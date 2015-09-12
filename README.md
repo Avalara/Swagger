@@ -1,0 +1,1 @@
+This repository holds swagger API descriptions for various APIs. Don't feel like you need to put your swagger description in this repository if you don't want to - you can keep it closer to your code if you prefer. Publishing recommendations and a fancier workflow will be announced soon, so stay tuned!
