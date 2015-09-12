@@ -1,0 +1,182 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "The TaxRates API provides a free rates lookup tool to allow merchants to retreive tax rates by location. You can use this API to get the sales tax rate for a five digit zip code in the United State or get the sales tax rate for a specific street address in the United States. [Register for an API Key](http://taxratesapi.avalara.com/) to get started.\n\nTo ensure that the service is available for as many people as possible, we have a rate limit of 15 tax rate requests every 1 minute. If you get a response that you’ve exceeded the rate limit, we suggest waiting 60 seconds before making your next request.\n",
+        "version": "1.0.0",
+        "title": "TaxRates API",
+        "termsOfService": "http://auth.avalara.com/taxrates-api-terms-of-service",
+        "contact": {
+            "name": "For support, visit the Avalara Community",
+            "url": "https://community.avalara.com/avalara/categories/avalara_taxrates_api/"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "taxrates.api.avalara.com",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "produces": [
+        "application/json",
+        "application/xml"
+    ],
+    "security": [
+        {
+            "header_key": []
+        },
+        {
+            "query_key": []
+        }
+    ],
+    "paths": {
+        "/address": {
+            "get": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Calculate tax by street address",
+                "description": "Retrieves the composite and local jurisdictional standard sales tax rates for a given street address.",
+                "operationId": "taxByAddress",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "address",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "city",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "country",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "postal",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/TaxResult"
+                        }
+                    },
+                    "400": {
+                        "description": "The postal code you provided was not valid. Please check your postal code before re-trying."
+                    },
+                    "401": {
+                        "description": "Your request provided two forms of authentication. Please check the documentation for the API to determine which form to use."
+                    },
+                    "429": {
+                        "description": "Rate limiting has been exceeded. Try again later."
+                    }
+                }
+            }
+        },
+        "/postal": {
+            "get": {
+                "tags": [
+                    "postal"
+                ],
+                "summary": "Calculate tax by zip code",
+                "description": "Retrieves the composite and local jurisdictional standard sales tax rates for a given zip5 location.",
+                "operationId": "taxByZip",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "country",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "postal",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/TaxResult"
+                        }
+                    },
+                    "400": {
+                        "description": "The postal code you provided was not valid. Please check your postal code before re-trying."
+                    },
+                    "401": {
+                        "description": "Your request provided two forms of authentication. Please check the documentation for the API to determine which form to use."
+                    },
+                    "429": {
+                        "description": "Rate limiting has been exceeded. Try again later."
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "header_key": {
+            "type": "apiKey",
+            "name": "AvalaraApiKey",
+            "in": "header"
+        },
+        "query_key": {
+            "type": "apiKey",
+            "name": "apikey",
+            "in": "query"
+        }
+    },
+    "definitions": {
+        "Rate": {
+            "properties": {
+                "rate": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 3
+                },
+                "name": {
+                    "type": "string",
+                    "example": "SEATTLE"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "City"
+                }
+            }
+        },
+        "TaxResult": {
+            "properties": {
+                "totalRate": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 9.5
+                },
+                "rates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rate"
+                    }
+                }
+            }
+        }
+    }
+}
