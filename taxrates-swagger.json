@@ -43,7 +43,7 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "address",
+                        "name": "street",
                         "required": true,
                         "type": "string"
                     },
