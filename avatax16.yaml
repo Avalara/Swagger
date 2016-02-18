@@ -43,7 +43,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: TaxDocument
           in: body
           description: The document on which tax should be calculated
@@ -77,7 +77,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -125,7 +125,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -164,7 +164,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -236,7 +236,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -298,7 +298,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: taxDocument
           in: body
           description: The document on which tax should be calculated
@@ -336,7 +336,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -376,7 +376,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -443,7 +443,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -499,7 +499,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -569,7 +569,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -613,9 +613,7 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
-
-            
+        
   /address/account/{accountId}/company/{companyCode}/validshippingaddresses:
     post: 
       summary: Validate an Address
@@ -626,7 +624,7 @@ paths:
       parameters:
         - $ref: '#/parameters/Authorization'
         - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Accept'
+        - $ref: '#/parameters/Content-Type'
         - name: accountId
           in: path
           description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
@@ -665,8 +663,8 @@ paths:
 ######################################################################
 
 parameters:
-  Accept:
-    name: Accept
+  Content-Type:
+    name: Content-Type
     type: string
     required: true
     in: header
@@ -705,8 +703,6 @@ definitions:
       - lines
     properties:
       header:
-        type: object
-        description: This section contains information relating to the transaction as a whole - who are the parties to the transaction, when did it occur, and so on. Because tax exemption certificates relate to customers and the customer identity is passed in this header section, this section is REQUIRED if using tax exemption certificates.
         $ref: '#/definitions/header'
       lines:
         type: array
@@ -724,12 +720,13 @@ definitions:
     type: object
     description: This section allows the caller to provide feedback on their experience of the API. Specifically, the latency experienced by the calling application for the previous request. 
     properties:
-      latency:
-        type: integer
-        description: The latency in miliseconds for a previous call from the client perspective. 
-      versionId:
-        type: string
-        description: The versionId (returned to the client in the processingInfo.versionId field) of the transaction for which latency is being passed.
+      latencyData:
+        type: object
+        description: Latency feedback for the transaction.
+        properties:
+          latency:
+            type: integer
+            description: The latency in miliseconds for a previous call from the client perspective.
   header:
     description: This section contains information relating to the transaction as a whole - who are the parties to the transaction, when did it occur, and so on 
     required:
@@ -739,6 +736,7 @@ definitions:
       - customerCode
       - defaultLocations
       - transactionDate
+      - accountingEntityCode
     properties:
       accountId: 
         type: string
@@ -748,6 +746,11 @@ definitions:
         type: string
         description: "This string is a code maintained by the client application to uniquely identify the company for which this transaction is being recorded. It is unique within the context of an Account. It will be limited to 60 characters when creating a Company"
         maxLength: 60
+        example: A1 Boat
+      accountingEntityCode:
+        type: string
+        maxLength: 60
+        description: "This string is a code maintained by the client application uniquely identify the accounting entity for which this transaction is being recorded. It is unique within the context of an Account. It will be limited to 60 characters when creating a Company"
         example: A1 Boat
       transactionType:
         type: string
@@ -777,6 +780,11 @@ definitions:
         type: number
         description: "This is the Tax Override Amount which overrides the total tax for the transaction. This may used for imported transactions, returns, and layaways where the tax has already been calculated either by AvaTax or another means. The tax shown for each line item is proportional to the line item's price. See the taxOverrideAmount for each line item to specify an override for a single line or to distribute the tax disproportionate to the price. This field is not currently supported."
         example: 2.53
+      currency:
+        type: string
+        description: This string is one of the three letter ISO 4217 currency names
+        maxLength: 3
+        example: USD
       taxCalculationDate:
         type: string
         format: date
@@ -790,10 +798,7 @@ definitions:
         description: "This string captures the goods and services modifier to be used for all lines that do not override this value. The Avalara goods and services type determines the specific type of goods or services associated with a particular line in the transaction. The Avalara goods and services modifier determines variations on the goods and services type. For example, if the goods were a type of food, the modifier might be 'dine in' or 'take out'. If the goods and services were a 'bicycle' the modifier might be 'rental' versus 'title'. This field is not currently supported. "
         example: Rental
       defaultLocations:
-        type: array
-        description: "This element contains a dictionary of locations such as the origin and destination addresses to be associated with this transaction. These locations may be overridden within each line item. The key for each location in the dictionary is the location 'purpose'. Valid locations purposes are 'ShipFrom', 'ShipTo', 'POS', 'POM', 'POO', 'BillingLocation', 'CallPlaced', 'CallReceived', 'ServiceRendered', 'POA' and 'FirstUse'. There can only be one location of a given purpose in the dictionary."
-        items: 
-          $ref: '#/definitions/location'
+        $ref: '#/definitions/locations' 
       defaultTaxPayerCode:
         type: string
         maxLength: 256
@@ -909,7 +914,6 @@ definitions:
         items: 
           $ref: '#/definitions/metadataItem'        
       calculatedTax:  
-        description: "This element contains the calculated tax information for this line item. This element is created by the tax service and overwritten if it exists in a request."
         $ref: '#/definitions/calculatedTax'
 
 
@@ -922,22 +926,100 @@ definitions:
       value: 
         type: string
 
-  location:
+  locations:
     description: |
-      Locations are used for specific purposes which are enumerated in the table below. To calculate tax for a line in a transaction transaction, the tax calculation engine may need to know about the "origin" and the "destination" of the transaction. Sometimes determining these locations is straight forward, as in the case of an item purchased in person at a retail store for immediate consumption (a single POS address would suffice to indicate the origin and destination of the transaction).Other cases are only slightly more complicated, such as when a product is purchased over the phone and shipped from a warehouse to the customer's house. In this second case, a Ship-from location would serve as the origin, and a Ship-to location would serve as the destination.Exactly which locations are required for a given transaction depends on the context of transaction. Specifically, such things as the transactionType, avalaraGoodsAndServicesType, and applicable jurisdictions may influence what location information is required in order to calculate tax. In the case where more than one location of a given category (origin/destination) is associated with a line, the jurisdiction will determine which location is used, and this will be indicated in the calculation response. The locations can be associated at the line level or the line can inherit the location from the header
-    required:
-      - taxLocationPurpose
-      - address
+      To calculate tax, the tax calculation engine needs to know about the location of the transaction. Sometimes determining these locations is straight forward, as in the case of an item purchased in person at a retail store for immediate consumption (a single POS address would suffice to indicate the origin and destination of the transaction). Other cases are only slightly more complicated, such as when a product is purchased over the phone and shipped from a warehouse to the customer's house. Exactly which locations are required for a given transaction depends on the context of transaction. Specifically, such things as the transactionType, avalaraGoodsAndServicesType, and applicable jurisdictions may influence what location information is required in order to calculate tax. In the case where more than one location of a given category (origin/destination) is associated with a line, the jurisdiction will determine which location is used, and this will be indicated in the calculation response. The locations can be associated at the line level or the line can inherit the location from the header. While no single location property is required, at least one location must be provided for a calculation.
     properties:
-      taxLocationPurpose:
-        type: string
-        description: "The type of location identified by the element. Each distinct type can be used as a destination or origin address depending on the sale type, as outlined in the table below:"
-        enum: ["ShipFrom","ShipTo", "CallPlaced", "POM", "POA", "DropShip", "POS", "POO", "BillingLocation", "CallReceived", "ServiceRendered", "FirstUse", "PointOfOrderAcceptance", "PointOfSale", "PointOfOrderOrigin", "Assumed Possession"]
+      ShipFrom:
+        type: object
+        description: The origin of the transaction or line item. Will be used as an origin address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      CallPlaced:
+        type: object
+        description: The origin of a phone call.Will be used as an origin address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      POM:
+        type: object
+        description: The point of manufacture of an item. Will be used as an origin address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      PointOfManufacture:
+        type: object
+        description: The point of manufacture of an item. Will be used as an origin address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      POA:
+        type: object
+        description: The point of access to an item. Will be used as an origin address. 
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      PointOfOrderAcceptance:
+        type: object
+        description: The point of access to an item. Will be used as an origin address. 
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      Dropship:
+        type: object
+        description: The drop shipment location of an item. Will be used as an origin address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      POS:
+        type: object
+        description: The point of sale of an item. Will be used as both an origin and destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      PointOfSale:
+        type: object
+        description: The point of sale of an item. Will be used as both an origin and destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      ShipTo:
+        type: object
+        description: The ship to location of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      POO:
+        type: object
+        description: The point of order origin of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      PointOfOrderOrigin:
+        type: object
+        description: The point of order origin of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      BillingLocation:
+        type: object
+        description: The billing location of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      CallReceived:
+        type: object
+        description: The destination of a phone call. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      ServiceRendered:
+        type: object
+        description: The location a service item was rendered. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      FirstUse:
+        type: object
+        description: The location of first use of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+      AssumedPossession:
+        type: object
+        description: The assumed possession of an item. Will be used as a destination address.
+        additionalProperties: 
+          $ref: '#/definitions/location'
+  location:
+    properties:
       address:
-        description: "This element contains a street or shipping address. The tax calculation service will convert this to a latlong"
         $ref: '#/definitions/address'
       latLong:
-        description: "This element contains a latitude and longitude."
         $ref: '#/definitions/latLong'
       locationCode:
         type: string
@@ -955,38 +1037,26 @@ definitions:
         type: string
         description: "This taxPayerCode overrides any taxPayerCode that may have been specified in the header or line item if this address is determined to govern the selection of tax rules (i.e.: if the transaction is sourced to this address). This field is not currently supported."
         example: "98237498623948"
-      addressBuyerType:  
-        type: string
-        maxLength: 64  
-        description: "This buyerType overrides any buyerType that may have been specified in the header or line item if this address is determined to govern the selection of tax rules (i.e.: if the transaction is sourced to this address). Valid values are: A - Federal Government, B - State/Local Govt., C - Tribal Government, D - Foreign Diplomat, E - Charitable Organization, F - Religious/Education, G - Resale, H - Agricultural Production, I - Industrial Prod/Mfg., J - Direct Pay Permit, K - Direct Mail, L - Other, N - Local Government, P - Commercial Aquaculture (Canada), Q - Commercial Fishery (Canada), R - Non-resident (Canada). This field is not currently supported."
-        example: N   
-      addressUseType:  
-        maxLength: 64  
-        type: string
-        description: "This useType overrides any useType that may have been specified in the header or line item if this address is determined to govern the selection of tax rules (i.e.: if the transaction is sourced to this address). Valid values are: A - Federal Government, B - State/Local Govt., C - Tribal Government, D - Foreign Diplomat, E - Charitable Organization, F - Religious/Education, G - Resale, H - Agricultural Production, I - Industrial Prod/Mfg., J - Direct Pay Permit, K - Direct Mail, L - Other, N - Local Government, P - Commercial Aquaculture (Canada), Q - Commercial Fishery (Canada), R - Non-resident (Canada). This field is not currently supported."
-        example: K 
-        
   latLong:
     required:
       - latitude
       - longitude
-    description: "Latlong contains a latitude and longitude for a location on earth. It has the following format."
+    description: "Latlong contains a latitude and longitude for a location."
     properties:
       latitude: 
         type: number
-        description: "This decimal captures the latitude of the transactio"
+        description: "The latitude of the transaction"
         example: 47.604813
       longitude: 
         type: number
-        description: "This decimal captures the longitude of the transaction"
+        description: "The longitude of the transaction"
         example: -122.339811
-      
   address:
     required:
     - line1
     - country
     - zipCode
-    description: "Address has the following format"
+    description: "This element contains a street or shipping address. The tax calculation service will convert this to a lat/long."
     properties:
       line1:
         type: string
@@ -1040,12 +1110,9 @@ definitions:
         type: string
         description: "Synonym for state"
         example: "WA"
-      zipCode:
-        type: string
-        description: "This string captures the zip code of the address"
-        example: "98101"  
   calculatedTax:
     type: object
+    description: "This element contains the calculated tax information for this line item. This element is created by the tax service and overwritten if it exists in a request."
     properties:
       taxByType:
         type: array
@@ -1053,13 +1120,14 @@ definitions:
         items:
           properties:
             taxType:
-              type: string
+              type: object
               description: "Tax Type"
               example: "Sellers Use"
-            tax:
-              type: number
-              description: "This decimal captures the total tax applicable for this line"
-              example: 240
+              properties:
+                tax:
+                  type: number
+                  description: "This decimal captures the total tax applicable for this line"
+                  example: 240
       tax:
         type: number
         description: "total tax applicable for this line"
@@ -1067,9 +1135,14 @@ definitions:
       details:
         type: array
         description: "List of tax authorities that apply to this line."
-        $ref: "#/definitions/details"
-        
-  details:
+        items:
+          $ref: "#/definitions/taxAuthority"
+      calculatedDetails:
+        type: array
+        description: "Reserved for future use."
+        items:
+          $ref: "#/definitions/taxAuthority"
+  taxAuthority:
     properties:
       locationType:
         type: string
@@ -1095,15 +1168,15 @@ definitions:
         type: string
         description: "This string captures the transaction scenario used to calculate the tax for this tax type. Scenarios are specific to the tax type. This field provides information about how the tax engine interpreted the transaction information that was passed in."
         example: "Simple Retail"
-      taxable:
+      subtotalTaxable:
         type: number
         description: "This decimal captures how much of the lineAmount was taxable by this tax"
         example: 4.13
-      exempt:
+      subtotalExempt:
         type: number
         description: "This decimal captures how much of the lineAmount was non-taxed. This is simply the line amount minus the taxable."
         example: 0
-      numberOfItemsTaxable:
+      quantityTaxable:
         type: number
         description: "This decimal captures what numberOfItems was considered taxable while calculating tax"
         example: 0.75
@@ -1115,7 +1188,7 @@ definitions:
         type: number
         description: "This decimal is the product of taxable and rate"
         example: 0.13
-      exemptionReason:
+      exemptionCode:
         type: string
         description: "This string is required if the exempt flag is present and set to true"
         example: "Certificate on File"
@@ -1127,11 +1200,21 @@ definitions:
           properties:
             location:
               type: string
-      comment: 
+      signatureCode:
         type: string
-        description: "This string captures any special instructions for interpreting the values here. Sometimes, for example, jurisdictions will impose a cap on how much of a given taxtype can be charged for a single transaction. In that case, the tax at the line level may not add up to the tax at the document level.  "
-        example: "Alabama state imposes a cap on sales tax for lumber"
-        
+        description: "Reserved for future use"
+      fee:
+        type: string
+        description: "Reserved for future use"
+      taxRuleType:
+        type: string
+        description: "Reserved for future use"
+      certificateId:
+        type: string
+        description: "Reserved for future use"
+      locationType:
+        type: string
+        description: "Reserved for future use"
   calculatedTaxSummary:
     type: object
     description: "The calculated tax summary is the rollup of the individual line item tax information."
@@ -1143,7 +1226,8 @@ definitions:
       taxByType:
         type: array
         description: "This element breaks out the tax for this document by tax type"
-        $ref: '#/definitions/taxByType'
+        items:
+          $ref: '#/definitions/taxByType'
       subtotal:
         type: number
         description: "This decimal captures the sum of the lineAmounts reported on each line for this transaction"
@@ -1156,9 +1240,6 @@ definitions:
         type: number
         description: "This decimal captures the total due to be paid by the purchaser to the seller including tax"
         example: 47.63
-
-        
-        
   taxByType:
     type: object
     description: "This element is a map keyed on tax type with an element for each type of tax that applied to this line. Each tax type key will refer to an item with following elements."
@@ -1166,6 +1247,7 @@ definitions:
       tax:
         type: number
         description: "The total tax applicable for this tax type for this document."
+        example: 4.13
       jurisdictions:
         type: array
         description: "This element is a list of jurisdictions that defined this tax type for this transaction"
@@ -1183,16 +1265,6 @@ definitions:
               type: number
               description: "This decimal captures the total tax applicable for this tax type for this jurisdiction for this document"
               example: 4.13
-            comment:
-              type: string
-              description: "This string captures any special instructions for interpreting the values here. Sometimes, for example, jurisdictions will impose a cap on how much of a given taxtype can be charged for a single transaction. In that case, the tax at the line level may not add up to the tax at the document level."
-              example: "Alabama state imposes a cap on sales tax for lumber"
-      comment:
-        type: string
-        description: "This string captures any special instructions for interpreting the values here. Sometimes, for example, jurisdictions will impose a cap on how much of a given taxtype can be charged for a single transaction. In that case, the tax at the line level may not add up to the tax at the document level."
-        example: "Alabama state imposes a cap on sales tax for lumber"
-        
-        
   processingInfo:
     type: object
     description: "This section of a calculation response contains information relating to the mechanics of performing the tax calculation. This section is created by the service during tax calculation."
@@ -1237,6 +1309,4 @@ definitions:
       message:
         type: string
       fields:
-        type: object       
-        
-        
+        type: object   
