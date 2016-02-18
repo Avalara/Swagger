@@ -736,7 +736,6 @@ definitions:
       - customerCode
       - defaultLocations
       - transactionDate
-      - accountingEntityCode
     properties:
       accountId: 
         type: string
@@ -776,10 +775,6 @@ definitions:
         format: date
         description: "This string is the transaction date in ISO 8601 format (which may be different from the date the tax calculation is performed)"
         example: 2014-06-11
-      totalTaxOverrideAmount:
-        type: number
-        description: "This is the Tax Override Amount which overrides the total tax for the transaction. This may used for imported transactions, returns, and layaways where the tax has already been calculated either by AvaTax or another means. The tax shown for each line item is proportional to the line item's price. See the taxOverrideAmount for each line item to specify an override for a single line or to distribute the tax disproportionate to the price. This field is not currently supported."
-        example: 2.53
       currency:
         type: string
         description: This string is one of the three letter ISO 4217 currency names
@@ -793,16 +788,12 @@ definitions:
       companyLocation:
         type: string
         description: "This string contains a previously configured company code which may also have codes needed for tax return purposes. These codes are maintained through the customer portal."
-      defautlAvalaraGoodsAndServicesModifierType:
-        type: string
-        description: "This string captures the goods and services modifier to be used for all lines that do not override this value. The Avalara goods and services type determines the specific type of goods or services associated with a particular line in the transaction. The Avalara goods and services modifier determines variations on the goods and services type. For example, if the goods were a type of food, the modifier might be 'dine in' or 'take out'. If the goods and services were a 'bicycle' the modifier might be 'rental' versus 'title'. This field is not currently supported. "
-        example: Rental
       defaultLocations:
         $ref: '#/definitions/locations' 
       defaultTaxPayerCode:
         type: string
         maxLength: 256
-        description: "This string is a code issued by a tax authority to identify a party (typically the customer associated with the customerCode field) that is exempt from tax for this type of transaction. This will apply to all lines in this transaction that don't otherwise override it. This field is not currently supported."
+        description: "This string is a code issued by a tax authority to identify a party (typically the customer associated with the customerCode field) that is exempt from tax for this type of transaction. This will apply to all lines in this transaction that don't otherwise override it."
         example: A2323223
       defaultBuyerType:
         type: string
@@ -829,7 +820,6 @@ definitions:
         description: "This is a collection of MetadataItems (string pairs) which exists to allow callers of the API to set arbitrary information that will be returned in the tax calculation response and which can be used during reporting"
         items: 
           $ref: '#/definitions/metadataItem'
-          
   line:
     required:
       - lineAmount
@@ -853,7 +843,7 @@ definitions:
       avalaraGoodsAndServicesModifierType:  
         maxLength: 128 
         type: string
-        description: "This string captures the goods and services modifier to be used for this line. The Avalara goods and services type determines the specific type of goods or services associated with a particular line in the transaction. The Avalara goods and services modifier determines variations on the goods and services type. For example, if the goods were a type of food, the modifier might be 'dine in' or 'take out'. If the goods and services were a 'bicycle' the modifier might be 'rental' versus 'title'. This field is not currently supported"      
+        description: "Reserved for future use."      
         example: Rental 
         default: Title
       numberOfItems:      
@@ -869,11 +859,6 @@ definitions:
         type: string
         description: "This string captures the description of the item represented by this line"
         example: "Men's Adidas FREEFOOTBALL JANEIRINHA Soccer Shoes"   
-      unitOfMeasure:
-        description: "This string captures the unit of measure associated with this line item. The default unit is 'Each' if this field is not specified. Valid values are 'Each', 'liters'. This field is not currently supported."
-        type: string
-        example: Each 
-        default: Each
       locations:
         type: array
         description: "This element contains a dictionary of locations such as the ShipFrom and ShipTo addresses to be associated with this line. These locations may override those specified in a transaction header. The key for each location in the dictionary is the location 'purpose'. Valid location purposes are 'ShipFrom', 'ShipTo', 'POS', 'POM', 'POO', 'BillingLocation', 'CallPlaced', 'CallReceived', 'ServiceRendered', 'POA' and 'FirstUse'. There can only be one location of a given purpose in the dictionary."
@@ -901,10 +886,10 @@ definitions:
         example: K   
       taxOverrideAmount:
         type: number
-        description: "This decimal is the Tax Override Amount which overrides the tax for the line. This may used for imported transactions, returns, and layaways where the tax has already been calculated either by AvaTax or another means. This field is not currently supported.  "
+        description: "This decimal is the Tax Override Amount which overrides the tax for the line. This may used for imported transactions, returns, and layaways where the tax has already been calculated either by AvaTax or another means. "
         example: 2.53
       taxIncluded:      
-        description: "This is a field to indicate whether the extendedPrice includes tax or not and is passed as a string. It must be either 'true' or 'false' if present. This field is not currently supported."
+        description: "This is a field to indicate whether the extendedPrice includes tax or not and is passed as a string. It must be either 'true' or 'false' if present."
         example: true
         default: false
         type: boolean
@@ -1021,22 +1006,10 @@ definitions:
         $ref: '#/definitions/address'
       latLong:
         $ref: '#/definitions/latLong'
-      locationCode:
-        type: string
-        description: "This (max 256) string is the identity of a pre-configured location unique to the company. This field is not currently supported."
-        example: "Loc134"
-      ipAddress:
-        type: string
-        description: "This (max 32) is an IP address for digital distribution. This field is not currently supported."
-        example: "54.1.3.1"
       resolutionQuality:
         type: string
         description: "This is an indication of how precisely the location information was able to be translated into a latitude / longitude. It will contain one of the following values: NotCoded (location was not geocoded), External (location was already geocoded on the request), CountryCentroid (Avalara-defined country centroid), RegionCentroid (Avalara-defined state / province centroid), PartialCentroid (geocoded at a level more coarse than a PostalCentroid1), PostalCentroidGood (largest postal code (zip5 in US, left three in CA, etc)), PostalCentroidBetter (better postal code (zip7 in US)), PostalCentroidBest (best postal code (zip9 in US, complete postal code elsewhere)), Intersection (nearest intersection), Interpolated (interpolated to rooftop), Rooftop (assumed to be rooftop level, non-interpolated), Constant (pulled from a static list of geocodes for specific jurisdictions)"
         example: "Rooftop"
-      addressTaxPayerCode:
-        type: string
-        description: "This taxPayerCode overrides any taxPayerCode that may have been specified in the header or line item if this address is determined to govern the selection of tax rules (i.e.: if the transaction is sourced to this address). This field is not currently supported."
-        example: "98237498623948"
   latLong:
     required:
       - latitude
