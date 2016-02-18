@@ -1131,7 +1131,7 @@ definitions:
         example: "State"
       taxType:
         type: string
-        description: "This string captures the type of the taxx"
+        description: "This string captures the type of the tax"
         example: "Sales"
       rateType:
         type: string
