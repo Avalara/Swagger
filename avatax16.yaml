@@ -1159,7 +1159,7 @@ definitions:
         example: 0.065
       tax:
         type: number
-        description: "This decimal is the product of taxable and rate"
+        description: "The product of subtotalTaxable and rate for rate based calculations and is the product of numberOfItemsTaxable and fee for fee based transactions."
         example: 0.13
       exemptionCode:
         type: string
@@ -1173,21 +1173,22 @@ definitions:
           properties:
             location:
               type: string
-      signatureCode:
-        type: string
-        description: "Reserved for future use"
       fee:
-        type: string
-        description: "Reserved for future use"
+        type: number
+        example: 0.10
+        description: "This decimal captures the fee for this tax."
       taxRuleType:
         type: string
-        description: "Reserved for future use"
+        description: "The nature of the calculation. Valid values are `No Nexus` For transactions where a tax would have accrued had the vendor declared nexus, `Not Taxable` : For transactions where no tax rules applied (perhaps the prevailing authorities declined to define rules, or perhaps Avalara content just hasn't captured the rules), `Product` : For transactions where a specific product category is exempt from a tax, `Zero Rated` : For transactions where a tax applied, but it was zero rate, `Use` : For transactions that are exempt because of the use to which the goods or services are applied, `Customer` : For transactions that are exempt because of some characteristic of the buyer."
+        example: Product
       certificateId:
         type: string
-        description: "Reserved for future use"
+        example: EX-001
+        description: "The ID of a certificate that was applied to the transaction. Certificates are managed for customers through the customer portal when configuring a company."
       locationType:
         type: string
-        description: "Reserved for future use"
+        description: "The location that triggered this taxing jurisdiction."
+        example: ShipTo
   calculatedTaxSummary:
     type: object
     description: "The calculated tax summary is the rollup of the individual line item tax information."
