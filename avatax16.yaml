@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: '2.0.0'
-  title: AvaTax 16 API
+  title: AvaTax 16 API - test
   description: |
     The Tax API is used to calculate tax and record transactions for tax purposes. Tax can be calculated on sales, purchases, and transfer transactions.
     
