@@ -56,7 +56,7 @@ paths:
           schema:
             $ref: '#/definitions/TaxDocument'
         '400':
-          description: "Returned if a member of the request is invalid"
+          description: "Returned if a member of the request is invalid."
           schema:
             $ref: '#/definitions/Error'
         '401':
