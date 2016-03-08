@@ -18,7 +18,7 @@ info:
     A TaxDocument captures the details of a transaction. 
 
     ### Authentication
-    The Authorization header is used to identify the actor (person or system) making the request. The value is of the format ‚Äú AvalaraAuth (access info)‚Äù, where access info is the generated API key for the actor making the call. An API Key can be generated through the Customer Portal.
+    The Authorization header is used to identify the actor (person or system) making the request. The value is of the format ì AvalaraAuth (access info)î, where access info is the generated API key for the actor making the call. An API Key can be generated through the Customer Portal.
     For example: `Authorization:  AvalaraAuth MmVhZDk4YzEtZWNiZi00NzA4LThkODYtYjAxYWY4YmMxM2U1`
 
   contact:
@@ -26,7 +26,7 @@ info:
     email: support@avalara.com
     url: http://help.avalara.com
 host: tax.api.avalara.com
-basePath: /v2
+basePath: /v3
 schemes:
   - https
 consumes:
@@ -613,6 +613,65 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
+            
+  "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/accountingEntity/{accountingEntityId}/stateTransitions":
+    post: 
+      summary: Change multiple documents' Transaction State
+      description: |
+       
+       Tax transaction record states are managed by the Avalara services. Certain events may cause transitions between the states. The state of a tax transaction record affects whether it is included in tax filing and whether it can be modified.
+       
+       Transactions can be in one of five states -
+       
+       - Recorded - Transactions in this state have been recorded in the Avalara system. They can be edited. They should be included in an upcoming tax filing.
+       - Voided - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They will not be included in tax filing.
+       - Reconciled - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to be included in a tax filing shortly.
+       - Filed - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to have been included in a tax filing by the client systems.
+       - FiledByAvalara - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They have been included in a tax filing by Avalara systems.
+       
+       The States API is used to record significant events associated with state transitions of the tax transaction record.
+       
+       Supported events are -
+       
+       - Voided - Send this event to a Recorded tax transaction record to mark it as voided.
+       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.       
+       - Reconciled - Send this event to a Recorded tax transaction record to indicate that it has been reconciled with client systems and to prevent it from being edited prior to filing. This is useful when a transaction will be filed and you do not want it to change again to facilitate auditing and reconciliation.
+       - UnReconciled - Send this event to a Reconciled tax transaction record to indicate that it has not been reconciled and may need to be edited. This is useful when a Tax transaction was erroniously put into the reconciled state.
+       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system. 
+       - UnFiled - Send this event to a Filed transaction to indicate that it has NOT been part of a tax filing by the client system.
+       - FiledbyAvalara - his event can only be sent by Avalara  
+
+      operationId: multiDocumentChangeTransactionState
+      parameters:
+        - $ref: '#/parameters/Authorization'
+        - $ref: '#/parameters/User-Agent'
+        - $ref: '#/parameters/accountId'
+        - $ref: '#/parameters/companyCode'
+        - $ref: '#/parameters/transactionType'
+        - $ref: '#/parameters/accountingEntityId'
+        - name: multiDocumentStateChangeRequest
+          in: body
+          description: ""
+          required: true
+          schema:
+            $ref: '#/definitions/multiDocumentStateChangeRequest'
+      responses:
+        '200':
+          description: "Successful response"
+          schema:
+            $ref: '#/definitions/TaxDocument'
+        '400':
+          description: "Returned if a member of the request is invalid"
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: "Returned if the HTTP Authorization header failed to validate."
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
+          schema:
+            $ref: '#/definitions/Error'
         
   /address/account/{accountId}/company/{companyCode}/validshippingaddresses:
     post: 
@@ -677,11 +736,35 @@ parameters:
     description: "The user agent header is used to indicate the technology of the client application (or connector). This is a string that is built into a connector or issued to an SDK partner when they sign up to use the SDK. e.g. `Drupal Connector v6.2`"
   Authorization:
     name: Authorization
-    required: true
     type: string
+    required: true
     in: header
     description: |
       The Authorization header is used to identify the actor (person or system) making the request. The value is of the format 'AvalaraAuth accessKey', where accessKey identifies the actor making the call. The access info is issued by avalara.com when the user registers for an access to a service. e.g. `AvalaraAuth MmVhZDk4YzEtZWNiZi00NzA4LThkODYtYjAxYWY4YmMxM2U1`
+  accountId:
+    name: accountId
+    type: string
+    required: true
+    in: path
+    description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
+  companyCode:
+    name: companyCode
+    type: string 
+    required: true
+    in: path
+    description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
+  transactionType:
+    name: transactionType
+    type: string      
+    required: true
+    in: path
+    description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
+  accountingEntityId:
+    name: accountingEntityId
+    type: string 
+    required: true
+    in: path
+    description: "Accounting Entity Id"
       
 ######################################################################
 
@@ -697,6 +780,18 @@ definitions:
       comment:
         description: "This is a string that will be recorded along with the event for audit purposes."
         type: string 
+        
+  multiDocumentStateChangeRequest:
+    required:
+      - documentCodes
+    properties:
+      documentCodes:
+        type: array
+        items:
+          type: string
+    additionalProperties:
+      $ref: '#/definitions/stateChangeRequest'
+        
   TaxDocument:
     required:
       - header
