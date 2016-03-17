@@ -1,44 +1,66 @@
 swagger: '2.0'
 info:
-  version: '2.0.0'
+  version: '3.0.0'
   title: AvaTax 16 API
-  description: |
+  description: >
+    ### Overview
+    
     The Tax API is used to calculate tax and record transactions for tax purposes. Tax can be calculated on sales, purchases, and transfer transactions.
+    
     
     There are two *record types* the Tax API manages Tax Calculation Records and Tax Transaction Records.
     
-    When a user of the Tax API simply wants to calculate tax on a transaction, but do not intend to include that transaction in a future filing (such as for quotes or orders), they would create a "tax calculation record" by using the /calculations URL.
+    
+    When a user of the Tax API simply wants to calculate tax on a transaction, but do not intend to include that transaction in a future filing (such as for quotes or orders), they would create a "tax calculation record" by using the `/calculations` URL.
+    
     
     On the other hand, if a user wants to calculate tax on a transaction to include in a future filing (such as for invoices), they would create a "tax transaction record" by using the /transactions URL.
     
-    The request message format, called a TaxDocument, is identical for both tax calculation records and tax transaction records except that documentCode is not required for calculations.
+    
+    The request message format, called a `TaxDocument`, is identical for both tax calculation records and tax transaction records except that `documentCode` is not required for calculations.
+    
     
     The response message format is the same as the request message format except that in the case of the response message, tax information has been inserted into the message in context of where the tax applies.
+    
     
     A TaxDocument captures the details of a transaction. 
 
     ### Authentication
-    The Authorization header is used to identify the actor (person or system) making the request. The value is of the format “ AvalaraAuth (access info)”, where access info is the generated API key for the actor making the call. An API Key can be generated through the Customer Portal.
-    For example: `Authorization:  AvalaraAuth MmVhZDk4YzEtZWNiZi00NzA4LThkODYtYjAxYWY4YmMxM2U1`
+    
+    The Authorization header is used to identify the actor (person or system) making the request. The value is of the format `AvalaraAuth {accessKey)`, where access info is the generated access key for the actor making the call. An Access Key can be generated through the Customer Portal.
 
+
+    For example: `Authorization:  AvalaraAuth MmVhZDk4YzEtZWNiZi00NzA4LThkODYtYjAxYWY4YmMxM2U1`
   contact:
     name: Avalara Support
     email: support@avalara.com
     url: http://help.avalara.com
 host: tax.api.avalara.com
-basePath: /v2
+basePath: /v3
 schemes:
   - https
 consumes:
   - application/json; document-version=1
 produces:
   - application/json
+tags:
+  -
+    name: "calculations"
+    description: "Working with Calculations"
+  -
+    name: "transactions"
+    description: "Working with Transactions"
+  -
+    name: "addresses"
+    description: "Working with Addresses"
 paths:
   /calculations:
     post: 
       summary: Create a Calculation
-      description: |
+      description: >
         The address to use for calculating tax obligations associated with transactions (sales, purchases, transfers, etc).To calculate tax, AvaTax requires a tax document in a JSON element in the request body. Making multiple POSTs to the /calculations service with the same companyCode and documentCode will result in the creation of a calculation record on the first call and then updates to that calculation record on subsequent calls.
+      tags:
+        - calculations
       operationId: createCalculation
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -71,8 +93,10 @@ paths:
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}":
     get: 
       summary: Get a Calculation
-      description: |
+      description: >
        This is how Avatax customers can retrieve their calculations. The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /calculations service in the body of the request when the calculation was generated. The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer". The most recent version of the calculation is retrieved..
+      tags:
+        - calculations
       operationId: getCalculation
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -119,8 +143,10 @@ paths:
   "/calculations/account/{accountId}/company/{companyCode}":
     get: 
       summary: Get a List of Calculations
-      description: |
+      description: >
         This is how Avatax customers can retrieve a list of all their tax calculation records. The value for companyCode is assigned by the calling application and is passed to /calculations in the body of the request when the calculation was generated.
+      tags:
+        - calculations
       operationId: getCalculationList
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -157,9 +183,10 @@ paths:
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}":
     get: 
       summary: Get a List of Calculations by Type
-      description: |
-        
+      description: >
         This is how Avatax customers can retrieve a list of all their tax calculation records. The value for companyCode is assigned by the calling application and is passed to /calculations in the body of the request when the calculation was generated.
+      tags:
+        - calculations
       operationId: getCalculationsByType
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -226,12 +253,13 @@ paths:
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/transactions":
     post: 
       summary: Create a Transaction from a Calculation
-      description: |
-        
+      description: >
         It may sometimes be convenient to create a tax transaction record directly from a previous tax calculation record. Perhaps an unchanged order is now to be invoiced, for example. 
         
         Tax transaction records can be created from tax calculation records either with a recalculation of the tax (this should be the most common situation) or without recalculation of the tax (this is unusual).
-
+      tags:
+        - calculations
+        - transactions
       operationId: createTransactionFromCalculation
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -278,8 +306,7 @@ paths:
   /transactions:
     post: 
       summary: Create a Transaction
-      description: |
-       
+      description: >
        The address to use for generating tax transaction records. Tax transaction records are meant to be used to calculate tax for inclusion in client system transaction documents. Tax transaction records can be retrieved later to assist with tax remittance and reconciliation.
        
        To simply calculate tax associated with a transaction, use /calculations instead.
@@ -293,7 +320,8 @@ paths:
        If there is a tax transaction record with the combination of accountId, companyCode and documentCode already in the tax transaction record DB for this account, it will be updated and the call will return 200.
        
        A POST to https://tax.api.avalara.com/transactions is really shorthand for a POST to https://tax.api.avalara.com/transactions/account/ _accountId_ /company/ _companyCode_ / _documentCode_ /versions where _accountId_, _companyCode_ and _documentCode_ are the respective values from the request body and will always (subject to passing error checking) result in a new version of the tax transaction record being created at that location.
-
+      tags:
+        - transactions
       operationId: createTransaction
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -326,12 +354,12 @@ paths:
   "/transactions/account/{accountId}/company/{companyCode}":
     get: 
       summary: Get a List of Transactions
-      description: |
-        
+      description: >
         This is how Avatax customers can retrieve a list of their tax transaction records.
         
         The value for *companyCode* is assigned by the calling application and is passed to /transactions in the body of the request when the tax transaction record was generated.
-
+      tags:
+        - transactions
       operationId: getTransactionList
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -368,10 +396,12 @@ paths:
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}":
     get: 
       summary: Get a List of Transactions by Type
-      description: |
+      description: >
         This is how Avatax customers can retrieve a list of their tax transaction records.
         
         The value for *companyCode* is assigned by the calling application and is passed to /transactions in the body of the request when the tax transaction record was generated.
+      tags:
+        - transactions
       operationId: getTransactionListByType
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -433,12 +463,14 @@ paths:
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}":
     get: 
       summary: Get a Transaction
-      description: |
-
+      description: >
         This is how Avatax customers can retrieve their individual transactions.
         
         The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /transactions in the body of the request when the tax transaction record was generated.  The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer".
+
         The most recent version of the tax transaction record is retrieved.
+      tags:
+        - transactions
       operationId: getTransaction
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -485,8 +517,7 @@ paths:
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/source":
     get: 
       summary: Get a Transaction Input
-      description: |
-       
+      description: >
        This is how Avatax customers can retrieve their original transaction request.
        
        The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /transactions service in the body of the request when the transaction was generated.
@@ -494,7 +525,8 @@ paths:
        The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer".
        
        The most recent version of the transaction request is retrieved.
-
+      tags:
+        - transactions
       operationId: getTransactionInput
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -541,8 +573,7 @@ paths:
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/stateTransitions":
     post: 
       summary: Change a Transaction State
-      description: |
-       
+      description: >
        Tax transaction record states are managed by the Avalara services. Certain events may cause transitions between the states. The state of a tax transaction record affects whether it is included in tax filing and whether it can be modified.
        
        Transactions can be in one of five states -
@@ -564,7 +595,8 @@ paths:
        - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system. 
        - UnFiled - Send this event to a Filed transaction to indicate that it has NOT been part of a tax filing by the client system.
        - FiledbyAvalara - his event can only be sent by Avalara  
-
+      tags:
+        - transactions
       operationId: changeTransactionState
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -613,13 +645,71 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
+            
+  "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/accountingEntity/{accountingEntityId}/stateTransitions":
+    post: 
+      summary: Change the Transaction State of multiple documents
+      description: >
+       Tax transaction record states are managed by the Avalara services. Certain events may cause transitions between the states. The state of a tax transaction record affects whether it is included in tax filing and whether it can be modified.
+       
+       Transactions can be in one of five states -
+       
+       - Recorded - Transactions in this state have been recorded in the Avalara system. They can be edited. They should be included in an upcoming tax filing.
+       - Voided - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They will not be included in tax filing.
+       - Reconciled - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to be included in a tax filing shortly.
+       - Filed - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to have been included in a tax filing by the client systems.
+       - FiledByAvalara - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They have been included in a tax filing by Avalara systems.
+       
+       The States API is used to record significant events associated with state transitions of the tax transaction record.
+       
+       Supported events are -
+       
+       - Voided - Send this event to a Recorded tax transaction record to mark it as voided.
+       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.       
+       - Reconciled - Send this event to a Recorded tax transaction record to indicate that it has been reconciled with client systems and to prevent it from being edited prior to filing. This is useful when a transaction will be filed and you do not want it to change again to facilitate auditing and reconciliation.
+       - UnReconciled - Send this event to a Reconciled tax transaction record to indicate that it has not been reconciled and may need to be edited. This is useful when a Tax transaction was erroniously put into the reconciled state.
+       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system. 
+       - UnFiled - Send this event to a Filed transaction to indicate that it has NOT been part of a tax filing by the client system.
+       - FiledbyAvalara - his event can only be sent by Avalara  
+      tags:
+        - transactions
+      operationId: multiDocumentChangeTransactionState
+      parameters:
+        - $ref: '#/parameters/Authorization'
+        - $ref: '#/parameters/User-Agent'
+        - $ref: '#/parameters/accountId'
+        - $ref: '#/parameters/companyCode'
+        - $ref: '#/parameters/transactionType'
+        - $ref: '#/parameters/accountingEntityId'
+        - name: 'multiDocumenetStateChangeRequest'
+          in: body
+          description: "The request for the documents to transition the document state for."
+          required: true
+          schema:
+            $ref: '#/definitions/multiDocumentStateChangeRequest'
+      responses:
+        '200':
+          description: "Successful response"
+        '400':
+          description: "Returned if a member of the request is invalid.  The response body is a Dictionary<string, string>, where the key is the document code of the document that generated the error, and the value is the error message that was generated."
+          schema:
+            $ref: '#/definitions/multiDocumentStateChangeError'
+        '401':
+          description: "Returned if the HTTP Authorization header failed to validate."
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
+          schema:
+            $ref: '#/definitions/Error'
         
   /address/account/{accountId}/company/{companyCode}/validshippingaddresses:
     post: 
       summary: Validate an Address
-      description: |
-        
+      description: >
         This function is to validate a given shipping address.
+      tags:
+        - addresses
       operationId: validateAddress
       parameters:
         - $ref: '#/parameters/Authorization'
@@ -659,7 +749,6 @@ paths:
           schema:
             $ref: '#/definitions/Error'
                         
-
 ######################################################################
 
 parameters:
@@ -677,11 +766,35 @@ parameters:
     description: "The user agent header is used to indicate the technology of the client application (or connector). This is a string that is built into a connector or issued to an SDK partner when they sign up to use the SDK. e.g. `Drupal Connector v6.2`"
   Authorization:
     name: Authorization
-    required: true
     type: string
+    required: true
     in: header
-    description: |
+    description: >
       The Authorization header is used to identify the actor (person or system) making the request. The value is of the format 'AvalaraAuth accessKey', where accessKey identifies the actor making the call. The access info is issued by avalara.com when the user registers for an access to a service. e.g. `AvalaraAuth MmVhZDk4YzEtZWNiZi00NzA4LThkODYtYjAxYWY4YmMxM2U1`
+  accountId:
+    name: accountId
+    type: string
+    required: true
+    in: path
+    description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
+  companyCode:
+    name: companyCode
+    type: string 
+    required: true
+    in: path
+    description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
+  transactionType:
+    name: transactionType
+    type: string      
+    required: true
+    in: path
+    description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
+  accountingEntityId:
+    name: accountingEntityId
+    type: string 
+    required: true
+    in: path
+    description: "Accounting Entity Id"
       
 ######################################################################
 
@@ -697,6 +810,30 @@ definitions:
       comment:
         description: "This is a string that will be recorded along with the event for audit purposes."
         type: string 
+        
+  multiDocumentStateChangeRequest:
+    required:
+      - documentCodes
+    properties:
+      documentCodes:
+        type: array
+        items:
+          type: string
+    additionalProperties:
+      $ref: '#/definitions/stateChangeRequest'
+
+  multiDocumentStateChangeError:
+    type: array
+    items:
+      $ref: "#/definitions/multiDocumentStateChangeErrorObject"
+        
+  multiDocumentStateChangeErrorObject:
+    properties:
+      documentCode:
+        type: string
+      errorMessage:
+        type: string
+      
   TaxDocument:
     required:
       - header
@@ -710,7 +847,7 @@ definitions:
         items:
           $ref: '#/definitions/line'
       calculatedTaxSummary:
-        $ref: '#/definitions/calculatedTaxSummary'
+        $ref: '#/definitions/calculatedTaxSummaryDefinition'
       processingInfo:
         $ref: '#/definitions/processingInfo'   
       feedback:
@@ -912,8 +1049,8 @@ definitions:
         type: string
 
   locations:
-    description: |
-      To calculate tax, the tax calculation engine needs to know about the location of the transaction. Sometimes determining these locations is straight forward, as in the case of an item purchased in person at a retail store for immediate consumption (a single POS address would suffice to indicate the origin and destination of the transaction). Other cases are only slightly more complicated, such as when a product is purchased over the phone and shipped from a warehouse to the customer's house. Exactly which locations are required for a given transaction depends on the context of transaction. Specifically, such things as the transactionType, avalaraGoodsAndServicesType, and applicable jurisdictions may influence what location information is required in order to calculate tax. In the case where more than one location of a given category (origin/destination) is associated with a line, the jurisdiction will determine which location is used, and this will be indicated in the calculation response. The locations can be associated at the line level or the line can inherit the location from the header. While no single location property is required, at least one location must be provided for a calculation.
+    description: >
+      To calculate tax, the tax calculation engine needs to know about the location of the transaction. Sometimes determining these locations is straight forward, as in the case of an item purchased in person at a retail store for immediate consumption (a single POS address would suffice to indicate the origin and destination of the transaction). Other cases are only slightly more complicated, such as when a product is purchased over the phone and shipped from a warehouse to the customer\'s house. Exactly which locations are required for a given transaction depends on the context of transaction. Specifically, such things as the transactionType, avalaraGoodsAndServicesType, and applicable jurisdictions may influence what location information is required in order to calculate tax. In the case where more than one location of a given category (origin/destination) is associated with a line, the jurisdiction will determine which location is used, and this will be indicated in the calculation response. The locations can be associated at the line level or the line can inherit the location from the header. While no single location property is required, at least one location must be provided for a calculation.
     properties:
       ShipFrom:
         type: object
@@ -1185,11 +1322,8 @@ definitions:
         type: string
         example: EX-001
         description: "The ID of a certificate that was applied to the transaction. Certificates are managed for customers through the customer portal when configuring a company."
-      locationType:
-        type: string
-        description: "The location that triggered this taxing jurisdiction."
-        example: ShipTo
-  calculatedTaxSummary:
+
+  calculatedTaxSummaryDefinition:
     type: object
     description: "The calculated tax summary is the rollup of the individual line item tax information."
     properties:
@@ -1283,4 +1417,4 @@ definitions:
       message:
         type: string
       fields:
-        type: object   
+        type: object
