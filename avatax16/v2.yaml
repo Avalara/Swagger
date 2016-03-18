@@ -1185,10 +1185,6 @@ definitions:
         type: string
         example: EX-001
         description: "The ID of a certificate that was applied to the transaction. Certificates are managed for customers through the customer portal when configuring a company."
-      locationType:
-        type: string
-        description: "The location that triggered this taxing jurisdiction."
-        example: ShipTo
   calculatedTaxSummary:
     type: object
     description: "The calculated tax summary is the rollup of the individual line item tax information."
