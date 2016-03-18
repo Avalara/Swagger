@@ -996,6 +996,14 @@ definitions:
         type: string
         description: "This string captures the description of the item represented by this line"
         example: "Men's Adidas FREEFOOTBALL JANEIRINHA Soccer Shoes"   
+      lineTaxedDiscount:
+        type: number
+        example: 23.20
+        description: "A discount that should be applied after tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount."
+      lineUntaxedDiscount:
+        type: number
+        example: 23.20
+        description: "A discount that should be applied before tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount."
       locations:
         type: array
         description: "This element contains a dictionary of locations such as the ShipFrom and ShipTo addresses to be associated with this line. These locations may override those specified in a transaction header. The key for each location in the dictionary is the location 'purpose'. Valid location purposes are 'ShipFrom', 'ShipTo', 'POS', 'POM', 'POO', 'BillingLocation', 'CallPlaced', 'CallReceived', 'ServiceRendered', 'POA' and 'FirstUse'. There can only be one location of a given purpose in the dictionary."
