@@ -57,8 +57,7 @@ paths:
   /calculations:
     post: 
       summary: Create a Calculation
-      description: >
-        The address to use for calculating tax obligations associated with transactions (sales, purchases, transfers, etc).To calculate tax, AvaTax requires a tax document in a JSON element in the request body. Making multiple POSTs to the /calculations service with the same companyCode and documentCode will result in the creation of a calculation record on the first call and then updates to that calculation record on subsequent calls.
+      description:  Use this resource to calculate tax without creating a reportable transaction. This should be used when quoting a tax amount to a user before completing a sale. Making multiple POSTs to the /calculations service with the same companyCode and documentCode will result in the creation of a calculation record on the first call and then updates to that calculation record on subsequent calls.
       tags:
         - calculations
       operationId: createCalculation
