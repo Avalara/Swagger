@@ -11,7 +11,7 @@ info:
     There are two *record types* the Tax API manages Tax Calculation Records and Tax Transaction Records.
     
     
-    When a user of the Tax API simply wants to calculate tax on a transaction, but do not intend to include that transaction in a future filing (such as for quotes or orders), they would create a "tax calculation record" by using the `/calculations` URL.
+    When a user of the Tax API simply wants to calculate tax on a transaction, but does not intend to include that transaction in a future filing (such as for quotes or orders), they would create a "tax calculation record" by using the `/calculations` URL.
     
     
     On the other hand, if a user wants to calculate tax on a transaction to include in a future filing (such as for invoices), they would create a "tax transaction record" by using the /transactions URL.
@@ -139,47 +139,6 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
-  "/calculations/account/{accountId}/company/{companyCode}":
-    get: 
-      summary: Get a List of Calculations
-      description: >
-        This is how Avatax customers can retrieve a list of all their tax calculation records. The value for companyCode is assigned by the calling application and is passed to /calculations in the body of the request when the calculation was generated.
-      tags:
-        - calculations
-      operationId: getCalculationList
-      parameters:
-        - $ref: '#/parameters/Authorization'
-        - $ref: '#/parameters/User-Agent'
-        - $ref: '#/parameters/Content-Type'
-        - name: accountId
-          in: path
-          description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
-          required: true
-          type: string
-        - name: companyCode
-          in: path
-          description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
-          required: true
-          type: string 
-      responses:
-        '200':
-          description: "Successful response"
-          schema:
-            $ref: '#/definitions/TaxDocument'
-        '400':
-          description: "Returned if a member of the request is invalid"
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: "Returned if the HTTP Authorization header failed to validate."
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
-          schema:
-            $ref: '#/definitions/Error'
-            
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}":
     get: 
       summary: Get a List of Calculations by Type
@@ -285,6 +244,10 @@ paths:
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
           type: string 
+        - name: createTransactionRequest
+          in: body
+          schema:
+            $ref: '#/definitions/createTransactionRequest'
       responses:
         '200':
           description: "Successful response"
@@ -799,6 +762,20 @@ parameters:
 ######################################################################
 
 definitions:
+  createTransactionRequest:
+    required:
+      - documentCode
+    properties:
+      recalculate:
+        description: "Determines if tax should be recalculated when creating the transaction. If omitted, will default to `true`."
+        type: boolean
+        default: true
+      documentCode:
+        description: "The new documentCode to be used for the transaction record."
+        type: string
+      comment:
+        description: "An optional comment that will be recorded with the event for audit purposes."
+        type: string
   stateChangeRequest:
     required:
       - type
@@ -809,8 +786,7 @@ definitions:
         type: string
       comment:
         description: "This is a string that will be recorded along with the event for audit purposes."
-        type: string 
-        
+        type: string        
   multiDocumentStateChangeRequest:
     required:
       - documentCodes
@@ -890,16 +866,16 @@ definitions:
         example: A1 Boat
       transactionType:
         type: string
-        description: "This string indicates the type of transaction for which tax should be calculated. It must be one of the following values: 'Sale', 'Purchase' or 'Transfer'. Only 'Sale' is currently supported."
+        description: "This string indicates the type of transaction for which tax should be calculated. The value must be either 'Sale' or 'Purchase'."
         example: Sale
       documentCode:
         type: string
-        description: "This string is a code maintained by the client application to uniquely identify a document in the client's systems. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc."
+        description: "This string is a code maintained by the client application to uniquely identify a document in the client's systems. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. documentCode is required for transactions. It is optional but strongly recommended for calculations - if omitted, the value defaults to a generated GUID."
         maxLength: 63
         example: Invoice:12345
       customerCode:
         type: string
-        description: "This string is a code maintained by the client application and recorded in CUP to uniquely identify the party with whom the company (identified by companyCode) is transacting. It is unique within the context of a Company."
+        description: "This string is a code maintained by the client application and recorded in the cusotmer portal to uniquely identify the party with whom the company (identified by companyCode) is transacting. It is unique within the context of a Company."
         maxLength: 256
         example: Argosy Cruises
       vendorCode:
@@ -999,11 +975,11 @@ definitions:
       lineTaxedDiscount:
         type: number
         example: 23.20
-        description: "A discount that should be applied after tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount."
+        description: "A discount that should be applied after tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount. Taxed discounts include manufacturer's coupons and rebates."
       lineUntaxedDiscount:
         type: number
         example: 23.20
-        description: "A discount that should be applied before tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount."
+        description: "A discount that should be applied before tax is calculated on the lineAmount. The sign (+/-) should match that of the lineAmount. Untaxed discounts include retails or trade discounts."
       locations:
         type: array
         description: "This element contains a dictionary of locations such as the ShipFrom and ShipTo addresses to be associated with this line. These locations may override those specified in a transaction header. The key for each location in the dictionary is the location 'purpose'. Valid location purposes are 'ShipFrom', 'ShipTo', 'POS', 'POM', 'POO', 'BillingLocation', 'CallPlaced', 'CallReceived', 'ServiceRendered', 'POA' and 'FirstUse'. There can only be one location of a given purpose in the dictionary."
