@@ -838,7 +838,7 @@ definitions:
       avalaraGoodsAndServicesType:  
         maxLength: 128 
         type: string
-        description: "This string identifies a category of products for tax purposes. It will likely be one of Avalara's standard avalaraGoodsAndServicesTypes, but may be a custom type configured in the Customer Portal. If not specified, itemCode to avalaraGoodsAndServicesType mapping will happen during tax calculation. Currently only 'P0000000' (Tangible Personal Property) is supported."
+        description: "This string identifies a category of products for tax purposes. It will likely be one of Avalara's standard avalaraGoodsAndServicesTypes, but may be a custom type configured in the Customer Portal. If not specified, itemCode to avalaraGoodsAndServicesType mapping will happen during tax calculation. If itemCode is not mapped and no avalaraGoodsAndServicesType is passed, then the transaction will default to using P0000000."
         example: PC040402    
       avalaraGoodsAndServicesModifierType:  
         maxLength: 128 
