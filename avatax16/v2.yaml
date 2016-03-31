@@ -16,6 +16,10 @@ info:
     The response message format is the same as the request message format except that in the case of the response message, tax information has been inserted into the message in context of where the tax applies.
     
     A TaxDocument captures the details of a transaction. 
+    
+    If you would like to test these operations with prepopulated sample data, see the provided Postman collection: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/90894f39ff43f3cb0fe3)
+    
+    To run these tests, you will need a valid account. To sign up for a trial account, go [here](http://developer.avalara.com/api-documentation/avatax-16-api/get-api-key).
 
     ### Authentication
     The Authorization header is used to identify the actor (person or system) making the request. The value is of the format “ AvalaraAuth (access info)”, where access info is the generated API key for the actor making the call. An API Key can be generated through the Customer Portal.
