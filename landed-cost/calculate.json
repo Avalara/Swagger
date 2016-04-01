@@ -13,7 +13,7 @@
     "produces": [
         "application/json"
     ],
-    "schemes": [ "https" ]
+    "schemes": [ "https" ],
     "consumes": [
         "application/json"
     ],
