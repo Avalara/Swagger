@@ -9,7 +9,7 @@
             "url": "http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"
         }
     },
-    "host": "sandbox.landedcost.api.avalara.com"
+    "host": "sandbox.landedcost.api.avalara.com",
     "produces": [
         "application/json"
     ],
