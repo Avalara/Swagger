@@ -1,0 +1,571 @@
+  swagger: "2.0"
+  info: 
+    title: "Onboarding API"
+    description: "The Onboarding API is available upon special request only; you must contact Avalara directly to be whitelisted for use of this service.\nThe Onboarding API is designed to allow partners to automatically provision individual customer accounts and assist with company profile setup on those accounts, allowing for a quick, automated account setup for these customers. For a basic company profile, only a single call to POST /accounts is required. \nTo call this service in a sandbox environment, use the base service URL `https://sandbox.onboarding.api.avalara.com/`"
+    version: "1.0"
+    license: 
+      name: "MIT"
+      url: "http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"
+  host: "onboarding.api.avalara.com"
+  produces: 
+    - "application/json"
+  schemes: 
+    - "https"
+  consumes: 
+    - "application/json"
+  tags: []
+  basePath: "/"
+  paths: 
+    /accounts: 
+      post: 
+        operationId: "createAccount"
+        description: "An account represents a single AvaTax client. Note that a single account may have multiple company profiles, each representing a single legal entity under the single AvaTax client contract. \n This resource creates an account with a functional but minimal company profile setup. It creates a single account with: \n * one Account Admin-level user\n * one default company profile\n * one defined location\n * nexus designated for the single location"
+        parameters: 
+          - 
+            name: "createAccountRequest"
+            in: "body"
+            required: true
+            schema: 
+              $ref: "#/definitions/CreateAccountRequest"
+        responses: 
+          200: 
+            description: "Successful request."
+            schema: 
+              $ref: "#/definitions/CreateAccountResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}: 
+      get: 
+        operationId: "getAccount"
+        description: "Retrieves the account details for a single specified account."
+        parameters: 
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AvaTax-assigned account number of the account you would like to get."
+            type: "string"
+        responses: 
+          200: 
+            description: "Successful request."
+            schema: 
+              $ref: "#/definitions/GetAccountResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}/companies:
+      post:
+        operationId: "createCompany"
+        description: "A company represents a single legal or reporting entity within an Account. An account may have many companies. Note that if you have created an account with `POST /accounts`, a single default company profile has already been created on the account."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the account in which you would like to create the company."
+            type: string
+          - name: "CreateCompanyRequest"
+            in: "body"
+            required: true
+            schema: 
+              $ref: "#/definitions/Company"
+        responses: 
+          200: 
+            description: "Successful request."
+            schema: 
+              $ref: "#/definitions/CreateCompanyResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}/companies/{companyCode}:
+      get:
+        operationId: "getCompany"
+        description: "Retrieves the company details for a single specified company on an account."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the desired company."
+            type: string
+          - name: "companyCode"
+            in: "path"
+            required: true
+            description: "The company code of the desired company."
+            type: string
+        responses: 
+          200: 
+            description: "Successful request."
+            schema: 
+              $ref: "#/definitions/CreateCompanyResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}/companies/{companyCode}/locations:
+      post:
+        operationId: "createLocations"
+        description: "Locations belong to a specific company profile and represent physical locations associated with the business, for example, office locations, retail locations, or warehouses. Locations are uniquely identified by the user-defined LocationCode within the context of their parent company. \n Allows for the creation of one or more locations associated with a single company profile. Note that if the account/company was created with `POST /accounts`, a default location has already been created for the initial company."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the desired company."
+            type: string
+          - name: "companyCode"
+            in: "path"
+            required: true
+            description: "The company code of the desired company."
+            type: string
+          - name: "CreateLocationRequest"
+            in: body
+            required: true
+            schema:
+              $ref: "#/definitions/CreateLocationRequest"
+        responses: 
+          200: 
+            description: "Successful request."
+            schema: 
+              $ref: "#/definitions/CreateLocationResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}/companies/{companyCode}/locations/{locationCode}:
+      get:
+        operationId: "getLocation"
+        description: "Retrieves a single specified location entry."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the desired company."
+            type: string
+          - name: "companyCode"
+            in: "path"
+            required: true
+            description: "The company code of the desired company."
+            type: string     
+          - name: "locationCode"
+            in: "path"
+            required: true
+            description: "The location code of the desired location."
+            type: string
+        responses: 
+          200: 
+            description: "Successful request. When retrieving a location, the format is the same as location creation, but only one result will be returned."
+            schema: 
+              $ref: "#/definitions/CreateLocationResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+    /accounts/{accountId}/companies/{companyCode}/nexuses:
+      post:
+        operationId: "createNexus"
+        description: "Nexus tells the AvaTax calculation where the business entity is required to collect and remit taxes. If no nexus is selected for a given state, no taxes will be calculated for that state. \n Adds all nexus jurisdictions triggered by an address. Note that companies created by calling `POST /accounts` start with nexus already designated for the address provided at that time - this method need only be used if additional nexus jurisdictions are required for this business."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the desired company."
+            type: string
+          - name: "companyCode"
+            in: "path"
+            required: true
+            description: "The company code of the desired company."
+            type: string     
+          - name: "CreateNexusRequest"
+            in: "body"
+            required: true
+            schema:
+              $ref: "#/definitions/CreateNexusRequest"
+        responses: 
+          200: 
+            description: "Successful request. For each input address, there will be an array element representing the status outcome for that individual element."
+            schema: 
+              $ref: "#/definitions/CreateNexusResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+      get:
+        operationId: "getNexus"
+        description: "Retrieves all nexus settings for a specified company."
+        parameters:
+          - name: "accountId"
+            in: "path"
+            required: true
+            description: "The AccountId of the desired company."
+            type: string
+          - name: "companyCode"
+            in: "path"
+            required: true
+            description: "The company code of the desired company."
+            type: string     
+        responses: 
+          200: 
+            description: "Successful request. When retrieving nexus setting, the format is the same as nexus setting creation, but all nexus setting for the specified company are returned."
+            schema: 
+              $ref: "#/definitions/CreateNexusResponse"
+          default: 
+            description: "Invalid request."
+            schema: 
+              $ref: "#/definitions/Error"
+  definitions: 
+    BaseResult:
+      type: "object"
+      properties:
+        Message:
+          type: string
+          description: "A human-readable description of the success or failure of the operation"
+        Status:
+          type: string
+          description: "An indication of the success of the operation. One of: Success, Error, Exception"
+    Error: 
+      type: "object"
+      properties: 
+        message: 
+          type: "string"
+          description: "Friendly error response."
+        error: 
+          type: "object"
+          description: "Full error object response."
+      required: 
+        - "message"
+        - "error"
+    CreateAccountRequest:
+      type: "object"
+      properties:
+        ProductRatePlans:
+          type: "array"
+          items: 
+            type: string
+          description: "Rate plans to be used for the account. This is an Avalara-specific value that determines at what billable rate the client will be charged. For paid accounts, multiple array elements are expected: one to describe the standard rate plan and one to describe the overage rate plan, as well as any additional elements required by the partner contract arrangement."
+        ConnectorName:
+          type: string
+          description: The connector that will be the primary method of access used to call the account created.
+        CampaignId:
+          type: string
+          description: SalesForce campaign ID under which the new account is being created. This is provided per connector by Avalara.
+        ParentAccountNumber:
+          type: string
+          description: An approved partner account can be referenced when provisioning an account, allowing a link between the partner and the provisioned account.
+        ReferrerId:
+          type: string
+          description: Identifies a referring partner for the assessment of referal-based commissions.
+        PaymentMethodId:
+          type: string
+          description: Zuora-generated Payment ID to which the new account should be associated. For free trial accounts, an empty string is acceptable.
+        LeadSourceMostRecent:
+          type: string
+          description: Most recent lead source; will associate the specified Avalara-internal SalesForce record for the newly created account.
+        EffDate:
+          type: string
+          description: The date on which the account should take effect. In the format YYYY-MM-DD
+        EndDate:
+          type: string
+          description: The date on which the account should expire. In the format YYYY-MM-DD
+        UserPassword:
+          type: string
+          description: If no password is supplied, an a tempoarary password is generated by the system and emailed to the user. The user will be challenged to change this password upon logging in to the Admin Console. If supplied, will be the set password for the default created user, and the user will not be challenged to change their password upon login to the Admin Console.
+        Company:
+          description: The company details for the company to be created.
+          type: object
+          additionalProperties:
+            $ref: "#/definitions/Company"
+      required:
+        - ProductRatePlans
+        - ConnectorName
+        - CampaignId
+        - PaymentMethodId
+        - LeadSourceMostRecent
+        - EffDate
+        - EndDate
+        - Company
+    Company:
+      type: object
+      required:
+        - CompanyCode
+        - CompanyName
+        - TIN
+        - CompanyAddr
+        - CompanyContact
+      properties:
+        BIN: 
+          type: string
+          description: The VAT registration ID for the business, if VAT registered.
+        CompanyCode:
+          type: string
+          description: A user-defined identifier for the company profile. Must be unique within a single account.
+        CompanyName:
+          type: string
+          description: The legal name of the company.
+        TIN:
+          type: string
+          description: The tax registration number for the company.
+        CompanyAddr:
+          type: object
+          description: The primary address for the business.
+          additionalProperties:
+            $ref: "#/definitions/CompanyAddr"
+        CompanyContact:
+          type: object
+          description: The contact details for the user to be created.
+          additionalProperties:
+            $ref: "#/definitions/CompanyContact"
+    CompanyAddr:
+      type: object
+      required:
+        - City
+        - Country
+        - Line1
+        - State
+        - Zip
+      properties:
+        City:
+          type: string
+        Country:
+          type: string
+          description: "2-character ISO country code"
+        Line1:
+          type: string
+        Line2:
+          type: string
+        Line3: 
+          type: string
+        State:
+          type: string
+          description: "2-character state/region code"
+        Zip:
+          type: string
+    CompanyContact:
+      type: object
+      required:
+        - Email
+        - FirstName
+        - LastName
+        - PhoneNumber
+      properties:
+        Email:
+          type: string
+          description: "A primary contact email for the company profile. This will also be the username assigned to the AccountAdmin-level user associated wiht the account."
+        Fax:
+          type: string
+          description: "A contact fax for the company."
+        FirstName:
+          type: string
+          description: "The first name of the primary contact for the company."
+        LastName:
+          type: string
+          description: "The last name of the primary contact for the company."
+        MobileNumber:
+          type: string
+          description: "A cell phone number for the primary contact for the company."
+        PhoneNumber:
+          type: string
+          description: "A main phone number for the primary contact for the company."
+        Title:
+          type: string
+          description: "The title of the primary contact for the company."
+    CreateAccountResponse:
+      type: object
+      description: "The response upon creating an account is the same as the request, with some additional parameters."
+      properties:
+        Result:
+          type: object
+          properties:
+            Errors:
+              type: array
+              description: "Provides debug information on the account creation process. Because multiple operations are performed, there may be multiple array elements (instead of a single, root-level element). For more information on the format of these elements, and an example, see the Errors section. Note that this element will only be included in the response if errors occurred during processing."
+              items:
+                $ref: "#/definitions/Error"
+            AccountId:
+              type: string
+              description: "The AvaTax-assigned account id for the newly created company."
+            LicenseKey:
+              type: string
+              description: "The license key for the account - this value should be saved to authenticate subsequent tax calculation calls."
+            TempPwd:
+              type: string
+              description: "The temporary password associated with the primary Account Admin user."
+            UserName:
+              type: string
+              description: "The username associated with the primary Account Admin user."
+          additionalProperties:
+            $ref: "#/definitions/CreateAccountRequest"
+      additionalProperties:
+        $ref: "#/definitions/BaseResult"
+    GetAccountResponse:
+      type: object
+      properties:
+        Result:
+          type: object
+          properties:
+            AccountId:
+              type: string
+              description: "The AvaTax-assigned account id for the account."
+            AccountName:
+              type: string
+              description: "The business name associated with the account."
+            AccountStatus:
+              type: string
+              description: "The status of the account. One of: Inactive, Active, Test, New"
+            EffDate:
+              type: string
+              description: "The effective date of the account. In the format YYYY-MM-DD."
+            EndDate:
+              type: string
+              description: "The exipration date of the account. In the format YYYY-MM-DD."
+      additionalProperties:
+        $ref: "#/definitions/BaseResult"
+    CreateCompanyResponse:
+      type: object
+      properties:
+        Result:
+          type: object
+          additionalProperties:
+            $ref: "#/definitions/Company"
+      additionalProperties:
+        $ref: "#/definitions/BaseResult"
+    CreateLocationRequest:
+      type: object
+      properties:
+        CompanyLocations:
+          type: array
+          items:
+            $ref: "#/definitions/Location"
+      required:
+        - CompanyLocations
+    Location:
+      type: object
+      properties:
+        AddressCategory:
+          type: string
+          description: "A human-readable indicator of the address category."
+        AddressType:
+          type: string
+          description: "A human-readable indicator of the address type."
+        Description:
+          type: string
+          description: "A description of the location."
+        EndDate:
+          type: string
+          description: "The expiration date of the record. In the format MM-DD-YYYY"
+        IsDefault:
+          type: boolean
+          description: "Indicates if the location is the default location for the company."
+        LocationCode:
+          type: string
+          description: "The company-wide unique, user defined identifier of the location."
+        StartDate:
+          type: string
+          description: "The effective date of the location record. In the format MM-DD-YYYY"
+      required:
+        - AddressCategory
+        - AddressType
+        - Description
+        - EndDate
+        - IsDefault
+        - LocationCode
+        - StartDate
+      additionalProperties:
+        $ref: "#/definitions/CompanyAddr"
+    CreateLocationResponse:
+      type: object
+      description: "For each input location, there will be an array element representing the status outcome for that individual element. Note that each element is evaluated individually, so some may succeed and others may fail. The response upon creating an account is the same as the request, with an additional parameter `LocationId`"
+      properties:
+        Result:
+          type: object
+          properties:
+            CompanyLocations:
+              type: array
+              items: 
+                $ref: "#/definitions/CreatedLocation"
+      additionalProperties:
+        $ref: "#/definitions/BaseResult"
+    CreatedLocation:
+      type: object
+      properties:
+        LocationId:
+          type: string
+          description: "The unique, Avatax-assigned LocationId of the created location."
+      additionalProperties:
+        $ref: "#/definitions/Location"
+    CreateNexusRequest:
+      type: object
+      properties:
+        NexusAddress:
+          type: array
+          items: 
+            $ref: "#/definitions/CompanyAddress"
+      required:
+        - NexusAddress
+    CompanyAddress:
+      type: object
+      properties:
+        City:
+          type: string
+        Country:
+          type: string
+          description: "2-character ISO country code"
+        Line1:
+          type: string
+        Line2:
+          type: string
+        Line3:
+          type: string
+        State:
+          type: string
+          description: "2-character state/region code"
+        Zip:
+          type: string
+      required:
+        - Country
+        - State
+    CreateNexusResponse:
+      type: object
+      properties:
+        Result:
+          type: object
+          properties:
+            CreatedNexus:
+              type: array
+              items:
+                $ref: "#/definitions/Nexus"
+      additionalProperties:
+        $ref: "#/definitions/BaseResult"
+    Nexus:
+      type: object
+      properties:
+        CompanyId:
+          type: string
+          description: "The unique identifier of the company to which the nexus setting belongs."
+        Country:
+          type: string
+          description: "The two-character ISO code for the country in which the nexus jurisdiction is located."
+        EffDate:
+          type: string
+          description: "The date on which the nexus setting takes effect."
+        EndDate:
+          type: string
+          description: "The expiration date of the nexus setting."
+        LocalNexusType:
+          type: string
+          description: "Indicates the inheritance of local nexus, if appropriate. One of: Selected, StateAdministered, All"
+        JurisName:
+          type: string
+          description: "The colloquial name of the jurisdiction. May not be unique."
+        JurisType:
+          type: string
+          description: "Indicates the level of the the nexus jurisdiction. One of CNT, CTY, CIT, STA, STJ"
+        NexusId:
+          type: string
+          description: "The unique AvaTax assigned record Id for the nexus setting."
+        NexusType:
+          type: string
+          description: "One of Volunteer or Non-Volunteer. Indicates if Sales and Seller’s use tax or just Sales Tax will be calcluated (respsectively)."
+        State:
+          type: string
+          description: "The state in which the nexus jurisdiction is located. Note that for country level nexus this will be the country code."
