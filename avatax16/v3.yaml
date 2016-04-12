@@ -1308,18 +1308,20 @@ definitions:
       authorityAssignedCode:
         type: string
         description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
-      adminAuthority:
-        title: "Admin Authority"
-        properties:
-          id:
-            type: integer
-            description: "An Avalara assigned identifier for the Admin Authority"
-          name:
-            type: string
-            description: "The name of the Admin Authority"
-          typeId:
-            type: integer
-            description: "An Avalara assigned identifier for the type of the Admin Authority"
+      adminAuthority: 
+        $ref: "#/definitions/adminAuthority"
+
+  adminAuthority:
+    properties:
+      id:
+        type: integer
+        description: "An Avalara assigned identifier for the Admin Authority"
+      name:
+        type: string
+        description: "The name of the Admin Authority"
+      typeId:
+        type: integer
+        description: "An Avalara assigned identifier for the type of the Admin Authority"
 
   calculatedTaxSummaryDefinition:
     type: object
