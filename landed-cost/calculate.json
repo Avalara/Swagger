@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "LandedCost Calculation API",
-        "description": "Landed Cost API providing duty rates, calculation, and item harmonization.\n# Basics\n### Timestamps\nTimestamps should be formatted using ISO-8601 to the nearest second, in UTC e.g `2015-06-12T09:17:37Z`\n### Expiries\nAll Requests will have an associated timestamp. The validity for any request is 1 minute to account for any clock-skew. \n# Authentication\nAll API requests must be accompanied by an API Access Key. During account provisioning, you will be issued an API Key which you must supply with every request.\n## Authorization Header\nTo pass in the Signature, set the HTTP Authorization Header: \n`authorization: avalaraapikey id:<Your Account Id> key:<Your API Key>`",
+        "description": "Landed Cost API providing duty rates, calculation, and item harmonization. A set of sample requests are available as a <a href='https://www.getpostman.com/collections/ad308f6c9351a18c2c12'>Postman Collection.</a>\n# Basics\n### Timestamps\nTimestamps should be formatted using ISO-8601 to the nearest second, in UTC e.g `2015-06-12T09:17:37Z`\n### Expiries\nAll Requests will have an associated timestamp. The validity for any request is 1 minute to account for any clock-skew. \n# Authentication\nAll API requests must be accompanied by an API Access Key. During account provisioning, you will be issued an API Key which you must supply with every request.\n## Authorization Header\nTo pass in the Signature, set the HTTP Authorization Header: \n`authorization: avalaraapikey id:<Your Account Id> key:<Your API Key>`",
         "version": "3.0"
     },
     "host": "sandbox.landedcost.api.avalara.com",
