@@ -1309,6 +1309,7 @@ definitions:
         type: string
         description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
       adminAuthority:
+        title: "Admin Authority"
         properties:
           id:
             type: integer
