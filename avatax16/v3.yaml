@@ -1306,7 +1306,7 @@ definitions:
         example: EX-001
         description: "The ID of a certificate that was applied to the transaction. Certificates are managed for customers through the customer portal when configuring a company."
       authorityAssignedCode:
-        type:string
+        type: string
         description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
       adminAuthority:
         properties:
