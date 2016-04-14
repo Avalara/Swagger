@@ -49,7 +49,7 @@
           }
         },
         "/v3/calculate": {
-            "post": {
+            "get": {
                 "x-swagger-router-controller": "calculate",
                 "operationId": "calculate",
                 "tags": [
