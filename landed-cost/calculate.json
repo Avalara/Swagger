@@ -31,6 +31,23 @@
     ],
     "basePath": "/",
     "paths": {
+        "/v3/validate-creds": {
+          "post": {
+            "tags":[
+              "Landed Cost Calculation API",
+              "Credential Validation"
+            ],
+            "description":"Convenience API to check credentials. This API is rate limited.",
+            "responses": {
+              "503" : {
+                "description":"Unauthorized. Invalid credentials, or no subscription to Landed Cost found."
+              },
+              "200": {
+                "description":"Credentials are valid and account has active Landed Cost subscription."
+              }
+            }
+          }
+        },
         "/v3/calculate": {
             "post": {
                 "x-swagger-router-controller": "calculate",
