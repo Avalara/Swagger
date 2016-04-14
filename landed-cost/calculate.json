@@ -39,7 +39,7 @@
             ],
             "description":"Convenience API to check credentials. This API is rate limited.",
             "responses": {
-              "503" : {
+              "401" : {
                 "description":"Unauthorized. Invalid credentials, or no subscription to Landed Cost found."
               },
               "200": {
