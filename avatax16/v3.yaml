@@ -1305,6 +1305,23 @@ definitions:
         type: string
         example: EX-001
         description: "The ID of a certificate that was applied to the transaction. Certificates are managed for customers through the customer portal when configuring a company."
+      authorityAssignedCode:
+        type: string
+        description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
+      adminAuthority: 
+        $ref: "#/definitions/adminAuthority"
+
+  adminAuthority:
+    properties:
+      id:
+        type: integer
+        description: "An Avalara assigned identifier for the Admin Authority"
+      name:
+        type: string
+        description: "The name of the Admin Authority"
+      typeId:
+        type: integer
+        description: "An Avalara assigned identifier for the type of the Admin Authority"
 
   calculatedTaxSummaryDefinition:
     type: object
