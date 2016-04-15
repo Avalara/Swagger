@@ -4,29 +4,29 @@ info:
   title: AvaTax 16 API
   description: >
     ### Overview
-    
+
     The Tax API is used to calculate tax and record transactions for tax purposes. Tax can be calculated on sales, purchases, and transfer transactions.
-    
-    
+
+
     There are two *record types* the Tax API manages Tax Calculation Records and Tax Transaction Records.
-    
-    
+
+
     When a user of the Tax API simply wants to calculate tax on a transaction, but does not intend to include that transaction in a future filing (such as for quotes or orders), they would create a "tax calculation record" by using the `/calculations` URL.
-    
-    
+
+
     On the other hand, if a user wants to calculate tax on a transaction to include in a future filing (such as for invoices), they would create a "tax transaction record" by using the /transactions URL.
-    
-    
+
+
     The request message format, called a `TaxDocument`, is identical for both tax calculation records and tax transaction records except that `documentCode` is not required for calculations.
-    
-    
+
+
     The response message format is the same as the request message format except that in the case of the response message, tax information has been inserted into the message in context of where the tax applies.
-    
-    
-    A TaxDocument captures the details of a transaction. 
+
+
+    A TaxDocument captures the details of a transaction.
 
     ### Authentication
-    
+
     The Authorization header is used to identify the actor (person or system) making the request. The value is of the format `AvalaraAuth {accessKey)`, where access info is the generated access key for the actor making the call. An Access Key can be generated through the Customer Portal.
 
 
@@ -55,7 +55,7 @@ tags:
     description: "Working with Addresses"
 paths:
   /calculations:
-    post: 
+    post:
       summary: Create a Calculation
       description:  Use this resource to calculate tax without creating a reportable transaction. This should be used when quoting a tax amount to a user before completing a sale. Making multiple POSTs to the /calculations service with the same companyCode and documentCode will result in the creation of a calculation record on the first call and then updates to that calculation record on subsequent calls.
       tags:
@@ -69,7 +69,7 @@ paths:
           in: body
           description: The document on which tax should be calculated
           required: true
-          schema: 
+          schema:
             $ref: '#/definitions/TaxDocument'
       responses:
         '200':
@@ -88,9 +88,9 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}":
-    get: 
+    get:
       summary: Get a Calculation
       description: >
        This is how Avatax customers can retrieve their calculations. The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /calculations service in the body of the request when the calculation was generated. The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer". The most recent version of the calculation is retrieved..
@@ -110,17 +110,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string      
+          type: string
         - name: documentCode
           in: path
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
-          type: string 
+          type: string
       responses:
         '200':
           description: "Successful response"
@@ -139,7 +139,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}":
-    get: 
+    get:
       summary: Get a List of Calculations by Type
       description: >
         This is how Avatax customers can retrieve a list of all their tax calculation records. The value for companyCode is assigned by the calling application and is passed to /calculations in the body of the request when the calculation was generated.
@@ -159,17 +159,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string  
+          type: string
         - name: limit
           in: query
           description: "This is the maximum number of records that should be returned by this call."
           required: false
-          type: integer 
+          type: integer
         - name: skip
           in: query
           description: "The search will return up to limit records starting from the first record after 'skip' * 'limit' records are skipped."
@@ -207,13 +207,13 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   "/calculations/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/transactions":
-    post: 
+    post:
       summary: Create a Transaction from a Calculation
       description: >
-        It may sometimes be convenient to create a tax transaction record directly from a previous tax calculation record. Perhaps an unchanged order is now to be invoiced, for example. 
-        
+        It may sometimes be convenient to create a tax transaction record directly from a previous tax calculation record. Perhaps an unchanged order is now to be invoiced, for example.
+
         Tax transaction records can be created from tax calculation records either with a recalculation of the tax (this should be the most common situation) or without recalculation of the tax (this is unusual).
       tags:
         - calculations
@@ -232,17 +232,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string      
+          type: string
         - name: documentCode
           in: path
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
-          type: string 
+          type: string
         - name: createTransactionRequest
           in: body
           schema:
@@ -264,23 +264,23 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   /transactions:
-    post: 
+    post:
       summary: Create a Transaction
       description: >
        The address to use for generating tax transaction records. Tax transaction records are meant to be used to calculate tax for inclusion in client system transaction documents. Tax transaction records can be retrieved later to assist with tax remittance and reconciliation.
-       
+
        To simply calculate tax associated with a transaction, use /calculations instead.
-       
+
        To generate a tax transaction record, AvaTax requires a tax document in a JSON element in the request body
-       
+
        A POST to /transactions always recalculates the tax using the information in the request.
 
        If there is no tax transaction record with the combination of accountId, companyCode and documentCode already in the tax transaction record DB for this account, it will be created and the call will return 201.
 
        If there is a tax transaction record with the combination of accountId, companyCode and documentCode already in the tax transaction record DB for this account, it will be updated and the call will return 200.
-       
+
        A POST to https://tax.api.avalara.com/transactions is really shorthand for a POST to https://tax.api.avalara.com/transactions/account/ _accountId_ /company/ _companyCode_ / _documentCode_ /versions where _accountId_, _companyCode_ and _documentCode_ are the respective values from the request body and will always (subject to passing error checking) result in a new version of the tax transaction record being created at that location.
       tags:
         - transactions
@@ -293,7 +293,7 @@ paths:
           in: body
           description: The document on which tax should be calculated
           required: true
-          schema: 
+          schema:
             $ref: '#/definitions/TaxDocument'
       responses:
         '200':
@@ -314,11 +314,11 @@ paths:
             $ref: '#/definitions/Error'
 
   "/transactions/account/{accountId}/company/{companyCode}":
-    get: 
+    get:
       summary: Get a List of Transactions
       description: >
         This is how Avatax customers can retrieve a list of their tax transaction records.
-        
+
         The value for *companyCode* is assigned by the calling application and is passed to /transactions in the body of the request when the tax transaction record was generated.
       tags:
         - transactions
@@ -336,7 +336,7 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
       responses:
         '200':
           description: "Successful response"
@@ -354,13 +354,13 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}":
-    get: 
+    get:
       summary: Get a List of Transactions by Type
       description: >
         This is how Avatax customers can retrieve a list of their tax transaction records.
-        
+
         The value for *companyCode* is assigned by the calling application and is passed to /transactions in the body of the request when the tax transaction record was generated.
       tags:
         - transactions
@@ -378,17 +378,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string  
+          type: string
         - name: limit
           in: query
           description: "This is the maximum number of records that should be returned by this call."
           required: false
-          type: integer 
+          type: integer
         - name: skip
           in: query
           description: "The search will return up to limit records starting from the first record after 'skip' * 'limit' records are skipped."
@@ -423,11 +423,11 @@ paths:
             $ref: '#/definitions/Error'
 
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}":
-    get: 
+    get:
       summary: Get a Transaction
       description: >
         This is how Avatax customers can retrieve their individual transactions.
-        
+
         The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /transactions in the body of the request when the tax transaction record was generated.  The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer".
 
         The most recent version of the tax transaction record is retrieved.
@@ -447,17 +447,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string      
+          type: string
         - name: documentCode
           in: path
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
-          type: string 
+          type: string
       responses:
         '200':
           description: "Successful response"
@@ -477,15 +477,15 @@ paths:
             $ref: '#/definitions/Error'
 
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/source":
-    get: 
+    get:
       summary: Get a Transaction Input
       description: >
        This is how Avatax customers can retrieve their original transaction request.
-       
+
        The values for *companyCode* and *documentCode* are assigned by the calling application and are passed to /transactions service in the body of the request when the transaction was generated.
-       
+
        The *transactionType* component is passed by the calling application and must be one of "Sale", "Purchase" or "Transfer".
-       
+
        The most recent version of the transaction request is retrieved.
       tags:
         - transactions
@@ -503,17 +503,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string      
+          type: string
         - name: documentCode
           in: path
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
-          type: string 
+          type: string
       responses:
         '200':
           description: "Successful response"
@@ -531,32 +531,32 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/{documentCode}/stateTransitions":
-    post: 
+    post:
       summary: Change a Transaction State
       description: >
        Tax transaction record states are managed by the Avalara services. Certain events may cause transitions between the states. The state of a tax transaction record affects whether it is included in tax filing and whether it can be modified.
-       
+
        Transactions can be in one of five states -
-       
+
        - Recorded - Transactions in this state have been recorded in the Avalara system. They can be edited. They should be included in an upcoming tax filing.
        - Voided - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They will not be included in tax filing.
        - Reconciled - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to be included in a tax filing shortly.
        - Filed - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to have been included in a tax filing by the client systems.
        - FiledByAvalara - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They have been included in a tax filing by Avalara systems.
-       
+
        The States API is used to record significant events associated with state transitions of the tax transaction record.
-       
+
        Supported events are -
-       
+
        - Voided - Send this event to a Recorded tax transaction record to mark it as voided.
-       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.       
+       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.
        - Reconciled - Send this event to a Recorded tax transaction record to indicate that it has been reconciled with client systems and to prevent it from being edited prior to filing. This is useful when a transaction will be filed and you do not want it to change again to facilitate auditing and reconciliation.
        - UnReconciled - Send this event to a Reconciled tax transaction record to indicate that it has not been reconciled and may need to be edited. This is useful when a Tax transaction was erroniously put into the reconciled state.
-       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system. 
+       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system.
        - UnFiled - Send this event to a Filed transaction to indicate that it has NOT been part of a tax filing by the client system.
-       - FiledbyAvalara - his event can only be sent by Avalara  
+       - FiledbyAvalara - his event can only be sent by Avalara
       tags:
         - transactions
       operationId: changeTransactionState
@@ -573,17 +573,17 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: transactionType
           in: path
           description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
           required: true
-          type: string      
+          type: string
         - name: documentCode
           in: path
           description: "This is a code maintained by the client application to uniquely identify a transaction. It will typically be an invoice number, receipt number, returned merchandise authorization number, etc. This field is REQUIRED"
           required: true
-          type: string 
+          type: string
         - name: stateChangeRequest
           in: body
           description: ""
@@ -607,32 +607,32 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-            
+
   "/transactions/account/{accountId}/company/{companyCode}/{transactionType}/accountingEntity/{accountingEntityId}/stateTransitions":
-    post: 
+    post:
       summary: Change the Transaction State of multiple documents
       description: >
        Tax transaction record states are managed by the Avalara services. Certain events may cause transitions between the states. The state of a tax transaction record affects whether it is included in tax filing and whether it can be modified.
-       
+
        Transactions can be in one of five states -
-       
+
        - Recorded - Transactions in this state have been recorded in the Avalara system. They can be edited. They should be included in an upcoming tax filing.
        - Voided - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They will not be included in tax filing.
        - Reconciled - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to be included in a tax filing shortly.
        - Filed - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They are likely to have been included in a tax filing by the client systems.
        - FiledByAvalara - Transactions in this state have been recorded in the Avalara system. They cannot be edited. They have been included in a tax filing by Avalara systems.
-       
+
        The States API is used to record significant events associated with state transitions of the tax transaction record.
-       
+
        Supported events are -
-       
+
        - Voided - Send this event to a Recorded tax transaction record to mark it as voided.
-       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.       
+       - UnVoided - Send this event to a Voided tax transaction record to mark it as recorded.
        - Reconciled - Send this event to a Recorded tax transaction record to indicate that it has been reconciled with client systems and to prevent it from being edited prior to filing. This is useful when a transaction will be filed and you do not want it to change again to facilitate auditing and reconciliation.
        - UnReconciled - Send this event to a Reconciled tax transaction record to indicate that it has not been reconciled and may need to be edited. This is useful when a Tax transaction was erroniously put into the reconciled state.
-       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system. 
+       - Filed - Send this event to a Reconciled transaction to indicate that it has been part of a tax filing by the client system.
        - UnFiled - Send this event to a Filed transaction to indicate that it has NOT been part of a tax filing by the client system.
-       - FiledbyAvalara - his event can only be sent by Avalara  
+       - FiledbyAvalara - his event can only be sent by Avalara
       tags:
         - transactions
       operationId: multiDocumentChangeTransactionState
@@ -664,9 +664,9 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-        
+
   /address/account/{accountId}/company/{companyCode}/validshippingaddresses:
-    post: 
+    post:
       summary: Validate an Address
       description: >
         This function is to validate a given shipping address.
@@ -686,12 +686,12 @@ paths:
           in: path
           description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
           required: true
-          type: string 
+          type: string
         - name: address
           in: body
           description: The address that requires validation.
           required: true
-          schema: 
+          schema:
             $ref: '#/definitions/address'
       responses:
         '200':
@@ -710,7 +710,7 @@ paths:
           description: "Returned if the actor identified by the HTTP Authorization header is not authorized to perform this action."
           schema:
             $ref: '#/definitions/Error'
-                        
+
 ######################################################################
 
 parameters:
@@ -741,23 +741,23 @@ parameters:
     description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode."
   companyCode:
     name: companyCode
-    type: string 
+    type: string
     required: true
     in: path
     description: "This is a code maintained by the client application to uniquely identify the party on whose behalf we are recording the tax transaction record in the context of an Account. It is unique within the context of an Account"
   transactionType:
     name: transactionType
-    type: string      
+    type: string
     required: true
     in: path
     description: "This string indicates the type of the transaction. It must be one of 'Sale', 'Purchase' or 'Transfer'."
   accountingEntityId:
     name: accountingEntityId
-    type: string 
+    type: string
     required: true
     in: path
     description: "Accounting Entity Id"
-      
+
 ######################################################################
 
 definitions:
@@ -785,7 +785,7 @@ definitions:
         type: string
       comment:
         description: "This is a string that will be recorded along with the event for audit purposes."
-        type: string        
+        type: string
   multiDocumentStateChangeRequest:
     required:
       - documentCodes
@@ -801,14 +801,14 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/multiDocumentStateChangeErrorObject"
-        
+
   multiDocumentStateChangeErrorObject:
     properties:
       documentCode:
         type: string
       errorMessage:
         type: string
-      
+
   TaxDocument:
     required:
       - header
@@ -818,19 +818,19 @@ definitions:
         $ref: '#/definitions/header'
       lines:
         type: array
-        description: This section contains the details of the line items associated with the transaction. 
+        description: This section contains the details of the line items associated with the transaction.
         items:
           $ref: '#/definitions/line'
       calculatedTaxSummary:
         $ref: '#/definitions/calculatedTaxSummaryDefinition'
       processingInfo:
-        $ref: '#/definitions/processingInfo'   
+        $ref: '#/definitions/processingInfo'
       feedback:
           $ref: '#/definitions/feedback'
-          
+
   feedback:
     type: object
-    description: This section allows the caller to provide feedback on their experience of the API. Specifically, the latency experienced by the calling application for the previous request. 
+    description: This section allows the caller to provide feedback on their experience of the API. Specifically, the latency experienced by the calling application for the previous request.
     properties:
       latencyData:
         type: object
@@ -840,7 +840,7 @@ definitions:
             type: integer
             description: The latency in miliseconds for a previous call from the client perspective.
   header:
-    description: This section contains information relating to the transaction as a whole - who are the parties to the transaction, when did it occur, and so on 
+    description: This section contains information relating to the transaction as a whole - who are the parties to the transaction, when did it occur, and so on
     required:
       - accountId
       - companyCode
@@ -849,7 +849,7 @@ definitions:
       - defaultLocations
       - transactionDate
     properties:
-      accountId: 
+      accountId:
         type: string
         description: "This string is a UUID issued by Avalara to identify the Avalara account that owns the company identified by the companyCode on the next line"
         example: "895d52b1f3c54696a8644eded8e32ee4"
@@ -889,9 +889,9 @@ definitions:
         example: 2014-06-11
       currency:
         type: string
-        description: This string is one of the three letter ISO 4217 currency names
-        maxLength: 3
+        description: "This string is one of the three letter ISO 4217 currency names"
         example: USD
+        maxLength: 3
       taxCalculationDate:
         type: string
         format: date
@@ -901,7 +901,7 @@ definitions:
         type: string
         description: "This string contains a previously configured company code which may also have codes needed for tax return purposes. These codes are maintained through the customer portal."
       defaultLocations:
-        $ref: '#/definitions/locations' 
+        $ref: '#/definitions/locations'
       defaultTaxPayerCode:
         type: string
         maxLength: 256
@@ -927,10 +927,15 @@ definitions:
         example: PO12345
         maxLength: 256
         description: "This is a string representing a purchase order number which might be used to look up a single use tax exemption certification"
+      allowOverwrite:
+        type: boolean
+        example: true
+        default: false
+        description: "This flag, when set to true, allows the document with the same documentCode to be overwritten. An error is thrown if it is not true and an overwrite is attempted."
       metadata:
         type: array
         description: "This is a collection of MetadataItems (string pairs) which exists to allow callers of the API to set arbitrary information that will be returned in the tax calculation response and which can be used during reporting"
-        items: 
+        items:
           $ref: '#/definitions/metadataItem'
   line:
     required:
@@ -939,38 +944,38 @@ definitions:
     properties:
       lineCode:
         type: string
-        maxLength: 512  
+        maxLength: 512
         description: "This string is a unique identifier for this line in the transaction"
         example: dkj23
-      itemCode: 
-        maxLength: 255 
+      itemCode:
+        maxLength: 255
         type: string
         description: "This string is a code maintained by the client application to uniquely identify a product or service. It will likely be a SKU and is required for SST states."
-        example: 22456366          
-      avalaraGoodsAndServicesType:  
-        maxLength: 128 
+        example: 22456366
+      avalaraGoodsAndServicesType:
+        maxLength: 128
         type: string
         description: "This string identifies a category of products for tax purposes. It will likely be one of Avalara's standard avalaraGoodsAndServicesTypes, but may be a custom type configured in the Customer Portal. If not specified, itemCode to avalaraGoodsAndServicesType mapping will happen during tax calculation. If itemCode is not mapped and no avalaraGoodsAndServicesType is passed, then the transaction will default to using P0000000."
-        example: PC040402    
-      avalaraGoodsAndServicesModifierType:  
-        maxLength: 128 
+        example: PC040402
+      avalaraGoodsAndServicesModifierType:
+        maxLength: 128
         type: string
-        description: "Reserved for future use."      
-        example: Rental 
+        description: "Reserved for future use."
+        example: Rental
         default: Title
-      numberOfItems:      
+      numberOfItems:
         description: "This decimal captures the number of individual items or units represented by this line. Digits after the decimal point are optional. This should always be positive."
         type: number
         example: 3.15
-      lineAmount:   
+      lineAmount:
         description: "This decimal captures the total cost of this line. In its simplest form lineAmount = (item price * numberOfItems). If taxIncluded is 'true', lineAmount = (item price * numberOfItems + tax)."
         type: number
-        example: 23.33   
-      itemDescription:  
-        maxLength: 1024  
+        example: 23.33
+      itemDescription:
+        maxLength: 1024
         type: string
         description: "This string captures the description of the item represented by this line"
-        example: "Men's Adidas FREEFOOTBALL JANEIRINHA Soccer Shoes"   
+        example: "Men's Adidas FREEFOOTBALL JANEIRINHA Soccer Shoes"
       lineTaxedDiscount:
         type: number
         example: 23.20
@@ -982,33 +987,33 @@ definitions:
       locations:
         type: array
         description: "This element contains a dictionary of locations such as the ShipFrom and ShipTo addresses to be associated with this line. These locations may override those specified in a transaction header. The key for each location in the dictionary is the location 'purpose'. Valid location purposes are 'ShipFrom', 'ShipTo', 'POS', 'POM', 'POO', 'BillingLocation', 'CallPlaced', 'CallReceived', 'ServiceRendered', 'POA' and 'FirstUse'. There can only be one location of a given purpose in the dictionary."
-        items: 
+        items:
           $ref: '#/definitions/location'
       taxPayerCode:
-        maxLength: 256 
+        maxLength: 256
         type: string
         description: "This string is a code issued by a tax authority to identify a party (typically the customer associated with the customerId field) that is exempt from tax for this type of transaction. This value will override any value set at the transaction level. This field is not currently supported."
-        example: A2323223    
-      buyerType:  
+        example: A2323223
+      buyerType:
         type: string
-        maxLength: 64  
+        maxLength: 64
         description: "This string captures the type of buyer associated with this line in the transaction. See below for valid values, A - Federal Government, B - State/Local Govt., C - Tribal Government, D - Foreign Diplomat, E - Charitable Organization,F - Religious/Education, L - Other, N - Local Government, R - Non-resident (Canada)"
-        example: N   
-      useType:  
-        maxLength: 64  
+        example: N
+      useType:
+        maxLength: 64
         type: string
         description: "This string captures the type of use associated with this line in the transaction. See below for valid values G - Resale, H - Agricultural Production, I - Industrial Prod/Mfg., J - Direct Pay Permit, K - Direct Mail, L - Other, P - Commercial Aquaculture (Canada), Q - Commercial Fishery (Canada)"
-        example: K   
-      buyerExemptionType: 
-        maxLength: 64  
+        example: K
+      buyerExemptionType:
+        maxLength: 64
         type: string
-        description: "This string captures the type of use associated with this line in the transaction. Valid values are: G - Resale, H - Agricultural Production, I - Industrial Prod/Mfg., J - Direct Pay Permit, K - Direct Mail, L - Other, P - Commercial Aquaculture (Canada), Q - Commercial Fishery (Canada)"  
-        example: K   
+        description: "This string captures the type of use associated with this line in the transaction. Valid values are: G - Resale, H - Agricultural Production, I - Industrial Prod/Mfg., J - Direct Pay Permit, K - Direct Mail, L - Other, P - Commercial Aquaculture (Canada), Q - Commercial Fishery (Canada)"
+        example: K
       taxOverrideAmount:
         type: number
         description: "This decimal is the Tax Override Amount which overrides the tax for the line. This may used for imported transactions, returns, and layaways where the tax has already been calculated either by AvaTax or another means. "
         example: 2.53
-      taxIncluded:      
+      taxIncluded:
         description: "This is a field to indicate whether the extendedPrice includes tax or not and is passed as a string. It must be either 'true' or 'false' if present."
         example: true
         default: false
@@ -1016,9 +1021,9 @@ definitions:
       metadata:
         type: array
         description: "This is a collection of MetadataItems (string pairs) which exists to allow callers of the API to set arbitrary information that will be returned in the tax calculation response and which can be used during reporting"
-        items: 
-          $ref: '#/definitions/metadataItem'        
-      calculatedTax:  
+        items:
+          $ref: '#/definitions/metadataItem'
+      calculatedTax:
         $ref: '#/definitions/calculatedTax'
 
 
@@ -1028,7 +1033,7 @@ definitions:
     properties:
       name:
         type: string
-      value: 
+      value:
         type: string
 
   locations:
@@ -1038,87 +1043,87 @@ definitions:
       ShipFrom:
         type: object
         description: The origin of the transaction or line item. Will be used as an origin address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       CallPlaced:
         type: object
         description: The origin of a phone call.Will be used as an origin address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       POM:
         type: object
         description: The point of manufacture of an item. Will be used as an origin address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       PointOfManufacture:
         type: object
         description: The point of manufacture of an item. Will be used as an origin address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       POA:
         type: object
-        description: The point of access to an item. Will be used as an origin address. 
-        additionalProperties: 
+        description: The point of access to an item. Will be used as an origin address.
+        additionalProperties:
           $ref: '#/definitions/location'
       PointOfOrderAcceptance:
         type: object
-        description: The point of access to an item. Will be used as an origin address. 
-        additionalProperties: 
+        description: The point of access to an item. Will be used as an origin address.
+        additionalProperties:
           $ref: '#/definitions/location'
       Dropship:
         type: object
         description: The drop shipment location of an item. Will be used as an origin address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       POS:
         type: object
         description: The point of sale of an item. Will be used as both an origin and destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       PointOfSale:
         type: object
         description: The point of sale of an item. Will be used as both an origin and destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       ShipTo:
         type: object
         description: The ship to location of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       POO:
         type: object
         description: The point of order origin of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       PointOfOrderOrigin:
         type: object
         description: The point of order origin of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       BillingLocation:
         type: object
         description: The billing location of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       CallReceived:
         type: object
         description: The destination of a phone call. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       ServiceRendered:
         type: object
         description: The location a service item was rendered. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       FirstUse:
         type: object
         description: The location of first use of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
       AssumedPossession:
         type: object
         description: The assumed possession of an item. Will be used as a destination address.
-        additionalProperties: 
+        additionalProperties:
           $ref: '#/definitions/location'
   location:
     properties:
@@ -1136,11 +1141,11 @@ definitions:
       - longitude
     description: "Latlong contains a latitude and longitude for a location."
     properties:
-      latitude: 
+      latitude:
         type: number
         description: "The latitude of the transaction"
         example: 47.604813
-      longitude: 
+      longitude:
         type: number
         description: "The longitude of the transaction"
         example: -122.339811
@@ -1182,23 +1187,23 @@ definitions:
       zipCode:
         type: string
         description: "This string captures the zip code of the address"
-        example: "98101"  
+        example: "98101"
       postalCode:
         type: string
         description: "Synonym for zipcode"
-        example: "98101"  
+        example: "98101"
       postCode:
         type: string
         description: "Synonym for zipcode"
-        example: "98101"  
+        example: "98101"
       municipality:
         type: string
         description: "Synonym for city"
-        example: "Seattle"  
+        example: "Seattle"
       town:
         type: string
         description: "Synonym for city"
-        example: "Seattle" 
+        example: "Seattle"
       province:
         type: string
         description: "Synonym for state"
@@ -1224,7 +1229,7 @@ definitions:
       tax:
         type: number
         description: "total tax applicable for this line"
-        example: 240  
+        example: 240
       details:
         type: array
         description: "List of tax authorities that apply to this line."
@@ -1308,7 +1313,7 @@ definitions:
       authorityAssignedCode:
         type: string
         description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
-      adminAuthority: 
+      adminAuthority:
         $ref: "#/definitions/adminAuthority"
 
   adminAuthority:
@@ -1401,14 +1406,14 @@ definitions:
         type: string
         description: "This string identifies the batch that this transaction was part of. If the transaction was not part of a batch import, this field is omitted. If the transaction was part of multiple batches, this string identifies the most recent."
         example: "895d52b1f3c54696a8644eded8e32ee4"
-      documentId: 
+      documentId:
         type: string
         description: "This string identifies the avalara version Id of the original transaction that created the entry"
         example: "895d52b1f3c54696a8644eded8e32ee4"
       message:
         type: string
         description: "This string allows Avalara to pass information back to the caller such as a warning to indicate that the message format used is now deprecated."
-        example: "Warning: format 3 as used in this transaction is deprecated by format 4 and may not be supported in the future."      
+        example: "Warning: format 3 as used in this transaction is deprecated by format 4 and may not be supported in the future."
   Error:
     properties:
       code:
