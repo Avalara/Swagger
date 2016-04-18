@@ -4,8 +4,6 @@ info:
   
   The [SOAP API reference](http://developer.avalara.com/wp-content/apireference/beta/#avatax-soap-api) is also available. \n
   
-  You will not be able to make web service calls until you have received an active account number and license key via email, or a username and password from the [sandbox registration](http://developer.avalara.com/getting-started). Authentication is in the format `Basic [account number]:[license key]` encoded to Base64, as per basic access authentication. For example: `Authorization: Basic a2VlcG1vdmluZzpub3RoaW5nMnNlZWhlcmU=`
-  
   A full set of sample requests is available as a [Postman collection](https://www.getpostman.com/collections/e362821310b01d7580e9)."
   
   version: '1.0'
@@ -166,7 +164,7 @@ paths:
 securityDefinitions:
   basic_auth:
     type: basic
-    description: "In the format 'Basic [account number]:[license key]' encoded to [Base64](http://en.wikipedia.org/wiki/Base64), as per [basic access authentication](http://en.wikipedia.org/wiki/Basic_access_authentication)."
+    description: "You will not be able to make web service calls until you have received an active account number and license key via email, or a username and password from the [sandbox registration](http://developer.avalara.com/getting-started). Authentication is in the format `Basic [account number]:[license key]` encoded to Base64, as per basic access authentication. For example: `Authorization: Basic a2VlcG1vdmluZzpub3RoaW5nMnNlZWhlcmU=`"
 definitions:
   CancelTaxRequest:
     required:
