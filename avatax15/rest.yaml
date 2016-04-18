@@ -43,8 +43,10 @@ paths:
           description: 'Successful operation'
           schema:
             $ref: '#/definitions/GetTaxResult'
-        '401':
+        '400':
           description: Unauthorized
+          schema: 
+            $ref: '#/definitions/UnauthorizedError'
         '500':
           description: An Error Occurred
           schema:
@@ -484,6 +486,23 @@ definitions:
                   }
                 ]
             }
+  UnauthorizedError:
+    properties:
+      ResultCode:
+        $ref: '#/definitions/ResultCode'
+      Messages:
+        type: array
+        items:
+          $ref: '#/definitions/Message'
+    example: {
+          "ResultCode": "Error",
+          "Messages": [
+          {
+          "Summary": "The user or account could not be authenticated.",
+          "Severity": "Error",
+          "Source": "Avalara.Web.Authorization"}
+          ]
+          }
   Message:
     properties:
       Summary:
