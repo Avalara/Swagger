@@ -33,6 +33,7 @@
     "paths": {
         "/v3/validate-creds": {
           "get": {
+            "summary":"Validate credentials",
             "tags":[
               "Landed Cost Calculation API",
               "Credential Validation"
