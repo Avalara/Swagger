@@ -1286,26 +1286,12 @@ definitions:
         type: number
         description: "The product of subtotalTaxable and rate for rate based calculations and is the product of numberOfItemsTaxable and fee for fee based transactions."
         example: 0.13
-      exemptionCode:
-        type: string
-        description: "This string is required if the exempt flag is present and set to true"
-        example: "Certificate on File"
-      significantLocations:
-        type: array
-        description: "List of locations that contributed to the tax determination. Elements in the list will be a subset of the locations associated with this line (i.e.: one or more of 'ShipFrom', 'CallPlaced', 'POM', 'POA', 'DropShip', 'POS', 'ShipTo', 'POO', 'BillingLocation', 'CallReceived', 'ServiceRendered', 'FirstUse'"
-        example: "FirstUse"
-        items:
-          properties:
-            location:
-              type: string
+      ruleInformation:
+        $ref: "#/definitions/ruleInformation"
       fee:
         type: number
         example: 0.10
         description: "This decimal captures the fee for this tax."
-      taxRuleType:
-        type: string
-        description: "The nature of the calculation. Valid values are `No Nexus` For transactions where a tax would have accrued had the vendor declared nexus, `Not Taxable` : For transactions where no tax rules applied (perhaps the prevailing authorities declined to define rules, or perhaps Avalara content just hasn't captured the rules), `Product` : For transactions where a specific product category is exempt from a tax, `Zero Rated` : For transactions where a tax applied, but it was zero rate, `Use` : For transactions that are exempt because of the use to which the goods or services are applied, `Customer` : For transactions that are exempt because of some characteristic of the buyer."
-        example: Product
       certificateId:
         type: string
         example: EX-001
@@ -1315,7 +1301,49 @@ definitions:
         description: "A code assigned by some authorities to their local jurisdictions.  It is used by the authority to allocate the tax collected back to the local jurisdictions."
       adminAuthority:
         $ref: "#/definitions/adminAuthority"
+  
+  statuteAuthority:
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: "An Avalara assigned uuid identifier for the statute authority"
+      name:
+        type: string
+        description: "The name of the Statute Authority"
+      type:
+        type: string
+        description: "The polity type of the statute authority (i.e. city, county, state)"
 
+  ruleInformation:
+    properties:
+      statuteAuthority:
+        $ref: "#/definitions/statuteAuthority"
+      customRuleId:
+        type: string
+        format: uuid
+        description: "An Avalara assigned id for the custom rule used to calculate the detail, null if a custom rule wasn't used"
+      customRuleName:
+        type: string
+        description: "The name of the custom rule used to calculate the detail, null if a custom rule wasn't used"
+      significantFacts:
+        type: object
+        description: "A hash of all of the significant properties of an attribute, and the specific value, that was used to determine the rule that produced the detail"
+      parametersUsed:
+        type: array
+        items:
+          type: string
+        description: "An array of strings that describe the paramters that were used in the rule that produced the detail (i.e. WA.Sales.General)"
+      resultProperties:
+        type: object
+        description: "A hash of additional information about the rule, for example, the ID of a parameter override used for a particular parameter"
+      significantLocations:
+        type: array
+        items:
+          type: string
+        description: "List of locations that contributed to the tax determination. Elements in the list will be a subset of the locations associated with this line (i.e.: one or more of 'ShipFrom', 'CallPlaced', 'POM', 'POA', 'DropShip', 'POS', 'ShipTo', 'POO', 'BillingLocation', 'CallReceived', 'ServiceRendered', 'FirstUse'"
+        example: "FirstUse"
+        
   adminAuthority:
     properties:
       id:
