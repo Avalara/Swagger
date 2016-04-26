@@ -8,7 +8,6 @@
     "schemes": [
         "http"
     ],
-    "host": "sandbox.landedcost.api.avalara.com",
     "produces": [
         "application/json"
     ],
@@ -32,25 +31,26 @@
     "basePath": "/",
     "paths": {
         "/v3/validate-creds": {
-          "get": {
-            "summary":"Validate credentials",
-            "tags":[
-              "Landed Cost Calculation API",
-              "Credential Validation"
-            ],
-            "description":"Convenience API to check credentials. This API is purposefully non-performant.",
-            "responses": {
-              "401" : {
-                "description":"Unauthorized. Invalid credentials, or no subscription to Landed Cost found."
-              },
-              "200": {
-                "description":"Credentials are valid and account has active Landed Cost subscription."
-              }
+            "get": {
+                "summary":"Validate credentials",
+                "tags": [
+                    "Landed Cost Calculation API",
+                    "Credential Validation"
+                ],
+                "description": "Convenience API to check credentials. This API is purposefully non-performant.",
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized. Invalid credentials, or no subscription to Landed Cost found."
+                    },
+                    "200": {
+                        "description": "Credentials are valid and account has active Landed Cost subscription."
+                    }
+                }
             }
-          }
         },
         "/v3/calculate": {
             "post": {
+                "summary":"Calculate landed cost",
                 "x-swagger-router-controller": "calculate",
                 "operationId": "calculate",
                 "tags": [
@@ -86,6 +86,7 @@
         },
         "/v3/rates": {
             "post": {
+                "summary":"Get rates",
                 "x-swagger-router-controller": "rates",
                 "operationId": "rates",
                 "tags": [
@@ -122,6 +123,7 @@
         },
         "/v3/units": {
             "post": {
+                "summary":"Get rate units",
                 "x-swagger-router-controller": "rates",
                 "operationId": "units",
                 "tags": [
@@ -158,6 +160,7 @@
         },
         "/v2/countries": {
             "get": {
+                "summary":"Get countries",
                 "description": "Returns the countries we currently support, along with most common classification system for both import and export.\n No request parameters are required for this call. The method returns a full list of supported countries",
                 "tags": [
                     "[v2]Country and Classification API"
@@ -179,6 +182,7 @@
         },
         "/v2/systems": {
             "get": {
+                "summary":"Get systems",
                 "description": "Returns a pair of classification (import and export) systems for trade between two countries",
                 "tags": [
                     "[v2]Country and Classification API"
@@ -217,6 +221,7 @@
         },
         "/v2/browse": {
             "get": {
+                "summary":"Get hs code trees",
                 "description": "Presents all of the available Harmonized Codes as a browesable tree. Each request specifies a parent node, and the response lists all child nodes of that parent. If no parent node is specified, all root-level nodes will be returned",
                 "tags": [
                     "[v2]Harmonized Codes API"
@@ -258,6 +263,7 @@
         },
         "/v2/hscodes": {
             "get": {
+                "summary":"Get hs code details including rates",
                 "description": "Search for Duty Rates for a harmonized code. Rates are dependant on at least a destination country",
                 "tags": [
                     "[v2]Harmonized Codes API"
@@ -315,6 +321,7 @@
         },
         "/v2/hscodes/{system}/{code}": {
             "get": {
+                "summary":"Get hs code details",
                 "description": "Allows for the traversal of classification system, harmonized codes, and duty rates, allowing the user to browse the available content",
                 "tags": [
                     "[v2]Harmonized Codes API"
@@ -471,6 +478,9 @@
                         "insurance",
                         "express"
                     ]
+                },
+                "discount": {
+                    "$ref": "#/definitions/Discount"
                 }
             },
             "required": [
@@ -568,6 +578,9 @@
                                                 "name"
                                             ]
                                         }
+                                    },
+                                    "discount": {
+                                        "$ref": "#/definitions/Discount"
                                     }
                                 },
                                 "required": [
@@ -617,6 +630,14 @@
                                     "price": {
                                         "type": "number",
                                         "description": "Item price of the product",
+                                        "format": "float",
+                                        "minimum": 0,
+                                        "maximum": 1000000,
+                                        "example": 100
+                                    },
+                                    "netPrice": {
+                                        "type": "number",
+                                        "description": "Original price of the product, returned if a discount was applied on the item",
                                         "format": "float",
                                         "minimum": 0,
                                         "maximum": 1000000,
@@ -885,6 +906,9 @@
                                                 ]
                                             }
                                         }
+                                    },
+                                    "discount": {
+                                        "$ref": "#/definitions/Discount"
                                     }
                                 },
                                 "required": [
@@ -1092,6 +1116,44 @@
                                                 "amount"
                                             ]
                                         },
+                                        "discounts": {
+                                            "type": "object",
+                                            "title": "Discounts",
+                                            "properties": {
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": -424.08,
+                                                    "description": "The total discount from the order, which can include an order-level discount as well as discounts on each individual item"
+                                                },
+                                                "details": {
+                                                    "type": "array",
+                                                    "title": "Details",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "The type of discount",
+                                                                "enum": [
+                                                                    "itemDiscount",
+                                                                    "orderDiscount"
+                                                                ]
+                                                            },
+                                                            "amount": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 344.32,
+                                                                "description": "The cash value of the item or order level discount"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "amount"
+                                            ]
+                                        },
                                         "duties": {
                                             "type": "object",
                                             "title": "Items",
@@ -1131,7 +1193,8 @@
                                                 }
                                             },
                                             "required": [
-                                                "amount", "details"
+                                                "amount",
+                                                "details"
                                             ]
                                         },
                                         "taxes": {
@@ -1173,7 +1236,8 @@
                                                 }
                                             },
                                             "required": [
-                                                "amount", "details"
+                                                "amount",
+                                                "details"
                                             ]
                                         },
                                         "fees": {
@@ -1215,7 +1279,8 @@
                                                 }
                                             },
                                             "required": [
-                                                "amount", "details"
+                                                "amount",
+                                                "details"
                                             ]
                                         }
                                     },
@@ -1781,6 +1846,33 @@
                 "ZWL"
             ],
             "example": "USD"
+        },
+        "Discount": {
+            "type": "object",
+            "title": "Discount",
+            "description": "The discount to apply at the shipment level",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The type of discount to apply. Currently, the system only supports sales discounts offered directly to consumers",
+                    "enum": [
+                        "sales"
+                    ],
+                    "example": "sales"
+                },
+                "rate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "A percentage to discount the shipment or item",
+                    "example": 20
+                },
+                "amount": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "A flate amount to discount the shipment or item",
+                    "example": 8.9
+                }
+            }
         },
         "RatesRequest": {
             "type": "array",
