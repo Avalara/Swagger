@@ -1037,10 +1037,24 @@
                             "properties": {
                                 "amount": {
                                     "type": "number",
-                                    "description": "Calculated landedCost.  Total of all products, shipping, and applicable taxes and fees",
+                                    "description": "Calculated landedCost.  Total of all products, shipping, and applicable duties, taxes, and fees",
                                     "format": "float",
                                     "minimum": 0,
                                     "example": 1121
+                                },
+                                "costInsuranceFreight": {
+                                    "type": "number",
+                                    "description": "Total of all products and shipping",
+                                    "format": "float",
+                                    "minimum": 0,
+                                    "example": 1000
+                                },
+                                "dutiesTaxesAndFees": {
+                                    "type": "number",
+                                    "description": "Total of all applicable duties, taxes, and fees",
+                                    "format": "float",
+                                    "minimum": 0,
+                                    "example": 121
                                 },
                                 "details": {
                                     "type": "object",
