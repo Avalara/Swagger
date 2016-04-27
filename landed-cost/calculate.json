@@ -8,6 +8,7 @@
     "schemes": [
         "http"
     ],
+    "host": "sandbox.landedcost.api.avalara.com",
     "produces": [
         "application/json"
     ],
