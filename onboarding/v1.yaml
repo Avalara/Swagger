@@ -1,7 +1,7 @@
   swagger: "2.0"
   info: 
     title: "Onboarding API"
-    description: "The Onboarding API is available upon special request only; you must contact Avalara directly to be whitelisted for use of this service.\nThe Onboarding API is designed to allow partners to automatically provision individual customer accounts (for both AvaTax 15 and AvaTax 16) and assist with company profile setup on those accounts, allowing for a quick, automated account setup for these customers. For a basic company profile, only a single call to POST /accounts is required. \nTo call this service in a sandbox environment, use the base service URL `https://sandbox.onboarding.api.avalara.com/` \nAvaTax 16 and AvaTax 15 have different credential requirements. While this API can provision and manipulate both AvaTax 15 and AvaTax 16 accounts, the Authorization header format will be different for each. AvaTax 15 accounts require a basic authentication header e.g. `Basic: a2VlcG1vdmluZzpub3RoaW5nMnNlZWhlcmU=`, but AvaTax 16 accounts require an API key e.g. `AvalaraAuth [accessKey]`. This is consistent with the authentication schemes for the platform-specific APIs."
+    description: "The Onboarding API is available upon special request only; you must contact Avalara directly to be whitelisted for use of this service.\nThe Onboarding API is designed to allow partners to automatically provision individual customer accounts and assist with company profile setup on those accounts, allowing for a quick, automated account setup for these customers. For a basic company profile, only a single call to POST /accounts is required. \nTo call this service in a sandbox environment, use the base service URL `https://sandbox.onboarding.api.avalara.com/` "
     version: "1.0"
     license: 
       name: "MIT"
@@ -164,7 +164,7 @@
     /accounts/{accountId}/companies/{companyCode}/nexuses:
       post:
         operationId: "createNexus"
-        description: "Nexus tells the AvaTax calculation where the business entity is required to collect and remit taxes. If no nexus is selected for a given state, no taxes will be calculated for that state. \n Adds all nexus jurisdictions triggered by an address. Note that companies created by calling `POST /accounts` start with nexus already designated for the address provided at that time - this method need only be used if additional nexus jurisdictions are required for this business. \n Note that, at this time, this operation is available for AvaTax 15 accounts only."
+        description: "Nexus tells the AvaTax calculation where the business entity is required to collect and remit taxes. If no nexus is selected for a given state, no taxes will be calculated for that state. \n Adds all nexus jurisdictions triggered by an address. Note that companies created by calling `POST /accounts` start with nexus already designated for the address provided at that time - this method need only be used if additional nexus jurisdictions are required for this business."
         parameters:
           - name: "accountId"
             in: "path"
@@ -183,7 +183,7 @@
               $ref: "#/definitions/CreateNexusRequest"
         responses: 
           200: 
-            description: "Successful request. For each input address, there will be an array element representing the status outcome for that individual element. \n Note that, at this time, this operation is available for AvaTax 15 accounts only."
+            description: "Successful request. For each input address, there will be an array element representing the status outcome for that individual element."
             schema: 
               $ref: "#/definitions/CreateNexusResponse"
           default: 
