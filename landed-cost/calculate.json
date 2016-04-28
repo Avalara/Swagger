@@ -35,8 +35,7 @@
             "get": {
                 "summary":"Validate credentials",
                 "tags": [
-                    "Landed Cost Calculation API",
-                    "Credential Validation"
+                    "Landed Cost Calculation API"
                 ],
                 "description": "Convenience API to check credentials. This API is purposefully non-performant.",
                 "responses": {
