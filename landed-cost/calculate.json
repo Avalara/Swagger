@@ -1080,6 +1080,11 @@
                                     "minimum": 0,
                                     "example": 121
                                 },
+                                "isCrossBorder": {
+                                    "type": "boolean",
+                                    "description": "Is shipment cross-border",
+                                    "example": true
+                                },
                                 "details": {
                                     "type": "object",
                                     "title": "Details",
@@ -1335,7 +1340,8 @@
                             },
                             "required": [
                                 "amount",
-                                "messages"
+                                "messages",
+                                "isCrossBorder"
                             ]
                         },
                         "status": {
@@ -1380,13 +1386,12 @@
             "properties": {
                 "country": {
                     "$ref": "#/definitions/CountryList",
-                    "example": "CA",
+                    "example": "US",
                     "description": "Source country of the shipment, in ISO 3166-1 alpha-2 format"
                 },
                 "region": {
                     "type": "string",
-                    "description": "Source region of the shipment, in ISO 3166-2 format",
-                    "example": "CA-BC"
+                    "description": "Source region of the shipment, in ISO 3166-2 format"
                 }
             },
             "required": [
@@ -1398,12 +1403,27 @@
             "title": "Destination",
             "properties": {
                 "country": {
-                    "$ref": "#/definitions/CountryList"
+                    "$ref": "#/definitions/DestinationCountryList"
                 },
                 "region": {
                     "type": "string",
+                    "enum": [
+                        "CA-AB",
+                        "CA-BC",
+                        "CA-MB",
+                        "CA-NB",
+                        "CA-NL",
+                        "CA-NS",
+                        "CA-NT",
+                        "CA-NU",
+                        "CA-ON",
+                        "CA-PE",
+                        "CA-QC",
+                        "CA-SK",
+                        "CA-YT"
+                    ],
                     "description": "Destination region of the shipment, in ISO 3166-2 format",
-                    "example": "US-FL"
+                    "example": "CA-BC"
                 }
             },
             "required": [
@@ -1667,7 +1687,63 @@
                 "ZM",
                 "ZW"
             ],
-            "example": "US"
+            "example": "CA"
+        },
+        "DestinationCountryList": {
+            "type": "string",
+            "enum": [
+                "AT",
+                "AU",
+                "AX",
+                "BE",
+                "BG",
+                "CA",
+                "CC",
+                "CN",
+                "CX",
+                "CY",
+                "CZ",
+                "DE",
+                "DK",
+                "EE",
+                "ES",
+                "FI",
+                "FR",
+                "GB",
+                "GF",
+                "GG",
+                "GP",
+                "GR",
+                "HR",
+                "HU",
+                "IE",
+                "IM",
+                "IO",
+                "IT",
+                "JE",
+                "JP",
+                "LT",
+                "LU",
+                "LV",
+                "MC",
+                "MQ",
+                "MT",
+                "MX",
+                "NF",
+                "NL",
+                "PL",
+                "PT",
+                "RE",
+                "RO",
+                "SE",
+                "SG",
+                "SI",
+                "SK",
+                "SM",
+                "TK",
+                "US"
+            ],
+            "example": "CA"
         },
         "Currency": {
             "type": "string",
@@ -2046,7 +2122,7 @@
                     "hsCode": {
                         "type": "string",
                         "description": "The harmonized classification code of the product",
-                        "example": "010229"
+                        "example": "1108199010"
                     },
                     "source": {
                         "$ref": "#/definitions/Source",
