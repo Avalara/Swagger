@@ -678,16 +678,18 @@ definitions:
   Line:
     description: Input property of the GetTaxRequest describing item lines.
     required:
-      - No
+      - LineNo
       - DestinationCode
       - OriginCode
       - Qty
     properties:
-      No:
+      LineNo:
         maxLength: 50
         type: string
         example: '1'
         description: 'Line item identifier. LineId uniquely identifies the line item row.'
+        xml: 
+          name: 'No'
       DestinationCode:
         type: string
         example: '01'
