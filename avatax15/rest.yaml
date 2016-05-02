@@ -530,6 +530,8 @@ definitions:
         type: string
         example: Error
         description: "Classifies the severity of the message. One of: Success, Warning, Error, Exception."
+    xml:
+      name: Message
   EstimateTaxResult:
     properties:
       Rate:
