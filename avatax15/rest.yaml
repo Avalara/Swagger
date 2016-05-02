@@ -48,6 +48,8 @@ paths:
           description: Unauthorized
           schema: 
             $ref: '#/definitions/UnauthorizedError'
+          xml:
+            name: GetTaxResult
         '500':
           description: An Error Occurred
           schema:
