@@ -250,6 +250,33 @@ definitions:
     xml:
       prefix: 'SOAP-ENV'
       namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+      name: 'Envelope'
+    example: '<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://avatax.avalara.com/services">
+    <SOAP-ENV:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" SOAP-ENV:mustUnderstand="1">
+            <wsse:UsernameToken>
+                <wsse:Username>1234567890</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">A1B2C3D4E5F6G7H8</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+        <Profile xmlns="http://avatax.avalara.com/services" SOAP-ENV:actor="http://schemas.xmlsoap.org/soap/actor/next" SOAP-ENV:mustUnderstand="0">
+            <Client>AvaTaxSample</Client>
+            <Adapter>customAdapter</Adapter>
+            <Name>Development</Name>
+        </Profile>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <ns1:CommitTax>
+            <ns1:CommitTaxRequest>
+                <ns1:CompanyCode>APITrialCompany</ns1:CompanyCode>
+                <ns1:DocType>SalesInvoice</ns1:DocType>
+                <ns1:DocCode>INV001</ns1:DocCode>
+                <ns1:NewDocCode>INV001-1</ns1:NewDocCode>
+            </ns1:CommitTaxRequest>
+        </ns1:CommitTax>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>'
   CommitTaxBody:
     required:
       - CommitTaxRequest
@@ -1279,6 +1306,8 @@ definitions:
         type: object
         additionalProperties:
           $ref: '#/definitions/Profile'
+    xml:
+      prefix: 'SOAP-ENV'
   Security:
     required:
       - UsernameToken
@@ -1287,6 +1316,9 @@ definitions:
         type: object
         additionalProperties:
           $ref: '#/definitions/UsernameToken'
+    xml:
+      prefix: 'wsse'
+      namespace: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
   UsernameToken:
     description: Either an Account/LicenseKey or a Username/Password is required to authenticate the request. AccountNumber/LicenseKey is preferred.
     required:
@@ -1311,6 +1343,8 @@ definitions:
         type: string
         maxLength: 50
         description: Your AvaTax Admin Console password.
+    xml:
+      prefix: 'wsse'
   Profile: 
     required:
       - Client
