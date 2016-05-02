@@ -34,7 +34,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/GetTax\""
+          description: "\"http://avatax.avalara.com/services/GetTax\""
+          type: string
         - in: body
           name: Envelope
           required: true
@@ -151,6 +152,7 @@ paths:
           name: SOAPAction
           required: true
           description: "\"http://avatax.avalara.com/services/GetTaxHistory\""
+          type: string
         - in: body
           name: Envelope
           schema:
