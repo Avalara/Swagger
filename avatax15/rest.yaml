@@ -21,7 +21,7 @@ schemes:
   - https
 consumes:
   - application/json
-  - applicatin/xml
+  - application/xml
 produces:
   - application/json
   - application/xml
