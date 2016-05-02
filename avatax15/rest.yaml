@@ -19,6 +19,9 @@ host: development.avalara.net
 basePath: /1.0
 schemes:
   - https
+consumes:
+  - application/json
+  - applicatin/xml
 produces:
   - application/json
   - application/xml
