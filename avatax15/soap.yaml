@@ -722,9 +722,9 @@ definitions:
         example: Red Size 7 Widget
         description: Item description. Required for customers using our filing service.
       Qty:
-        type: number
+        type: string
         example: '1'
-        description: Item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.
+        description: Numeric item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.
       Amount:
         type: number
         example: '10'
