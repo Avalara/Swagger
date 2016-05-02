@@ -19,6 +19,8 @@ schemes:
   - https
 produces:
   - application/xml
+consumes:
+  - application/xml
 x-ApiType: SOAP
 x-wsdlPath: "https://development.avalara.net/Tax/TaxSvc.wsdl"
 x-basePath: "https://development.avalara.net/Tax/TaxSvc.asmx"
@@ -212,8 +214,9 @@ paths:
           name: SOAPAction
           required: true
           example: "\"http://avatax.avalara.com/services/Validate\""
-        - name: Envelope
-          in: body
+        - in: body
+          name: Envelope
+          required: true
           schema:
             $ref: "#/definitions/ValidateAddressEnvelope"
       responses:
@@ -235,6 +238,9 @@ definitions:
         $ref: '#/definitions/Header'
       Body:
         $ref: '#/definitions/CommitTaxBody'
+    xml:
+      prefix: 'SOAP-ENV'
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
   CommitTaxBody:
     required:
       - CommitTaxRequest
@@ -1317,3 +1323,6 @@ definitions:
         type: string
         maxLength: 50
         description: Reference to a named profile.
+          
+                  
+        
