@@ -687,15 +687,15 @@ definitions:
         maxLength: 50
         type: string
         example: '1'
-        description: Line item identifier. LineId uniquely identifies the line item row.
+        description: 'Line item identifier. LineId uniquely identifies the line item row.'
       DestinationCode:
         type: string
         example: '01'
-        description: Destination (ship-to) address code.DestinationCode references an address from the Addresses collection.
+        description: 'Destination (ship-to) address code.DestinationCode references an address from the Addresses collection.'
       OriginCode:
         type: string
         example: '02'
-        description: Origination (ship-from) address code. OriginCode references an address from the Addresses collection.
+        description: 'Origination (ship-from) address code. OriginCode references an address from the Addresses collection.'
       ItemCode:
         maxLength: 50
         type: string
@@ -710,21 +710,21 @@ definitions:
         maxLength: 25
         type: string
         example: L
-        description: The client application customer or usage type. CustomerUsageType determines the exempt status of the transaction based on the exemption tax rules for the jurisdictions involved. Can also be referred to as Entity/Use Code. More information about this value is available in the Avalara Help Center.
+        description: 'The client application customer or usage type. CustomerUsageType determines the exempt status of the transaction based on the exemption tax rules for the jurisdictions involved. Can also be referred to as Entity/Use Code. More information about this value is available in the Avalara Help Center.'
       BusinessIdentificationNo:
         maxLength: 25
         type: string
         example: '234234'
-        description: The buyer’s VAT id. Using this value will force VAT rules to be considered for the transaction. This may be set on the document or the line.
+        description: 'The buyer’s VAT id. Using this value will force VAT rules to be considered for the transaction. This may be set on the document or the line.'
       Description:
         maxLength: 255
         type: string
         example: Red Size 7 Widget
-        description: Item description. Required for customers using our filing service.
+        description: 'Item description. Required for customers using our filing service.'
       Qty:
-        type: string
+        type: number
         example: '1'
-        description: Numeric item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.
+        description: 'Item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.'
       Amount:
         type: number
         example: '10'
@@ -732,7 +732,7 @@ definitions:
       Discounted:
         type: boolean
         example: 'false'
-        description: Should be set to true if the document level discount is applied to this line item. Defaults to false.
+        description: 'Should be set to true if the document level discount is applied to this line item. Defaults to false.'
       TaxIncluded:
         type: boolean
         example: 'false'
