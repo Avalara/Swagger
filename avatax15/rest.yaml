@@ -475,6 +475,8 @@ definitions:
         $ref: '#/definitions/ResultCode'
       Messages:
         type: array
+        xml: 
+          wrapped: true
         items:
           $ref: '#/definitions/Message'
     example: {
@@ -495,6 +497,8 @@ definitions:
         $ref: '#/definitions/ResultCode'
       Messages:
         type: array
+        xml:
+          wrapped: true
         items:
           $ref: '#/definitions/Message'
     example: {
@@ -552,6 +556,8 @@ definitions:
         $ref: '#/definitions/ResultCode'
       Messages:
         type: array
+        xml:
+          wrapped: true
         items:
           $ref: '#/definitions/Message'
   TaxDetail:
@@ -610,6 +616,8 @@ definitions:
         $ref: '#/definitions/ResultCode'
       Messages:
         type: array
+        xml: 
+          wrapped: true
         items:
           $ref: '#/definitions/Message'
   GetTaxResult:
@@ -661,6 +669,8 @@ definitions:
         $ref: '#/definitions/ResultCode'
       Messages:
         type: array
+        xml: 
+          wrapped: true
         items: 
           $ref: '#/definitions/Message'
   TaxLine:
