@@ -20,11 +20,11 @@ basePath: /1.0
 schemes:
   - https
 consumes:
-  - application/json
-  - application/xml
+  - text/json
+  - text/xml
 produces:
-  - application/json
-  - application/xml
+  - text/json
+  - text/xml
 security:
   - basic_auth: []
 paths:
@@ -47,20 +47,20 @@ paths:
         '400':
           description: Unauthorized
           schema: 
-            $ref: '#/definitions/UnauthorizedError'
+            $ref: '#/definitions/GetTaxError'
           xml:
             name: GetTaxResult
         '500':
           description: An Error Occurred
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/GetTaxError'
           xml: 
             name: GetTaxRequest
   '/tax/cancel':
     post:
       operationId: cancelTax
       summary: Void a Document
-      description: Voids or deletes and existing transaction record from the AvaTax system.
+      description: 'Voids or deletes and existing transaction record from the AvaTax system. To use the xml for this operation specify the request `Content-Type: text/xml`. No modification needs to be made to the URL.'
       parameters:
         - in: body
           name: CancelTaxRequest
@@ -70,17 +70,15 @@ paths:
         '200':
           description: Successful operation *or* Unsuccessful operation. In the case of an unsuccessful operation, a ResultCode of `Error` and an array of `Messages` is returned in the `CancelTaxResult` object.
           schema: 
-            $ref: '#/definitions/CancelTaxResult'
-        '401':
-          description: Unauthorized
+            $ref: '#/definitions/CancelTaxResponse'
         '400':
-          description: Bad Request
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/CancelTaxUnauthorizedError'
   '/tax/{latitude},{longitude}/get?{saleamount}':
     get:
       summary: Estimate Tax
-      description: 'Retrieves tax rate details for the supplied geographic coordinates and sale amount. Since the REST API does not provide an explicit ping function, this method can also be used to test connectivity to the service.'
+      description: 'Retrieves tax rate details for the supplied geographic coordinates and sale amount. Since the REST API does not provide an explicit ping function, this method can also be used to test connectivity to the service. If you would like an XML response, use the URL `/1.0/tax/{latitude},{longitude}/get.xml?{saleamount}` and specify the request header `Content-Type: text/xml`.'
       operationId: estimateTax
       parameters:
         - in: path
@@ -106,16 +104,18 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/EstimateTaxResult'
-        '401':
+        '400':
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/EstimateTaxError'
         '500':
           description: An Error Occurred
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/EstimateTaxError'
   '/address/validate':
     get:
       summary: Validate an Address
-      description: 'Normalizes a single US or Canadian address, providing a non-ambiguous USPS address match.'
+      description: 'Normalizes a single US or Canadian address, providing a non-ambiguous USPS address match. To recieve an XML response, use the URL `/1.0/address/validate.xml` and set the request header `Content-Type: text/xml`'
       operationId: validateAddress
       parameters: 
         - name: Line1
@@ -162,12 +162,14 @@ paths:
           description: 'Successful operation'
           schema:
             $ref: '#/definitions/ValidateResult'
-        '401':
+        '400':
           description: Unauthorized
+          schema: 
+            $ref: '#/definitions/ValidateResultError'
         '500':
           description: An Error Occurred
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ValidateResultError'
 securityDefinitions:
   basic_auth:
     type: basic
@@ -292,13 +294,19 @@ definitions:
         items:
           $ref: '#/definitions/Address'
         description: ''
+        xml:
+          wrapped: true
       Lines:
         type: array
         items:
           $ref: '#/definitions/Line'
         description: Document line array. There is a limit of 15000 lines per document.
+        xml:
+          wrapped: true
   Line:
     description: Input property of the GetTaxRequest describing item lines.
+    xml:
+      name: Line
     required:
       - LineNo
       - DestinationCode
@@ -396,6 +404,8 @@ definitions:
         description: 'Must be numeric, required if TaxOverrideType is TaxAmount. The overriding amount of tax to apply. If at the document level, this is distributed across all taxable rows.'
   Address:
     description: Input property of GetTaxRequest representing addresses needed for tax calculations.
+    xml:
+      name: Address
     required:
       - AddressCode
       - Line1
@@ -465,12 +475,20 @@ definitions:
     type: string
     example: Success
     description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
+  ErrorResultCode:
+    type: string
+    example: Error
+    description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
+    xml:
+      name: ResultCode
   Country:
     maxLength: 2
     type: string
     example: US
     description: Two character ISO country code.
-  Error:
+  CancelTaxUnauthorizedError:
+    xml:
+      name: CancelTaxResponse
     properties:
       ResultCode:
         $ref: '#/definitions/ResultCode'
@@ -492,25 +510,18 @@ definitions:
                   }
                 ]
             }
-  UnauthorizedError:
+  GetTaxError:
+    xml:
+      name: GetTaxResult
     properties:
       ResultCode:
-        $ref: '#/definitions/ResultCode'
+        $ref: '#/definitions/ErrorResultCode'
       Messages:
         type: array
-        xml:
+        xml: 
           wrapped: true
         items:
           $ref: '#/definitions/Message'
-    example: {
-          "ResultCode": "Error",
-          "Messages": [
-          {
-          "Summary": "The user or account could not be authenticated.",
-          "Severity": "Error",
-          "Source": "Avalara.Web.Authorization"}
-          ]
-          }
   Message:
     properties:
       Summary:
@@ -553,16 +564,28 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/TaxDetail'
+        xml:
+          wrapped: true
       ResultCode:
         $ref: '#/definitions/ResultCode'
+    xml:
+      name: GeoTaxResult
+  EstimateTaxError:
+    xml:
+      name: GeoTaxResult
+    properties:
+      ResultCode:
+        $ref: '#/definitions/ErrorResultCode'
       Messages:
         type: array
-        xml:
+        xml: 
           wrapped: true
         items:
           $ref: '#/definitions/Message'
   TaxDetail:
     description: Tax details by jurisdiction
+    xml:
+      name: TaxDetail
     properties:
       Country:
         $ref: '#/definitions/Country'
@@ -605,22 +628,24 @@ definitions:
         description: Tax name
         example: WA CITY TAX
         maxLength: 75
-  CancelTaxResult:
+  CancelTaxResponse:
     properties:
-      TransactionId:
-        type: string
-        description: The unique numeric identifier of the API operation assigned by the AvaTax service.
-      DocId:
-        type: string
-        description: The unique numeric identifier (Document ID) assigned to the tax document in question by the AvaTax Service.
-      ResultCode:
-        $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        xml: 
-          wrapped: true
-        items:
-          $ref: '#/definitions/Message'
+      CancelTaxResult:
+        properties:
+          TransactionId:
+            type: string
+            description: The unique numeric identifier of the API operation assigned by the AvaTax service.
+          DocId:
+            type: string
+            description: The unique numeric identifier (Document ID) assigned to the tax document in question by the AvaTax Service.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml: 
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
   GetTaxResult:
     properties:
       DocCode:
@@ -658,24 +683,26 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/TaxLine'
+        xml:
+          wrapped: true
       TaxSummary:
         type: array
         items:
           $ref: '#/definitions/TaxDetail'
+        xml:
+          wrapped: true
       TaxAddresses:
         type: array
         items:
           $ref: '#/definitions/TaxAddress'
+        xml:
+          wrapped: true
       ResultCode:
         $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        xml: 
-          wrapped: true
-        items: 
-          $ref: '#/definitions/Message'
   TaxLine:
     description: Tax calculation details for each item line (returned for detail levels Line and Tax).
+    xml:
+      name: TaxLine
     properties:
       LineNo:
         maxLength: 50
@@ -714,8 +741,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/TaxDetail'
+        xml:
+          wrapped: true
   TaxAddress:
     description: TaxAddress represents canonical addresses used in tax calculation.
+    xml:
+      name: TaxAddress
     properties:
       Address:
         type: string
@@ -755,62 +786,71 @@ definitions:
   ValidateResult:
     description: Output for address/validate showing the validated address match or address validation errors.
     properties:
-      Line1:
-        type: string
-        example: 45 Fremont Street
-        description: Address line 1
-        maxLength: 50
-      Line2:
-        type: string
-        example: Suite 100
-        description: Address line 2
-        maxLength: 50
-      Line3:
-        type: string
-        example: ATTN Accounts Payable
-        description: Address line 3
-        maxLength: 50
-      City:
-        type: string
-        example: Chicago
-        description: City name
-        maxLength: 50
-      Region:
-        type: string
-        example: IL
-        description: 'State, province, or region name.'
-        maxLength: 3
-      Country:
-        type: string
-        example: US
-        description: Country code.
-        maxLength: 2
-      PostalCode:
-        type: string
-        example: '60602'
-        description: Postal or ZIP code
-        maxLength: 11
-      AddressType:
-        type: string
-        description: 'Address type code. One of:\n * F - Firm or company address\n * G - General Delivery address\n * H - High-rise or business complex\n * P - PO Box address\n * R - Rural route address\n * S - Street or residential address' 
-        maxLength: 1
-      FipsCode:
-        type: string
-        description: 'FIPSCode is a unique 10-digit code representing each geographic combination of state, county, and city. The code is made up of the Federal Information Processing Code (FIPS) that uniquely identifies each state, county, and city in the U.S. Returned for US addresses only. Digits represent jurisdiction codes:\n * 1-2 State code\n * 3-5 County code\n * 6-10 City code'
-        maxLength: 10
-      CarrierRoute:
-        type: string
-        description: 'CarrierRoute is a four-character string representing a US postal carrier route. The first character of this property, the term, is always alphabetic, and the last three numeric. For example, “R001” or “C027” would be typical carrier routes. The alphabetic letter indicates the type of delivery associated with this address. Returned for US addresses only.\n * B - PO Box\n * C - City delivery\n * G - General delivery\n * H - Highway contract\n * R - Rural route'
-        maxLength: 4
-      PostNet:
-        type: string
-        description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:\n * 1-5 ZIP code\n * 6-9 Plus4 code\n * 10-11 Delivery point\n * 12 Check digit'
-        maxLength: 12
+      Address:
+        type: object
+        properties:
+          Line1:
+            type: string
+            example: 45 Fremont Street
+            description: Address line 1
+            maxLength: 50
+          Line2:
+            type: string
+            example: Suite 100
+            description: Address line 2
+            maxLength: 50
+          Line3:
+            type: string
+            example: ATTN Accounts Payable
+            description: Address line 3
+            maxLength: 50
+          City:
+            type: string
+            example: Chicago
+            description: City name
+            maxLength: 50
+          Region:
+            type: string
+            example: IL
+            description: 'State, province, or region name.'
+            maxLength: 3
+          Country:
+            type: string
+            example: US
+            description: Country code.
+            maxLength: 2
+          PostalCode:
+            type: string
+            example: '60602'
+            description: Postal or ZIP code
+            maxLength: 11
+          AddressType:
+            type: string
+            description: 'Address type code. One of:\n * F - Firm or company address\n * G - General Delivery address\n * H - High-rise or business complex\n * P - PO Box address\n * R - Rural route address\n * S - Street or residential address' 
+            maxLength: 1
+          FipsCode:
+            type: string
+            description: 'FIPSCode is a unique 10-digit code representing each geographic combination of state, county, and city. The code is made up of the Federal Information Processing Code (FIPS) that uniquely identifies each state, county, and city in the U.S. Returned for US addresses only. Digits represent jurisdiction codes:\n * 1-2 State code\n * 3-5 County code\n * 6-10 City code'
+            maxLength: 10
+          CarrierRoute:
+            type: string
+            description: 'CarrierRoute is a four-character string representing a US postal carrier route. The first character of this property, the term, is always alphabetic, and the last three numeric. For example, “R001” or “C027” would be typical carrier routes. The alphabetic letter indicates the type of delivery associated with this address. Returned for US addresses only.\n * B - PO Box\n * C - City delivery\n * G - General delivery\n * H - Highway contract\n * R - Rural route'
+            maxLength: 4
+          PostNet:
+            type: string
+            description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:\n * 1-5 ZIP code\n * 6-9 Plus4 code\n * 10-11 Delivery point\n * 12 Check digit'
+            maxLength: 12
       ResultCode:
         $ref: '#/definitions/ResultCode'
+  ValidateResultError:
+    xml:
+      name: ValidateResult
+    properties:
+      ResultCode:
+        $ref: '#/definitions/ErrorResultCode'
       Messages:
         type: array
+        xml: 
+          wrapped: true
         items:
           $ref: '#/definitions/Message'
-        xml:
-          wrapped: true
