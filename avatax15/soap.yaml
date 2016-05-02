@@ -57,7 +57,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/PostTax\""
+          description: "\"http://avatax.avalara.com/services/PostTax\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -79,7 +80,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/CommitTax\""
+          description: "\"http://avatax.avalara.com/services/CommitTax\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -102,7 +104,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/CancelTax\""
+          description: "\"http://avatax.avalara.com/services/CancelTax\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -124,7 +127,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/AdjustTax\""
+          description: "\"http://avatax.avalara.com/services/AdjustTax\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -146,7 +150,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/GetTaxHistory\""
+          description: "\"http://avatax.avalara.com/services/GetTaxHistory\""
         - in: body
           name: Envelope
           schema:
@@ -168,7 +172,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/Ping\""
+          description: "\"http://avatax.avalara.com/services/Ping\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -190,7 +195,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/IsAuthorized\""
+          description: "\"http://avatax.avalara.com/services/IsAuthorized\""
+          type: string
         - in: body
           name: Envelope
           schema:
@@ -213,7 +219,8 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          example: "\"http://avatax.avalara.com/services/Validate\""
+          description: "\"http://avatax.avalara.com/services/Validate\""
+          type: string
         - in: body
           name: Envelope
           required: true
