@@ -647,8 +647,13 @@ definitions:
         example: WA CITY TAX
         maxLength: 75
   CancelTaxResponse:
+    xml:
+      name: CancelTaxResponse
     properties:
       CancelTaxResult:
+        type: object
+        xml:
+          name: CancelTaxResult
         properties:
           TransactionId:
             type: string
@@ -665,6 +670,8 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   GetTaxResult:
+    xml:
+      name: GetTaxResult
     properties:
       DocCode:
         $ref: '#/definitions/DocCode'
@@ -803,6 +810,8 @@ definitions:
         description: Tax jurisdiction code
   ValidateResult:
     description: Output for address/validate showing the validated address match or address validation errors.
+    xml:
+      ValidateResult
     properties:
       Address:
         type: object
