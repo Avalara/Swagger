@@ -48,20 +48,14 @@ paths:
           description: 'Unauthorized: Service raises a 400 when the credentials provided in the Authorization header are invalid.'
           schema: 
             $ref: '#/definitions/GetTaxError'
-          xml:
-            name: GetTaxResult
         '401':
           description: 'Unauthorized: Service raises a 401 when the Authorization header is missing or malformed.'
           schema: 
             $ref: '#/definitions/GetTaxError'
-          xml:
-            name: GetTaxResult
         '500':
           description: 'An Error Occurred: Service raises a 500 for any errors raised during the processing of a request.  For 500 errors, clients will need to inspect the Error Message returned in the response.'
           schema:
             $ref: '#/definitions/GetTaxError'
-          xml: 
-            name: GetTaxRequest
   '/tax/cancel':
     post:
       operationId: cancelTax
