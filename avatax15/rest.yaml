@@ -804,8 +804,6 @@ definitions:
         description: Tax jurisdiction code
   ValidateResult:
     description: Output for address/validate showing the validated address match or address validation errors.
-    xml:
-      name: ValidateResult
     properties:
       Address:
         type: object
