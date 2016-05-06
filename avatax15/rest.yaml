@@ -45,13 +45,19 @@ paths:
           schema:
             $ref: '#/definitions/GetTaxResult'
         '400':
-          description: Unauthorized
+          description: 'Unauthorized: Service raises a 400 when the credentials provided in the Authorization header are invalid.'
+          schema: 
+            $ref: '#/definitions/GetTaxError'
+          xml:
+            name: GetTaxResult
+        '401':
+          description: 'Unauthorized: Service raises a 401 when the Authorization header is missing or malformed.'
           schema: 
             $ref: '#/definitions/GetTaxError'
           xml:
             name: GetTaxResult
         '500':
-          description: An Error Occurred
+          description: 'An Error Occurred: Service raises a 500 for any errors raised during the processing of a request.  For 500 errors, clients will need to inspect the Error Message returned in the response.'
           schema:
             $ref: '#/definitions/GetTaxError'
           xml: 
@@ -72,7 +78,11 @@ paths:
           schema: 
             $ref: '#/definitions/CancelTaxResponse'
         '400':
-          description: Unauthorized
+          description: 'Unauthorized: Service raises a 400 when the credentials provided in the Authorization header are invalid.'
+          schema:
+            $ref: '#/definitions/CancelTaxUnauthorizedError'
+        '401':
+          description: 'Unauthorized: Service raises a 401 when the Authorization header is missing or malformed.'
           schema:
             $ref: '#/definitions/CancelTaxUnauthorizedError'
   '/tax/{latitude},{longitude}/get?{saleamount}':
@@ -105,11 +115,15 @@ paths:
           schema:
             $ref: '#/definitions/EstimateTaxResult'
         '400':
-          description: Unauthorized
+          description: 'Unauthorized: Service raises a 400 when the credentials provided in the Authorization header are invalid.'
+          schema:
+            $ref: '#/definitions/EstimateTaxError'
+        '401':
+          description: 'Unauthorized: Service raises a 401 when the Authorization header is missing or malformed.'
           schema:
             $ref: '#/definitions/EstimateTaxError'
         '500':
-          description: An Error Occurred
+          description: 'An Error Occurred: Service raises a 500 for any errors raised during the processing of a request.  For 500 errors, clients will need to inspect the Error Message returned in the response.'
           schema:
             $ref: '#/definitions/EstimateTaxError'
   '/address/validate':
@@ -163,11 +177,15 @@ paths:
           schema:
             $ref: '#/definitions/ValidateResult'
         '400':
-          description: Unauthorized
+          description: 'Unauthorized: Service raises a 400 when the credentials provided in the Authorization header are invalid.'
+          schema: 
+            $ref: '#/definitions/ValidateResultError'
+        '401':
+          description: 'Unauthorized: Service raises a 401 when the Authorization header is missing or malformed.'
           schema: 
             $ref: '#/definitions/ValidateResultError'
         '500':
-          description: An Error Occurred
+          description: 'An Error Occurred: Service raises a 500 for any errors raised during the processing of a request.  For 500 errors, clients will need to inspect the Error Message returned in the response.'
           schema:
             $ref: '#/definitions/ValidateResultError'
 securityDefinitions:
