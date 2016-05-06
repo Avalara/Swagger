@@ -811,7 +811,7 @@ definitions:
   ValidateResult:
     description: Output for address/validate showing the validated address match or address validation errors.
     xml:
-      ValidateResult
+      name: ValidateResult
     properties:
       Address:
         type: object
