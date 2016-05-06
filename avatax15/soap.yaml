@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: "The AvaTax REST API exposes the most commonly used available for interacting with the AvaTax service, allowing calculation of tax, modification of documents, and validation of addresses. If you're unsure of which API to use, a full comparison of the differences between the functionality provided by our REST and SOAP interfaces is documented [here](http://developer.avalara.com/api-docs/designing-your-integration/soap-or-rest). \n 
+  description: "The AvaTax SOAP API exposes the most commonly used available for interacting with the AvaTax service, allowing calculation of tax, modification of documents, and validation of addresses. If you're unsure of which API to use, a full comparison of the differences between the functionality provided by our REST and SOAP interfaces is documented [here](http://developer.avalara.com/api-docs/designing-your-integration/soap-or-rest). \n 
   
   The [REST API reference](http://developer.avalara.com/api-documentation/avatax-15-api/avatax-rest-api-reference) is also available. \n"
   
@@ -18,9 +18,9 @@ basePath: /
 schemes:
   - https
 produces:
-  - application/xml
+  - text/xml
 consumes:
-  - application/xml
+  - text/xml
 x-ApiType: SOAP
 x-wsdlPath: "https://development.avalara.net/Tax/TaxSvc.wsdl"
 x-basePath: "https://development.avalara.net/Tax/TaxSvc.asmx"
@@ -34,7 +34,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/GetTax\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/GetTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/GetTax\""`'
           type: string
         - in: body
           name: Envelope
@@ -43,12 +43,12 @@ paths:
             $ref: '#/definitions/GetTaxEnvelope'
       responses:
         '200':
-          description: 'Successful operation'
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema:
-            $ref: '#/definitions/GetTaxResult'
+            $ref: '#/definitions/GetTaxResponse'
         '400':
-          description: Bad Request
-          schema: 
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
             $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?PostTax':
     post:
@@ -58,7 +58,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/PostTax\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/PostTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/PostTax\""`'
           type: string
         - in: body
           name: Envelope
@@ -66,13 +66,13 @@ paths:
             $ref: '#/definitions/PostTaxEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/PostTaxResult'
+            $ref: '#/definitions/PostTaxResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?CommitTax':
     post:
       operationId: commitTax
@@ -81,7 +81,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/CommitTax\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/CommitTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/CommitTax\""`'
           type: string
         - in: body
           name: Envelope
@@ -89,13 +89,13 @@ paths:
             $ref: '#/definitions/CommitTaxEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/CommitTaxResult'
+            $ref: '#/definitions/CommitTaxResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?CancelTax':
     post:
       operationId: cancelTax
@@ -105,7 +105,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/CancelTax\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/CancelTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/CancelTax\""`'
           type: string
         - in: body
           name: Envelope
@@ -113,13 +113,13 @@ paths:
             $ref: '#/definitions/CancelTaxEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/CancelTaxResult'
+            $ref: '#/definitions/CancelTaxResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?AdjustTax':
     post:
       operationId: adjustTax
@@ -128,7 +128,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/AdjustTax\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/AdjustTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/AdjustTax\""`'
           type: string
         - in: body
           name: Envelope
@@ -136,13 +136,13 @@ paths:
             $ref: '#/definitions/AdjustTaxEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/AdjustTaxResult'
+            $ref: '#/definitions/AdjustTaxResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?GetTaxHistory':
     post:
       operationId: getTaxHistory
@@ -151,7 +151,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/GetTaxHistory\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/GetTaxHistory" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/GetTaxHistory\""`'
           type: string
         - in: body
           name: Envelope
@@ -159,13 +159,13 @@ paths:
             $ref: '#/definitions/GetTaxHistoryEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/GetTaxHistoryResult'
+            $ref: '#/definitions/GetTaxHistoryResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?Ping':
     post:
       operationId: ping
@@ -174,7 +174,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/Ping\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/Ping" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Ping\""`'
           type: string
         - in: body
           name: Envelope
@@ -182,13 +182,13 @@ paths:
             $ref: '#/definitions/PingEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/PingResult'
+            $ref: '#/definitions/PingResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?IsAuthorized':
     post:
       operationId: isAuthorized
@@ -197,7 +197,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/IsAuthorized\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/IsAuthorized" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/IsAuthorized\""`'
           type: string
         - in: body
           name: Envelope
@@ -205,13 +205,13 @@ paths:
             $ref: '#/definitions/IsAuthorizedEnvelope'
       responses:
         '200':
-          description: Successful operation.
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema: 
-            $ref: '#/definitions/IsAuthorizedResult'
+            $ref: '#/definitions/IsAuthorizedResponse'
         '400':
-          description: Bad Request
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
   '/Address/AddressSvc.asmx?Validate':
     post:
       summary: Validate an Address
@@ -221,24 +221,28 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          description: "\"http://avatax.avalara.com/services/Validate\""
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/Validate" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Validate\"" `'
           type: string
         - in: body
           name: Envelope
           required: true
           schema:
-            $ref: "#/definitions/ValidateAddressEnvelope"
+            $ref: "#/definitions/ValidateEnvelope"
       responses:
         '200':
-          description: 'Successful operation'
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
           schema:
-            $ref: '#/definitions/ValidateResult'
-        '400':
-          description: An Error Occurred
+            $ref: '#/definitions/ValidateResponse'
+        '500':
+          description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/UnauthorizedError'
 definitions:
   CommitTaxEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -247,43 +251,25 @@ definitions:
         $ref: '#/definitions/Header'
       Body:
         $ref: '#/definitions/CommitTaxBody'
-    xml:
-      prefix: 'SOAP-ENV'
-      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
-      name: 'Envelope'
-    example: '<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://avatax.avalara.com/services">
-    <SOAP-ENV:Header>
-        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" SOAP-ENV:mustUnderstand="1">
-            <wsse:UsernameToken>
-                <wsse:Username>1234567890</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">A1B2C3D4E5F6G7H8</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-        <Profile xmlns="http://avatax.avalara.com/services" SOAP-ENV:actor="http://schemas.xmlsoap.org/soap/actor/next" SOAP-ENV:mustUnderstand="0">
-            <Client>AvaTaxSample</Client>
-            <Adapter>customAdapter</Adapter>
-            <Name>Development</Name>
-        </Profile>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        <ns1:CommitTax>
-            <ns1:CommitTaxRequest>
-                <ns1:CompanyCode>APITrialCompany</ns1:CompanyCode>
-                <ns1:DocType>SalesInvoice</ns1:DocType>
-                <ns1:DocCode>INV001</ns1:DocCode>
-                <ns1:NewDocCode>INV001-1</ns1:NewDocCode>
-            </ns1:CommitTaxRequest>
-        </ns1:CommitTax>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>'
   CommitTaxBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
     required:
       - CommitTaxRequest
     properties:
-      CommitTaxRequest:
-        $ref: '#/definitions/CommitTaxRequest' 
+      CommitTax:
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties:
+          CommitTaxRequest:
+            $ref: '#/definitions/CommitTaxRequest' 
   AdjustTaxEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -293,12 +279,24 @@ definitions:
       Body:
         $ref: '#/definitions/AdjustTaxBody'
   AdjustTaxBody:
+    xml: 
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - AdjustTaxRequest
+      - AdjustTax
     properties:
-      AdjustTaxRequest:
-        $ref: '#/definitions/AdjustTaxRequest' 
+      AdjustTax:
+        type: object
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          AdjustTaxRequest:
+            $ref: '#/definitions/AdjustTaxRequest' 
   GetTaxHistoryEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -308,12 +306,24 @@ definitions:
       Body:
         $ref: '#/definitions/GetTaxHistoryBody'
   GetTaxHistoryBody:
+    xml: 
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - GetTaxHistoryRequest
+      - GetTaxHistory
     properties:
-      GetTaxHistoryRequest:
-        $ref: '#/definitions/GetTaxHistoryRequest' 
+      GetTaxHistory:
+        type: object
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          GetTaxHistoryRequest:
+            $ref: '#/definitions/GetTaxHistoryRequest' 
   PingEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -323,12 +333,19 @@ definitions:
       Body:
         $ref: '#/definitions/PingBody'
   PingBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - PingRequest
+      - Ping
     properties:
-      PingRequest:
-        $ref: '#/definitions/PingRequest' 
+      Ping:
+        $ref: '#/definitions/Ping' 
   IsAuthorizedEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -338,12 +355,24 @@ definitions:
       Body:
         $ref: '#/definitions/IsAuthorizedBody'
   IsAuthorizedBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - IsAuthorizedRequest
+      - IsAuthorized
     properties:
-      IsAuthorizedRequest:
-        $ref: '#/definitions/IsAuthorizedRequest' 
+      IsAuthorized:
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          IsAuthorizedRequest:
+            $ref: '#/definitions/IsAuthorizedRequest' 
   PostTaxEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -353,12 +382,24 @@ definitions:
       Body:
         $ref: '#/definitions/PostTaxBody'
   PostTaxBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - PostTaxRequest
+      - PostTax
     properties:
-      PostTaxRequest:
-        $ref: '#/definitions/PostTaxRequest' 
-  ValidateAddressEnvelope:
+      PostTax:
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties:
+          PostTaxRequest:
+            $ref: '#/definitions/PostTaxRequest' 
+  ValidateEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
     required:
       - Header
       - Body
@@ -366,8 +407,16 @@ definitions:
       Header:
         $ref: '#/definitions/Header'
       Body:
-        $ref: '#/definitions/ValidateAddressBody'
-  ValidateAddressBody:
+        xml:
+          prefix: SOAP-ENV
+        required:
+          - Validate
+        properties:
+          Validate:
+            $ref: '#/definitions/ValidateBody'
+  ValidateBody:
+    xml:
+      namespace: 'http://avatax.avalara.com/services'
     required:
       - ValidateRequest
     properties:
@@ -377,21 +426,23 @@ definitions:
     required:
       - Address
     properties:
+      Coordinates:
+        type: boolean
+        description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
+      Taxability:
+        type: boolean
+        description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
+      TextCase:
+        type: string
+        description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
+        example: Default
       Address:
-        type: object
-        properties:
-          Coordinates:
-            type: boolean
-            description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
-          Taxability:
-            type: boolean
-            description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
-          TextCase:
-            type: string
-            description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
-        additionalProperties:
-          $ref: '#/definitions/BaseAddress'
+        $ref: '#/definitions/Address'
   CancelTaxEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
     required:
       - Header
       - Body
@@ -401,12 +452,24 @@ definitions:
       Body:
         $ref: '#/definitions/CancelTaxBody'
   CancelTaxBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - CancelTaxRequest
+      - CancelTax
     properties:
-      CancelTaxRequest:
-        $ref: '#/definitions/CancelTaxRequest'  
+      CancelTax:
+        type: object
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          CancelTaxRequest:
+            $ref: '#/definitions/CancelTaxRequest'  
   GetTaxEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     required:
       - Header
       - Body
@@ -416,11 +479,19 @@ definitions:
       Body:
         $ref: '#/definitions/GetTaxBody'
   GetTaxBody:
+    xml: 
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - GetTaxRequest
+      - GetTax
     properties:
-      GetTaxRequest:
-        $ref: '#/definitions/GetTaxRequest'
+      GetTax:
+        type: object
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          GetTaxRequest:
+            $ref: '#/definitions/GetTaxRequest'
   PostTaxRequest:
     required:
       - CompanyCode
@@ -482,7 +553,7 @@ definitions:
         maxLength: 19
         description: Avatax-assigned unique Document Id, can be used in place of CompanyCode, DocType and DocCode.
   AdjustTaxRequest:
-    description: Input for adjusting documents. An AdjustTaxRequest consists of the body of a regular GetTaxRequest plus the addition of the AdjustTaxRequest object and calling method.
+    description: Input for adjusting documents. An AdjustTaxRequest consists of the body of a regular GetTaxRequest plus the addition of the AdjustTaxRequest object and calling method. The GetTaxRequest specified will replace the original document. All original values that aren’t being modified need to be populated in this object in addition to any values that are being modified.
     required:
       - AdjustmentReason
       - AdjustmentDescription
@@ -501,15 +572,14 @@ definitions:
             6 - Item Exchanged
             7 - Bad Debt
             8 - Other (Explain) Must provide AdjustmentDescription"
+        example: 8
       AdjustmentDescription:
         type: string
         maxLength: 255
         description: Should be used when AdjustmentReason is “Other” for enhanced traceability. Leave empty for all AdjustmentReason selections except 8 - Other.
+        example: "Invoice Adjusted"
       GetTaxRequest:
-        type: object
-        description: The GetTaxRequest object that will replace the original document. All original values that aren’t being modified need to be populated in this object in addition to any values that are being modified.
-        additionalProperties:
-          $ref: '#/definitions/GetTaxRequest'
+        $ref: '#/definitions/GetTaxRequest'
   GetTaxHistoryRequest:
     description: Input for GetTaxHistory indicating the document for which history should be retrieved. The request must specify all of CompanyCode, DocCode, and DocType in order to uniquely identify the document.
     required:
@@ -522,13 +592,16 @@ definitions:
         type: string
         maxLength: 25
         description: The client application company reference code.
+        example: APITrialCompany
       DocCode:
         type: string
         maxLength: 50
         description: The internal reference code (invoice number) used by the client application.
+        example: INV001
       DocType:
         type: string
         description: The original document's type, such as SalesInvoice or PurchaseInvoice.
+        example: SalesInvoice
       DetailLevel:
         type: string
         description: "Specifies the level of detail to return. Must be one of:
@@ -536,7 +609,10 @@ definitions:
           Document - only document detail
           Line - document and line detail
           Tax - document, line and jurisdiction detail"
-  PingRequest:
+        example: Summary
+  Ping:
+    xml:
+      namespace: "http://avatax.avalara.com/services"
     required:
       - Message
     properties:
@@ -672,15 +748,14 @@ definitions:
         type: string
         example: '02'
         description: Origination (ship-from) address code. OriginCode references an address from the Addresses
-      HashCode:
-        type: string
-        description: "Reserved for internal use only."
       ServiceMode:
         type: string
         description: "AvaTaxLocal function - provides the ability to control whether a tax is calculated locally or AvaTax web service. The default is Automatic which calculates locally unless a remote connection is necessary for “send sales” not configured at the local server level. One of: Automatic, Local, Remote"
+        example: Automatic
       PaymentDate:
         type: string
         description: "PaymentDate indicates the date that a payment was received for the document. It is only applicable for cash-basis accounting and does not need to be set. The default value is 1900-01-01 which indicates no payment received."
+        example: '1900-01-01'
       ExchangeRate:
         type: number
         format: decimal
@@ -690,20 +765,27 @@ definitions:
       ExchangeRateEffDate:
         type: string
         description: ExchangeRateEffDate indicates the effective date of the exchange rate and works in tandem with ExchangeRate. Default is the DocDate if null. Date is in the format YYYY-MM-DD.
+        example: '1900-01-01'
       TaxOverride:
         $ref: '#/definitions/TaxOverride'
       Addresses:
         type: array
+        xml:
+          wrapped: true
         items:
           $ref: '#/definitions/BaseAddress'
         description: ''
       Lines:
         type: array
+        xml: 
+          wrapped: true
         items:
           $ref: '#/definitions/Line'
         description: Document line array. There is a limit of 15000 lines per document.
   Line:
     description: Input property of the GetTaxRequest describing item lines.
+    xml:
+      name: Line
     required:
       - LineNo
       - DestinationCode
@@ -791,7 +873,7 @@ definitions:
         description: "This provides the reason for a tax override for audit purposes. Typical reasons include: 'Return', 'Layaway', 'Imported'."
       TaxOverrideType:
         type: string
-        example: ref456
+        example: None
         description: "Must be one of the following: \n None: Default \n TaxAmount: The TaxAmount overrides the total tax for the document. This is used for imported documents, returns, and layaways where the tax has already been calculated either by AvaTax or another means. \n Exemption: Exemption certificates are overridden making the document taxable. This may be used for situations where a normally exempt entity needs to be treated as not exempt. \n TaxDate: The TaxDate overrides the DocDate as the effective date used for tax calculation. This may effect rates, rules and other factors."
       TaxDate:
         type: string
@@ -801,8 +883,74 @@ definitions:
         type: string
         example: '14.26'
         description: 'Must be numeric, required if TaxOverrideType is TaxAmount. The overriding amount of tax to apply. If at the document level, this is distributed across all taxable rows.'
+  Address:
+    description: Input property of GetTaxRequest representing addresses needed for tax calculations.
+    xml:
+      name: Address
+    required:
+      - Line1
+      - City
+      - Region
+      - PostalCode
+    properties:
+      AddressCode:
+        type: string
+        example: '01'
+        description: Reference code uniquely identifying this address instance.
+      Line1:
+        maxLength: 50
+        type: string
+        example: 45 Fremont Street
+        description: 'Address line 1, required if Latitude and Longitude are not provided.'
+      Line2:
+        maxLength: 50
+        type: string
+        example: Suite 100
+        description: Address line 2
+      Line3:
+        maxLength: 50
+        type: string
+        example: ATTN Accounts Payable
+        description: Address line 3
+      City:
+        maxLength: 50
+        type: string
+        example: Chicago
+        description: 'City name, required unless PostalCode is specified and/or Latitude and Longitude are provided.'
+      Region:
+        maxLength: 3
+        type: string
+        example: IL
+        description: 'State, province, or region name. Required unless City is specified and/or Latitude and Longitude are provided.'
+      Country:
+        maxLength: 2
+        type: string
+        example: US
+        description: "Country code. If not provided, will default to 'US'."
+      PostalCode:
+        maxLength: 11
+        type: string
+        example: '60602'
+        description: 'Postal or ZIP code, Required unless City and Region are specified, and/or Latitude and Longitude are provided.'
+      Latitude:
+        type: number
+        format: double
+        example: '47.627935'
+        description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+      Longitude:
+        type: number
+        format: float
+        example: '-122.51702'
+        description: 'Geographic longitude. If Longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+      TaxRegionId:
+        type: number
+        format: integer
+        description: 'AvaTax tax region identifier. If a non-zero value is entered into TaxRegionId, other fields will be ignored.'
+        example: 1
   BaseAddress:
     description: Input property of GetTaxRequest representing addresses needed for tax calculations.
+    xml:
+      name: BaseAddress
     required:
       - AddressCode
       - Line1
@@ -863,6 +1011,7 @@ definitions:
         type: number
         format: integer
         description: 'AvaTax tax region identifier. If a non-zero value is entered into TaxRegionId, other fields will be ignored.'
+        example: 1
   DocCode:
     maxLength: 50
     type: string
@@ -870,7 +1019,13 @@ definitions:
     description: 'While this is an optional field, serious consideration should be given to using it. If no value is sent, AvaTax assigns a GUID value to keep the document unique, which can make reconciliation a challenge.'
   ResultCode:
     type: string
+    example: Success
+    description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
+  ErrorResultCode:
+    type: string
     example: Error
+    xml:
+      name: ResultCode
     description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
   Country:
     maxLength: 2
@@ -899,23 +1054,30 @@ definitions:
                 ]
             }
   UnauthorizedError:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     properties:
-      ResultCode:
-        $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-    example: {
-          "ResultCode": "Error",
-          "Messages": [
-          {
-          "Summary": "The user or account could not be authenticated.",
-          "Severity": "Error",
-          "Source": "Avalara.Web.Authorization"}
-          ]
-          }
+      Body:
+        type: object
+        xml:
+          prefix: s
+        properties:
+          Fault:
+            type: object
+            xml:
+              prefix: s
+            properties:
+              faultcode:
+                type: string
+                example: 's:Client'
+              faultstring:
+                type: string
+                example: 'The user or account could not be authenticated.'
   Message:
+    xml:
+      name: Message
     properties:
       Summary:
         maxLength: 255
@@ -943,6 +1105,8 @@ definitions:
         description: "Classifies the severity of the message. One of: Success, Warning, Error, Exception."
   TaxDetail:
     description: Tax details by jurisdiction
+    xml:
+      name: TaxDetail
     properties:
       Country:
         $ref: '#/definitions/Country'
@@ -985,20 +1149,39 @@ definitions:
         description: Tax name
         example: WA CITY TAX
         maxLength: 75
-  CancelTaxResult:
+  CancelTaxResponse:
     properties:
-      TransactionId:
-        type: string
-        description: The unique numeric identifier of the API operation assigned by the AvaTax service.
-      DocId:
-        type: string
-        description: The unique numeric identifier (Document ID) assigned to the tax document in question by the AvaTax Service.
-      ResultCode:
-        $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
+      CancelTaxResult:
+        type: object
+        properties:
+          TransactionId:
+            type: string
+            description: The unique numeric identifier of the API operation assigned by the AvaTax service.
+          DocId:
+            type: string
+            description: The unique numeric identifier (Document ID) assigned to the tax document in question by the AvaTax Service.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  GetTaxResponse:
+    properties:
+      GetTaxResult:
+        allOf:
+          - $ref: '#/definitions/GetTaxResult'
+          - properties:
+              ResultCode:
+                $ref: '#/definitions/ResultCode'
+              Messages:
+                type: array
+                xml:
+                  wrapped: true
+                items:
+                  $ref: '#/definitions/Message'
   GetTaxResult:
     properties:
       DocCode:
@@ -1034,24 +1217,26 @@ definitions:
         description: Date used to assess tax rates and jurisdictions.
       TaxLines:
         type: array
+        xml: 
+          wrapped: true
         items:
           $ref: '#/definitions/TaxLine'
       TaxSummary:
+        xml:
+          wrapped: true
         type: array
         items:
           $ref: '#/definitions/TaxDetail'
       TaxAddresses:
+        xml:
+          type: true
         type: array
         items:
           $ref: '#/definitions/TaxAddress'
-      ResultCode:
-        $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items: 
-          $ref: '#/definitions/Message'
   TaxLine:
     description: Tax calculation details for each item line (returned for detail levels Line and Tax).
+    xml:
+      name: TaxLine
     properties:
       LineNo:
         maxLength: 50
@@ -1088,10 +1273,14 @@ definitions:
         maxLength: 7
       TaxDetails:
         type: array
+        xml:
+          wrapped: true
         items:
           $ref: '#/definitions/TaxDetail'
   TaxAddress:
     description: TaxAddress represents canonical addresses used in tax calculation.
+    xml:
+      name: TaxAddress
     properties:
       Address:
         type: string
@@ -1128,9 +1317,43 @@ definitions:
       JurisCode:
         type: string
         description: Tax jurisdiction code
-  ValidateResult:
+  ValidateResponse:
     description: Output for address/validate showing the validated address match or address validation errors.
+    xml:
+      namespace: 'http://avatax.avalara.com/services'
     properties:
+      ValidateResult:
+        type: object
+        properties:
+          ValidAddresses:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/ValidAddress'
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Taxable:
+            type: boolean
+            description: Indicates if the address should have tax applied to it. Only present if `Taxability` was set to true in the request.
+          TransactionId:
+            type: string
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          Messages:
+            description: 'Present in the response only if ResultCode is not `Success`'
+            type: array
+            xml: 
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  ValidAddress:
+    xml:
+      name: ValidAddress
+    properties:
+      AddressCode:
+        type: string
+        example: 01
+        description: A unique identifier of the address in the request. Will be blank unless an AddressCode was passed in the request.
       Line1:
         type: string
         example: 45 Fremont Street
@@ -1182,116 +1405,138 @@ definitions:
         type: string
         description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:\n * 1-5 ZIP code\n * 6-9 Plus4 code\n * 10-11 Delivery point\n * 12 Check digit'
         maxLength: 12
-      ResultCode:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-  PostTaxResult:
+  PostTaxResponse:
     description: Result data returned from PostTax.
     properties:
-      DocId:
-        type: string
-        maxLength: 19
-        description: The unique document ID assigned by AvaTax to the document modified. This value need only be retained for troubleshooting.
-      TransactionId:
-        type: string
-        maxLength: 19
-        description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
-      ResultCode:
+      PostTaxResult:
         type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-  CommitTaxResult:
+        properties:
+          DocId:
+            type: string
+            maxLength: 19
+            description: The unique document ID assigned by AvaTax to the document modified. This value need only be retained for troubleshooting.
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  CommitTaxResponse:
     description: Output for CommitTax indicating the success of the operation, or any errors encountered.
     properties:
-      DocId:
-        type: string
-        maxLength: 19
-        description: The unique document ID assigned by AvaTax to the document modified. This value need only be retained for troubleshooting.
-      TransactionId:
-        type: string
-        maxLength: 19
-        description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
-      ResultCode:
+      CommitTaxResult:
         type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-  AdjustTaxResult:
+        properties:
+          DocId:
+            type: string
+            maxLength: 19
+            description: The unique document ID assigned by AvaTax to the document modified. This value need only be retained for troubleshooting.
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  AdjustTaxResponse:
     description: Result data returned from AdjustTax. Within this result you will find the same elements as a GetTaxResult. It is likely you will want to consider retrieving the document Version in addition to other tax related information. This is an element of all GetTaxResult or AdjustTaxResult objects.
-    additionalProperties:
-      $ref: '#/definitions/GetTaxResult'
-  GetTaxHistoryResult:
+    properties:
+      AdjustTaxResult:
+        allOf:
+          - $ref: '#/definitions/GetTaxResult'
+          - properties:
+              ResultCode:
+                $ref: '#/definitions/ResultCode'
+              Messages:
+                type: array
+                xml:
+                  wrapped: true
+                items:
+                  $ref: '#/definitions/Message'
+  GetTaxHistoryResponse:
     description: Result data returned from GetTaxHistory. You can retrieve any part of the GetTaxRequest or GetTaxResult.
     properties:
-      GetTaxRequest:
+      GetTaxHistoryResult:
         type: object
-        additionalProperties:
-          $ref: '#/definitions/GetTaxRequest'
-      GetTaxResult:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/GetTaxResult'
-      ResultCode:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-  PingResult:
+        properties:
+          GetTaxRequest:
+            $ref: '#/definitions/GetTaxRequest'
+          GetTaxResult:
+            $ref: '#/definitions/GetTaxResult'
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  PingResponse:
     description: Result data returned from Ping.
     properties:
-      Version:
-        description: The service version of the AvaTax service.
-        maxLength: 15
-      TransactionId:
-        type: string
-        maxLength: 19
-        description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
-      ResultCode:
+      PingResult:
         type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-  IsAuthorizedResult:
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        properties: 
+          Version:
+            description: The service version of the AvaTax service.
+            maxLength: 15
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            type: object
+            additionalProperties:
+              $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml: 
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  IsAuthorizedResponse:
     description: Result data returned from IsAuthorized.
     properties:
-      Expires:
-        description: The date and time at which your AvaTax account will expire. DateTime in the format YYYY-MM-DD
-        type: string
-        maxLength: 10
-      Operations:
-        type: string
-        description: "The operations that the current user is authorized to use. Determined from the list provided in the IsAuthorized call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
-        maxLength: 255
-      TransactionId:
-        type: string
-        maxLength: 19
-        description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
-      ResultCode:
+      IsAuthorizedResult:
         type: object
-        additionalProperties:
-          $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          Expires:
+            description: The date and time at which your AvaTax account will expire. DateTime in the format YYYY-MM-DD
+            type: string
+            maxLength: 10
+          Operations:
+            type: string
+            description: "The operations that the current user is authorized to use. Determined from the list provided in the IsAuthorized call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
+            maxLength: 255
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            type: object
+            additionalProperties:
+              $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
   Header:
     description: 'The SOAP API uses standard WSS (Web Service Security) token to authenticate the account or user, and additional `Profile` information to describe the agent calling the service.'
     required:
@@ -1299,13 +1544,9 @@ definitions:
       - Profile
     properties:
       Security:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/Security'
+        $ref: '#/definitions/Security'
       Profile:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/Profile'
+        $ref: '#/definitions/Profile'
     xml:
       prefix: 'SOAP-ENV'
   Security:
@@ -1313,14 +1554,20 @@ definitions:
       - UsernameToken
     properties:
       UsernameToken:
-        type: object
-        additionalProperties:
-          $ref: '#/definitions/UsernameToken'
+        $ref: '#/definitions/UsernameToken'
+      'SOAP-ENV:actor':
+        type: string
+        example: "http://schemas.xmlsoap.org/soap/actor/next"
+        description: 'The WS-Security standard requires the wsse:Security element contains a SOAP-ENV:actor attribute.'
+        xml:
+          attribute: true
     xml:
       prefix: 'wsse'
       namespace: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
   UsernameToken:
     description: Either an Account/LicenseKey or a Username/Password is required to authenticate the request. AccountNumber/LicenseKey is preferred.
+    xml:
+      prefix: 'wsse'
     required:
       - Account
       - LicenseKey
@@ -1330,36 +1577,44 @@ definitions:
         maxLength: 10
         description: The unique account number provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use Username.
         example: 1234567890
+        xml:
+          prefix: 'wsse'
       LicenseKey:
         type: string
         maxLength: 16
         description: The unique alpha-numeric key provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use Password.
         example: A1B2C3D4E5F6G7H8
+        xml:
+          prefix: 'wsse'
       Username:
         type: string
         maxLength: 50
         description: Your AvaTax Admin Console username. Usually an email address.
+        xml:
+          prefix: 'wsse'
       Password: 
         type: string
         maxLength: 50
         description: Your AvaTax Admin Console password.
-    xml:
-      prefix: 'wsse'
+        xml:
+          prefix: 'wsse'
   Profile: 
     required:
       - Client
       - Adapter
       - Name
       - Machine
+    xml:
+      namespace: 'http://avatax.avalara.com/services'
     properties:
-      Adapter: 
-        type: string
-        maxLength: 50
-        description: Name and version of the adapter. This is set automatically by the .NET, PHP, and Java adapters.
       Client: 
         type: string
         maxLength: 50
         description: 'Client application name and version. This should unique identify the software client that is calling the AvaTax service, and should be consistent across all deployments of that client version. e.g. “Drupal Commerce 5.7”'
+      Adapter: 
+        type: string
+        maxLength: 50
+        description: Name and version of the adapter. This is set automatically by the .NET, PHP, and Java adapters.
       Machine:
         type: string
         maxLength:  50
