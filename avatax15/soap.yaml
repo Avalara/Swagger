@@ -412,37 +412,37 @@ definitions:
       Header:
         $ref: '#/definitions/Header'
       Body:
-        xml:
-          prefix: SOAP-ENV
-        required:
-          - Validate
-        properties:
-          Validate:
-            $ref: '#/definitions/ValidateBody'
+        $ref: '#/definitions/ValidateBody'
   ValidateBody:
-    title: Body
     xml:
-      namespace: 'http://avatax.avalara.com/services'
+      name: Body
+      prefix: SOAP-ENV
     required:
-      - ValidateRequest
+      - Validate
     properties:
-      ValidateRequest:
-        title: ValidateRequest
-        required:
-          - Address
+      Validate:
+        title: Validate
+        xml:
+          namespace: 'http://avatax.avalara.com/services'
+        type: object
         properties:
-          Coordinates:
-            type: boolean
-            description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
-          Taxability:
-            type: boolean
-            description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
-          TextCase:
-            type: string
-            description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
-            example: Default
-          Address:
-            $ref: '#/definitions/Address'
+          ValidateRequest:
+            title: ValidateRequest
+            required:
+              - Address
+            properties:
+              Coordinates:
+                type: boolean
+                description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
+              Taxability:
+                type: boolean
+                description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
+              TextCase:
+                type: string
+                description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
+                example: Default
+              Address:
+                $ref: '#/definitions/Address'
   CancelTaxEnvelope:
     xml:
       name: Envelope
@@ -1189,6 +1189,7 @@ definitions:
                   wrapped: true
                 items:
                   $ref: '#/definitions/Message'
+          - title: GetTaxResult
   GetTaxResult:
     title: GetTaxResult
     properties:
@@ -1475,6 +1476,7 @@ definitions:
                   wrapped: true
                 items:
                   $ref: '#/definitions/Message'
+          - title: GetTaxResult
   GetTaxHistoryResponse:
     description: Result data returned from GetTaxHistory. You can retrieve any part of the GetTaxRequest or GetTaxResult.
     properties:
