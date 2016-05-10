@@ -1169,6 +1169,8 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   GetTaxResponse:
+    xml:
+      name: GetTaxResponse
     properties:
       GetTaxResult:
         allOf:
