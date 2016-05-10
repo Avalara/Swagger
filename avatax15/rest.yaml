@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: "The AvaTax REST API exposes the most commonly used available for interacting with the AvaTax service, allowing calculation of tax, modification of documents, and validation of addresses. If you're unsure of which API to use, a full comparison of the differences between the functionality provided by our REST and SOAP interfaces is documented [here](http://developer.avalara.com/api-docs/designing-your-integration/soap-or-rest). \n 
   
-  The [SOAP API reference](http://developer.avalara.com/wp-content/apireference/beta/#avatax-soap-api) is also available. \n
+  The [SOAP API reference](http://developer.avalara.com/api-documentation/avatax-15-api/avatax-soap-api-reference) is also available. \n
   
   A full set of sample requests is available as a [Postman collection](https://www.getpostman.com/collections/e362821310b01d7580e9)."
   
