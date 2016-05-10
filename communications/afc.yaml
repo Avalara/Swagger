@@ -17,10 +17,6 @@ schemes:
 x-ApiType: SOAP
 x-wsdlPath: "https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc?wsdl"
 x-basePath: "https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc"
-
-################################################################################
-#                                           Paths                              #
-################################################################################
 paths:
   /EZTaxWebService.svc?NpaNxxToPCode:
     post:
@@ -316,11 +312,6 @@ paths:
           description: Boolean indicating success or failure.
       tags:
         - Telecom
-
-
-################################################################################
-#                                 Definitions                                  #
-################################################################################
 definitions:
   BasicHeader:
     xml:
