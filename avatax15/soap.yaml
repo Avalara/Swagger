@@ -259,6 +259,7 @@ definitions:
       - CommitTaxRequest
     properties:
       CommitTax:
+        title: CommitTax
         xml: 
           namespace: "http://avatax.avalara.com/services"
         type: object
@@ -286,6 +287,7 @@ definitions:
       - AdjustTax
     properties:
       AdjustTax:
+        title: AdjustTax
         type: object
         xml:
           namespace: "http://avatax.avalara.com/services"
@@ -314,6 +316,7 @@ definitions:
     properties:
       GetTaxHistory:
         type: object
+        title: GetTaxHistory
         xml:
           namespace: "http://avatax.avalara.com/services"
         properties:
@@ -362,6 +365,7 @@ definitions:
       - IsAuthorized
     properties:
       IsAuthorized:
+        title: IsAuthorized
         xml:
           namespace: "http://avatax.avalara.com/services"
         type: object
@@ -389,6 +393,7 @@ definitions:
       - PostTax
     properties:
       PostTax:
+        title: PostTax
         xml: 
           namespace: "http://avatax.avalara.com/services"
         type: object
@@ -460,6 +465,7 @@ definitions:
     properties:
       CancelTax:
         type: object
+        title: CancelTax
         xml: 
           namespace: "http://avatax.avalara.com/services"
         properties:
@@ -486,6 +492,7 @@ definitions:
       - GetTax
     properties:
       GetTax:
+        title: GetTax
         type: object
         xml: 
           namespace: "http://avatax.avalara.com/services"
@@ -1055,11 +1062,13 @@ definitions:
       namespace: "http://schemas.xmlsoap.org/soap/envelope/"
     properties:
       Body:
+        title: Body
         type: object
         xml:
           prefix: s
         properties:
           Fault:
+            title: Fault
             type: object
             xml:
               prefix: s
@@ -1147,6 +1156,7 @@ definitions:
   CancelTaxResponse:
     properties:
       CancelTaxResult:
+        title: CancelTaxResult
         type: object
         properties:
           TransactionId:
@@ -1320,6 +1330,7 @@ definitions:
       namespace: 'http://avatax.avalara.com/services'
     properties:
       ValidateResult:
+        title: ValidateResult
         type: object
         properties:
           ValidAddresses:
@@ -1407,6 +1418,7 @@ definitions:
     properties:
       PostTaxResult:
         type: object
+        title: PostTaxResult
         properties:
           DocId:
             type: string
@@ -1429,6 +1441,7 @@ definitions:
     properties:
       CommitTaxResult:
         type: object
+        title: CommitTaxResult
         properties:
           DocId:
             type: string
@@ -1466,6 +1479,7 @@ definitions:
     properties:
       GetTaxHistoryResult:
         type: object
+        title: GetTaxHistoryResult
         properties:
           GetTaxRequest:
             $ref: '#/definitions/GetTaxRequest'
@@ -1484,6 +1498,7 @@ definitions:
     properties:
       PingResult:
         type: object
+        title: PingResult
         xml: 
           namespace: "http://avatax.avalara.com/services"
         properties: 
@@ -1495,9 +1510,7 @@ definitions:
             maxLength: 19
             description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
           ResultCode:
-            type: object
-            additionalProperties:
-              $ref: '#/definitions/ResultCode'
+            $ref: '#/definitions/ResultCode'
           Messages:
             type: array
             xml: 
@@ -1508,6 +1521,7 @@ definitions:
     description: Result data returned from IsAuthorized.
     properties:
       IsAuthorizedResult:
+        title: IsAuthorizedResult
         type: object
         xml:
           namespace: "http://avatax.avalara.com/services"
@@ -1525,9 +1539,7 @@ definitions:
             maxLength: 19
             description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
           ResultCode:
-            type: object
-            additionalProperties:
-              $ref: '#/definitions/ResultCode'
+            $ref: '#/definitions/ResultCode'
           Messages:
             type: array
             xml:
