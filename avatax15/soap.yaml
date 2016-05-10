@@ -667,11 +667,6 @@ definitions:
         type: boolean
         example: 'false'
         description: 'Default is false. Setting this value to true will put the document in a Committed status, preventing further document status changes, except voiding with CancelTax.'
-      Client:
-        maxLength: 50
-        type: string
-        example: AvaTaxSample
-        description: An identifier of software client generating the API call.
       CompanyCode:
         maxLength: 25
         type: string
