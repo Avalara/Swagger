@@ -646,6 +646,7 @@ definitions:
       name: CancelTaxResponse
     properties:
       CancelTaxResult:
+        title: CancelTaxResult
         type: object
         xml:
           name: CancelTaxResult
