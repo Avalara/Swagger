@@ -420,29 +420,29 @@ definitions:
           Validate:
             $ref: '#/definitions/ValidateBody'
   ValidateBody:
+    title: Body
     xml:
       namespace: 'http://avatax.avalara.com/services'
     required:
       - ValidateRequest
     properties:
       ValidateRequest:
-        $ref: '#/definitions/ValidateRequest' 
-  ValidateRequest:
-    required:
-      - Address
-    properties:
-      Coordinates:
-        type: boolean
-        description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
-      Taxability:
-        type: boolean
-        description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
-      TextCase:
-        type: string
-        description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
-        example: Default
-      Address:
-        $ref: '#/definitions/Address'
+        title: ValidateRequest
+        required:
+          - Address
+        properties:
+          Coordinates:
+            type: boolean
+            description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
+          Taxability:
+            type: boolean
+            description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
+          TextCase:
+            type: string
+            description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
+            example: Default
+          Address:
+            $ref: '#/definitions/Address'
   CancelTaxEnvelope:
     xml:
       name: Envelope
@@ -1190,6 +1190,7 @@ definitions:
                 items:
                   $ref: '#/definitions/Message'
   GetTaxResult:
+    title: GetTaxResult
     properties:
       DocCode:
         $ref: '#/definitions/DocCode'
