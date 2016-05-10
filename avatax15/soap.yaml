@@ -5,7 +5,7 @@ info:
   The [REST API reference](http://developer.avalara.com/api-documentation/avatax-15-api/avatax-rest-api-reference) is also available. \n"
   
   version: '1.0'
-  title: AvaTax 15 SOAP API
+  title: AvaTax SOAP API
   termsOfService: 'http://www.avalara.com/terms/'
   contact:
     name: 'For support, visit the Avalara Community'
