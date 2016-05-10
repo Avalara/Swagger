@@ -66,6 +66,7 @@ paths:
           name: CancelTaxRequest
           schema:
             $ref: '#/definitions/CancelTaxRequest'
+          required: true
       responses:
         '200':
           description: Successful operation *or* Unsuccessful operation. In the case of an unsuccessful operation, a ResultCode of `Error` and an array of `Messages` is returned in the `CancelTaxResult` object.
