@@ -7,7 +7,7 @@ info:
   A full set of sample requests is available as a [Postman collection](https://www.getpostman.com/collections/e362821310b01d7580e9)."
   
   version: '1.0'
-  title: AvaTax 15 REST API
+  title: AvaTax REST API
   termsOfService: 'http://www.avalara.com/terms/'
   contact:
     name: 'For support, visit the Avalara Community'
