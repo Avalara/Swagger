@@ -84,12 +84,12 @@ paths:
             $ref: '#/definitions/EstimateTaxResult'
         '400':
           description: "Tax could not be calculated on the address provided."
-  '/{companyCode}/documents':  
+  '/companies/{companyCode}/documents':  
     parameters:
       - $ref: '#/parameters/companyCode'
     get:
       summary: Retrieve documents belonging to a Company
-      description: "Functionally equivalent to the AccountSvc DocumentFetch if possible, or if that poses a permissions issue, perhaps to a (fixed) ReconcileTaxHistory without the reconciliation bit? This is not a full list of permitted queryparams."
+      description: "Functionally equivalent to the AccountSvc DocumentFetch if possible, or if that poses a permissions issue, perhaps to a (fixed) ReconcileTaxHistory without the reconciliation bit? This is not a full list of permitted queryparams. This operation should allow limits and pagination."
       operationId: documentFetch
       parameters:
         - in: query
@@ -111,7 +111,7 @@ paths:
             $ref: '#/definitions/DocumentFetchResult'
         '400':
           description: 'The request was malformed or invalid.'
-  '/{companyCode}/documents/{docType}':
+  '/companies/{companyCode}/documents/{docType}':
     parameters:
       - $ref: '#/parameters/companyCode'
       - $ref: '#/parameters/docType'
@@ -134,7 +134,7 @@ paths:
           description: 'Successful Operation, record created'
           schema:
             $ref: '#/definitions/DocumentResult'
-  '/{companyCode}/documents/{docType}/{docCode}':
+  '/companies/{companyCode}/documents/{docType}/{docCode}':
     parameters:
       - $ref: '#/parameters/companyCode'
       - $ref: '#/parameters/docType'
@@ -190,7 +190,7 @@ paths:
   '/validAddresses':
     get:
       summary: Validate an Address
-      description: 'Normalizes a single US or Canadian address, providing a non-ambiguous USPS address match. To recieve an XML response, use the URL `/1.0/address/validate.xml` and set the request header `Content-Type: text/xml`'
+      description: 'Normalizes a single US or Canadian address, providing a non-ambiguous USPS address match.'
       operationId: validateAddress
       parameters: 
         - name: Line1
@@ -431,6 +431,7 @@ definitions:
         description: Item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.
       Amount:
         type: number
+        format: float
         example: '10'
         description: 'Total amount of item (extended amount, qty * unit price). If omitted, this value will default to 0'
       Discounted:
@@ -528,7 +529,7 @@ definitions:
         description: 'Postal or ZIP code, Required unless City and Region are specified, and/or Latitude and Longitude are provided.'
       Latitude:
         type: number
-        format: double
+        format: float
         example: '47.627935'
         description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       Longitude:
@@ -646,21 +647,27 @@ definitions:
           description: Server timestamp of request.
         TotalAmount:
           type: number
+          format: float
           description: Sum of all line Amount values.
         TotalDiscount:
           type: number
+          format: float
           description: Sum of all TaxLine discount amounts.
         TotalExemption:
           type: number
+          format: float
           description: Total exemption amount.
         TotalTaxable:
           type: number
+          format: float
           description: Total taxable amount.
         TotalTax:
           type: number
+          format: float
           description: Sum of all TaxLine tax amounts.
         TotalTaxCalculated:
           type: number
+          format: float
           description: TotalTaxCalculated indicates the total tax calculated by AvaTax. This is usually the same as the TotalTax, except when a tax override amount is specified. This is for informational purposes. The TotalTax will still be used for reporting.
         TaxDate: 
           type: string
@@ -696,21 +703,27 @@ definitions:
         description: Flag indicating item was taxable
       Taxable:
         type: number
+        format: float
         description: The amount that is taxable
       Rate:
         type: number
+        format: float
         description: Effective tax rate
       Tax:
         type: number
+        format: float
         description: Tax amount
       Discount: 
         type: number
+        format: float
         description: Discount amount
       TaxCalculated:
         type: number
+        format: float
         description: Amount of tax calculated
       Exemption:
         type: number
+        format: float
         description: Exempt amount
       BoundaryLevel:
         type: string
@@ -752,12 +765,15 @@ definitions:
         maxLength: 11
       Latitude:
         type: number
+        format: float
         description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       Longitude:
         type: number
+        format: float
         description: 'Geographic longitude. If Longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       TaxRegionId:
         type: number
+        format: integer
         description: AvaTax tax region identifier
       JurisCode:
         type: string
