@@ -50,12 +50,20 @@ paths:
           description: "Successful operation"
         '401':
           description: "The authorization header was malformed, or the provided credentials were not valid."
+          schema:
+            $ref: '#/definitions/error'
         '400':
           description: "The request was invalid in form or data, and should be corrected before retrying. Additonal error information is provided in the response body. For tax calculation or address validation, this is returned when tax could not be calculated/ the address could not be validated."
+          schema:
+            $ref: '#/definitions/error'
         '404':
           description: "The requested resource was not found. This can be returned for CompanyNotFound or DocumentNotFound, or for an invalid DocType specified. Details are provided in the response body."
+          schema:
+            $ref: '#/definitions/error'
         '503':
           description: "The service is temporarily unavailable."
+          schema:
+            $ref: '#/definitions/error'
   '/taxRates':
     get:
       summary: Estimate Tax
@@ -278,25 +286,25 @@ parameters:
 definitions:
   documentFetchResult:
     properties:
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/message'
-      Documents:
+      documents:
         type: array
         items:
           $ref: '#/definitions/documentSummary'
   documentSummary:
     description: 'This can include any document level information - if a user wants more detail, they can pull a GetTaxHistory to get the full request/response.'
     properties:
-      DocCode:
+      docCode:
         type: string
-      DocType:
+      docType:
         type: string
-      DocDate:
+      docDate:
         type: string
-      CustomerCode:
+      customerCode:
         type: string
+      totalAmount:
+        type: number
+      totaltax: 
+        type: number
   document:
     properties:
       businessIdentificationNo:
@@ -602,37 +610,6 @@ definitions:
         type: number
         format: integer
         description: 'AvaTax tax region identifier. If a non-zero value is entered into TaxRegionId, other fields will be ignored.'
-  message:
-    properties:
-      summary:
-        maxLength: 255
-        type: string
-        example: Company not found.  Verify the CompanyCode.
-        description: The message summary in short form.
-      details:
-        maxLength: 255
-        type: string
-        example: APITrialCompany
-        description: Description of the error or warning.
-      refersTo:
-        maxLength: 255
-        type: string
-        example: CompanyCode
-        description: The data used during the request that caused the message to be generated.
-      source:
-        maxLength: 255
-        type: string
-        example: Avalara.AvaTax.Services.Tax
-        description: The internal location that generated the message.
-      severity:
-        type: string
-        example: Error
-        description: "Classifies the severity of the message."
-        enum:
-          - Success
-          - Warning
-          - Error
-          - Exception
   estimateTaxResult:
     properties:
       rate:
@@ -714,6 +691,37 @@ definitions:
             type: string
             description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:\n * 1-5 ZIP code\n * 6-9 Plus4 code\n * 10-11 Delivery point\n * 12 Check digit'
             maxLength: 12
+  message:
+    properties:
+      summary:
+        maxLength: 255
+        type: string
+        example: Company not found.  Verify the CompanyCode.
+        description: The message summary in short form.
+      details:
+        maxLength: 255
+        type: string
+        example: APITrialCompany
+        description: Description of the error or warning.
+      refersTo:
+        maxLength: 255
+        type: string
+        example: CompanyCode
+        description: The data used during the request that caused the message to be generated.
+      source:
+        maxLength: 255
+        type: string
+        example: Avalara.AvaTax.Services.Tax
+        description: The internal location that generated the message.
+      severity:
+        type: string
+        example: Error
+        description: "Classifies the severity of the message."
+        enum:
+          - Success
+          - Warning
+          - Error
+          - Exception  
   error:
     properties:
       messages:
