@@ -3,21 +3,15 @@ info:
   description: "This is a proposal for a v2 of the AvaTax REST API. This is a DESIGN DOCUMENT ONLY and is not intended to be used, since this API DOES NOT EXIST. 
   The design in its current form describes a renaming of resources and clarification of returned statuses, but otherwise does not depart significantly from the existing AvaTax 15 API. There are a couple of features that could be considered if we want to depart further from the existing API with this version:
     
-    * We should allow an address to be specified at the document/line directly (as opposed to the current AddressCode/OriginCode method). This is reflected in the Document format below
+    * All resources below map DIRECTLY to A16 resources. The request and response payloads are almost identical in format (but favor the flatter A15 style as opposed to the more nested A16 style), with allowances made for the different structures of A15 and A16. 
     
-    * Some parameters have refactored from request body to path: CompanyCode, DocType, DocCode.
+    * Existing field names from AvaTax 15 are used.  This is a better idea than renaming things in A16 terminology that is not consistent with the existing db, API, documentation, customer understanding, particularly for TaxSvc (where there's already a pretty detailed and complex conversation with customers). Some parameters have refactored from request body to path: CompanyCode, DocType, DocCode.
     
-    * This design doesn't go into AccountSvc functions (yet). Once we get some ground covered with TaxSvc operations, we can extend to AccountSvc. I realize that's the one people are really interested in, but let's agree on TaxSvc to lay down some baselines.
+    * An address can be specified at the document/line directly (as opposed to the current AddressCode/OriginCode method). This is reflected in the Document format below. This follows the A16 model.
     
-    * I've added a feature where you can POST to a /{docCode} to amend a document - this can add line items without repeating the whole document (an oft-requested feature) and permits changing DocCode. Right now, A15 lets you change DocCode in PostTax and CommitTax.
-    
-    * That said, POST /{docCode} ALSO lets you change a document state! 
-    
-    * This document uses existing field names from AvaTax 15. I think this is a better idea than renaming things in A16 terminology that is not consistent with the existing db, API, documentation, customer understanding, particularly for TaxSvc (where there's already a pretty detailed and complex conversation with customers). With AccountSvc, we can be a bit more free with our language.
+    * I'd like to add a feature where you can POST .../{docCode} to amend a document - this can add line items without repeating the whole document (an oft-requested feature) and permits changing DocCode. Right now, A15 lets you change DocCode in PostTax and CommitTax. POST .../{docCode} should ALSO let you change a document state! I think this is superior to the /stateTransitions model, but in the interest of keeping this draft as close to A16 as possible, that's what is reflected here.
     
     * Right now, this document only describes basic auth. If we want token-based auth as well, that would just be an additional security scheme.
-    
-    * Some hypermedia stuff could be pretty cool in here, and allow the server to keep track of permitted actions (instead of making CUP do it). Maybe for v3? It would be interesting to discuss.
     
     "
   version: '2.0'
@@ -67,7 +61,7 @@ paths:
   '/taxRates':
     get:
       summary: Estimate Tax
-      description: "Customers consistently want the ability to 'just get the tax' for a given address or lat/long. This has proven to be a great marketing tool, and a great tool for getting developers introduced to the tax service. This operation would just return TPP tax for an all-nexus-on company profile, similar to the [tax map](http://salestax.avalara.com/) or the existing EstimateTax or WidgetTax (which is used by the map). All properties of Address are accepted as queryparams, I've just listed a few here for brevity."
+      description: "Customers consistently want the ability to 'just get the tax' for a given address or lat/long. This has proven to be a great marketing tool, and a great tool for getting developers introduced to the tax service. This operation would just return TPP tax for an all-nexus-on company profile, similar to the [tax map](http://salestax.avalara.com/) or the existing EstimateTax or WidgetTax (which is used by the map). You'll notice that there is no `company` or `account` path segment here - the calculation returned should be generic independent of account. All properties of Address are accepted as queryparams, I've just listed a few here for brevity."
       operationId: estimateTax
       parameters:
         - in: query
@@ -90,8 +84,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/estimateTaxResult'
-  '/companies/{companyCode}/documents':  
+  '/accounts/{accountId}/companies/{companyCode}/documents':  
     parameters:
+      - $ref: '#/parameters/accountId'
       - $ref: '#/parameters/companyCode'
     get:
       summary: Retrieve documents belonging to a Company
@@ -115,8 +110,9 @@ paths:
           description: 'Successful Operation. If no documents are found, the result set will be empty.'
           schema:
             $ref: '#/definitions/documentFetchResult'
-  '/companies/{companyCode}/documents/{docType}':
+  '/accounts/{accountId}/companies/{companyCode}/documents/{docType}':
     parameters:
+      - $ref: '#/parameters/accountId'
       - $ref: '#/parameters/companyCode'
       - $ref: '#/parameters/docType'
     post:
@@ -128,18 +124,19 @@ paths:
           required: true
           name: document
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/requestDocument'
       responses:
         '200':
           description: 'Successful Operation, no record created'
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/responseDocument'
         '201':
           description: 'Successful Operation, record created'
           schema:
-            $ref: '#/definitions/document'
-  '/companies/{companyCode}/documents/{docType}/{docCode}':
+            $ref: '#/definitions/responseDocument'
+  '/accounts/{accountId}/companies/{companyCode}/documents/{docType}/{docCode}':
     parameters:
+      - $ref: '#/parameters/accountId'
       - $ref: '#/parameters/companyCode'
       - $ref: '#/parameters/docType'
       - $ref: '#/parameters/docCode'
@@ -151,7 +148,7 @@ paths:
         '200':
           description: 'Successful Operation, no record created'
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/responseDocument'
     put:
       summary: Adjust a document
       description: 'Equivalent to AdjustTax. Note that this has always worked just like GetTax, except it allows you to update committed documents. It would continue to do that. The entire GetTaxRequest must be present.'
@@ -161,20 +158,20 @@ paths:
           name: document
           schema:
             $ref:
-              '#/definitions/document'
+              '#/definitions/requestDocument'
       responses:
         '200':
           description: 'Successful Operation'
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/responseDocument'
         '201':
           description: 'Document created. (This operation can also be used to create a document.)'
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/responseDocument'
         '303':
           description: 'Resource moved. This operation can be used to change the DocCode, which would change the doc-specific URL.'
     post:
-      summary: Amend a document
+      summary: Amend a document [NEW FEATURE]
       description: 'Allows the amendment of an existing document without reiterating the entire document. Only specified properties will be updated. This can also be used to change the status of a document, making it equivalent to CancelTax, PostTax, CommitTax. Recalculation of tax triggered by this operation is lazy: if parameters are specified that do not require recalculation (noteably, changes of document state), a calculation will not be performed. As such, all request parameters are optional.'
       operationId: amendTax
       parameters:
@@ -182,12 +179,35 @@ paths:
           name: partialDocument
           schema:
             $ref:
-              '#/definitions/document'
+              '#/definitions/requestDocument'
       responses:
         '200':
           description: 'Successful Operation'
           schema:
-            $ref: '#/definitions/document'
+            $ref: '#/definitions/responseDocument'
+        '303':
+          description: 'Resource moved. This operation can be used to change the DocCode, which would change the doc-specific URL.'
+  '/accounts/{accountId}/companies/{companyCode}/documents/{docType}/{docCode}/stateTransitions':
+    parameters:
+      - $ref: '#/parameters/accountId'
+      - $ref: '#/parameters/companyCode'
+      - $ref: '#/parameters/docType'
+      - $ref: '#/parameters/docCode'
+    post:
+      summary: Change a Transaction State
+      description: 'Takes the place of PostTax, CommitTax, and CancelTax. Changes the state of the of the document to the specified target state, and optionally changes the docCode. Optionally recalculates tax.'
+      operationId: changeState
+      parameters: 
+        - in: body
+          name: stateTransitionRequest
+          schema:
+            $ref:
+              '#/definitions/stateTransitionRequest'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          schema:
+            $ref: '#/definitions/responseDocument'
         '303':
           description: 'Resource moved. This operation can be used to change the DocCode, which would change the doc-specific URL.'
   '/validAddresses':
@@ -255,6 +275,13 @@ securityDefinitions:
 ####################################################            
  
 parameters:
+  accountId:
+    name: accountId
+    description: "The unique account number provided by Avalara for verification against the service."
+    type: string
+    in: path
+    required: true
+    maxLength: 10
   companyCode:
     name: companyCode
     description: "The case-sensitive code that identifies the company in the AvaTax account in which the document should be posted. This code is declared during the company setup in the AvaTax Admin Console. If no value is passed, the document will be assigned to the default company. If a value is passed that does not match any company on on the account, an error is returned."
@@ -284,6 +311,24 @@ parameters:
 ####################################################
 
 definitions:
+  stateTransitionRequest:
+    required:
+      - docStatus
+    properties:
+      recalculate:
+        type: boolean
+        description: "If set to `true`, tax will be recalculated on the document at the time of the state transition. Default is `false`."
+      docStatus:
+        type: string
+        description: 'The target state for the document.'
+        enum: 
+          - Uncommitted
+          - Committed
+          - Voided
+          - NotRecorded
+      newDocCode:
+        type: string
+        description: 'If specified, will change the document code to the specified value.'
   documentFetchResult:
     properties:
       documents:
@@ -305,7 +350,7 @@ definitions:
         type: number
       totaltax: 
         type: number
-  document:
+  baseDocument:
     properties:
       businessIdentificationNo:
         maxLength: 25
@@ -390,51 +435,109 @@ definitions:
         $ref: '#/definitions/address'
       originAddress:
         $ref: '#/definitions/address'
-      lines:
-        type: array
-        items:
-          $ref: '#/definitions/line'
-        description: Document line array. There is a limit of 15000 lines per document.
-      timeStamp:
-        type: string
-        format: date-time
-        description: Server timestamp of request.
-        readOnly: true
-      totalAmount:
-        type: number
-        format: float
-        description: Sum of all line Amount values.
-        readOnly: true
-      totalDiscount:
-        type: number
-        format: float
-        description: Sum of all TaxLine discount amounts.
-        readOnly: true
-      totalExemption:
-        type: number
-        format: float
-        description: Total exemption amount.
-        readOnly: true
-      totalTaxable:
-        type: number
-        format: float
-        description: Total taxable amount.
-        readOnly: true
-      totalTax:
-        type: number
-        format: float
-        description: Sum of all TaxLine tax amounts.
-        readOnly: true
-      totalTaxCalculated:
-        type: number
-        format: float
-        description: TotalTaxCalculated indicates the total tax calculated by AvaTax. This is usually the same as the TotalTax, except when a tax override amount is specified. This is for informational purposes. The TotalTax will still be used for reporting.
-        readOnly: true
-      taxSummary:
-        type: array
-        items:
-          $ref: '#/definitions/taxDetail'
-        readOnly: true
+  requestDocument:
+    allOf:
+      - $ref: '#/definitions/baseDocument'
+      - type: object
+        properties:
+          lines:
+            type: array
+            items:
+              $ref: '#/definitions/line'
+            description: Document line array. There is a limit of 15000 lines per document.
+  responseDocument:
+    allOf:
+      - $ref: '#/definitions/baseDocument'
+      - type: object
+        properties:
+          timeStamp:
+            type: string
+            format: date-time
+            description: Server timestamp of request.
+            readOnly: true
+          totalAmount:
+            type: number
+            format: float
+            description: Sum of all line Amount values.
+            readOnly: true
+          totalDiscount:
+            type: number
+            format: float
+            description: Sum of all TaxLine discount amounts.
+            readOnly: true
+          totalExemption:
+            type: number
+            format: float
+            description: Total exemption amount.
+            readOnly: true
+          totalTaxable:
+            type: number
+            format: float
+            description: Total taxable amount.
+            readOnly: true
+          totalTax:
+            type: number
+            format: float
+            description: Sum of all TaxLine tax amounts.
+            readOnly: true
+          totalTaxCalculated:
+            type: number
+            format: float
+            description: TotalTaxCalculated indicates the total tax calculated by AvaTax. This is usually the same as the TotalTax, except when a tax override amount is specified. This is for informational purposes. The TotalTax will still be used for reporting.
+            readOnly: true
+          taxLines:
+            type: array
+            items:
+              $ref: '#/definitions/taxLine'
+          taxSummary:
+            type: array
+            items:
+              $ref: '#/definitions/taxDetail'
+            readOnly: true
+  taxLine:
+    allOf:
+      - $ref: '#/definitions/line'
+      - type: object
+        properties:
+          taxability:
+            type: boolean
+            description: Flag indicating item was taxable
+            readOnly: true
+          taxable:
+            type: number
+            format: float
+            description: The amount that is taxable
+            readOnly: true
+          rate:
+            type: number
+            format: float
+            description: Effective tax rate
+            readOnly: true
+          tax:
+            type: number
+            format: float
+            description: Tax amount
+            readOnly: true
+          taxCalculated:
+            type: number
+            format: float
+            description: Amount of tax calculated
+            readOnly: true
+          exemption:
+            type: number
+            format: float
+            description: Exempt amount
+            readOnly: true
+          boundaryLevel:
+            type: string
+            description: 'The boundary level used to calculate tax: determined by the provided addresses'
+            maxLength: 7
+            readOnly: true
+          taxDetails:
+            type: array
+            readOnly: true
+            items:
+              $ref: '#/definitions/taxDetail'
   line:
     description: Input property of the GetTaxRequest describing item lines.
     required:
@@ -514,45 +617,6 @@ definitions:
       overrideExemption:
         type: boolean
         description: 'Overrides the presence of any exemption certificate. Equivalent to TaxOverrideType.Exemption'
-      taxability:
-        type: boolean
-        description: Flag indicating item was taxable
-        readOnly: true
-      taxable:
-        type: number
-        format: float
-        description: The amount that is taxable
-        readOnly: true
-      rate:
-        type: number
-        format: float
-        description: Effective tax rate
-        readOnly: true
-      tax:
-        type: number
-        format: float
-        description: Tax amount
-        readOnly: true
-      taxCalculated:
-        type: number
-        format: float
-        description: Amount of tax calculated
-        readOnly: true
-      exemption:
-        type: number
-        format: float
-        description: Exempt amount
-        readOnly: true
-      boundaryLevel:
-        type: string
-        description: 'The boundary level used to calculate tax: determined by the provided addresses'
-        maxLength: 7
-        readOnly: true
-      taxDetails:
-        type: array
-        readOnly: true
-        items:
-          $ref: '#/definitions/taxDetail'
   address:
     description: Represents a single physical location.
     required:
