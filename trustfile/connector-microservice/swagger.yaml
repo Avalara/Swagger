@@ -1,0 +1,890 @@
+swagger: '2.0'
+info:
+  version: 3.0.0
+  title: TrustFile Connector Management API
+  description: |
+    All custom integration / ETL ought to behave/operate in the exact same way. Adhering to this documentation will allow this
+
+    #### Tokens:
+    * connectorToTFToken: identifies the connector and restricts access to environments / version of TF API the connector is certified for (see below for token usage in header)
+    * TFToConnectorToken: authorizes Trustfile to access operate the connector micro-service API
+    * connectionId: identifies and authorizes access to the TF company to push data into. Mapped to a UUID Company Token in database
+
+    #### Connector Management API responsibility
+     * Integrating with TF Items API
+     * Integrating with host system API, including authorization (typically something like oAuth)
+     * ETL of sales/refunds/tax/shipping data into TrustFile data model
+     * Basic management of user data sources:  CRUD, enable/disable/status
+     * Scheduling and load balancing of users data synchronization
+     * Data integrity. It is the responsibility of the connector micro-service to know what data has been processed by TrustFile.
+
+    #### Connector Management API is not responsible for
+     * User experience
+     * Branding of experience (aside from the popup for authentication with host system)
+
+    #### Hosting / Language
+    * All connectors will be hosted and operated from the Heroku PaaS
+    * Language: choose between - Ruby/Node/Java
+    * DB: Postgres (on heroku)
+
+    #### Dates and Timestamps
+    * Dates are in yyyy-mm-dd format
+    * Timestamps are in the ISO format: 2015-07-06T22:26:28+00:00
+    * Timestamps are in UTC +00:00 timezone
+
+    #### Configs
+    Put localization configs (specific to a given environment) into environment variables. Document the required variables in the README.md of the project. https://devcenter.heroku.com/articles/config-vars
+    
+    #### Security:
+    API requests except orangez/health are authorized with Header param
+    ```
+    Authorization: Bearer TFToConnectorToken
+    ```
+  contact:
+    name: Trustfile API Support
+    url: trustfile.com
+    email: api@trustfile.com
+host: microservice.herokuapp.com
+basePath: /
+produces:
+  - application/json
+schemes:
+  - http
+securityDefinitions:
+  Authorization:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: Key should be 'Bearer ' followed by the TFToConnectorToken
+paths:
+  /connections:
+    get:
+      tags:
+        - Connections
+      summary: Get list of Connections
+      description: "Returns list of connectionId's of the given enabled state"
+      operationId: GetConnections
+      parameters:
+        - in: query
+          name: enabled
+          description: 'Enabled state of connections to retrieve. Default: true'
+          type: boolean
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              connections:
+                type: array
+                items:
+                  $ref: '#/definitions/ConnectionId'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+      security:
+        - Authorization: []
+    post:
+      tags:
+        - Connections
+      summary: Creates a connection
+      description: |
+                   This will create a connection with the posted connectionId and startDate.
+                   
+                   The connectionId is used to identify the connection in the micro-service API. It's also used to authorize access to a company when posting data to Trustfile.
+                   
+                   The connector will synchronize all the Sales / Tax data starting from the startDate into TrustFile; then the connector will periodically synchronize this connection at least once a day
+
+      operationId: PostConnection
+      parameters:
+        - in: body
+          name: body
+          description: Contains the connectionId and the startDate from which to begin syncing
+          required: true
+          schema:
+            $ref: '#/definitions/PostConnectionBody'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ConnectionSummary'
+        '400':
+          description: Bad query response. e.g. if connectionId or startDate are missing
+          schema:
+            $ref: '#/definitions/BadQueryError'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '500':
+          description: Failure response
+          schema:
+            type: object
+            example:
+              message: "User already exists"
+            properties:
+              message:
+                type: string
+                description: Reason for failure
+                example: User already exists
+      security:
+        - Authorization: []
+  '/connections/{connectionId}':
+    head:
+      summary: Determine if connection with connectionId exists
+      tags:
+        - Connections
+      operationId: HeadConnectionDetail
+      parameters:
+        - in: path
+          name: connectionId
+          description: Used to identify the connection in the micro-service API
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ConnectionId exists response
+        '401':
+          description: Authentication error response
+        '404':
+          description: ConnectionId does not exist response
+      security:
+        - Authorization: []
+    get:
+      summary: Get information about connection
+      description: |
+        * Returns the status and other information about the connection
+        identified by 'connectionId'
+        * Enabled connections will process
+        data periodically if authorized
+        * Authorized connections are
+        authenticated with the host integration system (paypal, amazon..) and
+        allowed to pull sales/tax data
+        * The status message should be sufficient for the user to understand what state the connection is in and if there are any actions required of them to proceed.
+        * The HostSystemIdentifier will be displayed to the user (if not null) in TF to identify which host account was used for this connector.
+      tags:
+        - Connections
+      operationId: GetConnectionDetail
+      parameters:
+        - in: path
+          name: connectionId
+          description: Used to identify the connection in the micro-service API
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ConnectionDetail'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '404':
+          description: ConnectionId does not exist response
+      security:
+        - Authorization: []
+    put:
+      tags:
+        - Connections
+      summary: Update the connection with the given connectionId
+      operationId: PutConnection
+      parameters:
+        - in: path
+          name: connectionId
+          description: Used to identify the connection in the micro-service API
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Connection update
+          required: true
+          schema:
+            $ref: '#/definitions/ConnectionUpdate'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ConnectionSummary'
+        '400':
+          description: Bad query response
+          schema:
+            $ref: '#/definitions/BadQueryError'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '404':
+          description: ConnectionId does not exist response
+      security:
+        - Authorization: []
+    delete:
+      tags:
+        - Connections
+      summary: Delete a connection
+      description: Deletes the connection from the database given the connectionId and stops syncing data from it
+      operationId: DeleteConnection
+      parameters:
+        - in: path
+          name: connectionId
+          description: ID of data source to be deleted
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            example:
+              success: true
+            properties:
+              success:
+                type: boolean
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '404':
+          description: ConnectionId does not exist response
+      security:
+        - Authorization: []
+  '/connections/{connectionId}/activities':
+    get:
+      tags:
+        - Connections
+      summary: Get activity logs for connection
+      description: "Returns a log of all activities up to a max of 365 days. The activity logs should be sufficient to help the user understand what's going on synchronizing their account with Trustfile"
+      operationId: GetConnectionActivities
+      parameters:
+        - in: path
+          name: connectionId
+          required: true
+          type: string
+          description: Used to identify the connection in the micro-service API. Also used to authorize access to a company when posting data to Trustfile
+        - in: query
+          name: days
+          description: 'Days of activity history to retrieve. Trustfile may request up to 1 year of activity logs. Default: 14 days'
+          type: string
+        - in: query
+          name: limit
+          description: 'Number of activities to retrieve. Default: 100'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              activities:
+                type: array
+                example: [{"timestamp": "2015-12-11T18:18:28+00:00","action": "Updated user"},{"timestamp": "2015-12-11T17:46:27+00:00","action": "Updated user"},{"timestamp": "2015-12-11T17:46:16+00:00","action": "Created user"}]
+                items:
+                  $ref: '#/definitions/ConnectionActivity'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '404':
+          description: ConnectionId does not exist response
+        '500':
+          description: Error response
+          schema:
+            type: object
+            example:
+              message: Unable to retrieve activity logs.
+            properties:
+              message:
+                type: string
+                description: Reason for failure
+                example: Unable to retrieve activity logs.
+      security:
+        - Authorization: []
+  '/connections/{connectionId}/authentication':
+    get:
+      tags:
+        - Connections
+      summary: Authenticate with connection
+      description: 'Redirects user to the connection authentication. Response will be rendered in a popup iframe to handle oAuth or other authentication mechanism. Once the user logs in or authorizes the connector, they will be redirected to the provided redirectUri, passing the TFToConnectorToken'
+      operationId: GetConnectionAuthenticate
+      parameters:
+        - in: path
+          name: connectionId
+          required: true
+          description: Used to identify the connection in the micro-service API
+          type: string
+        - in: query
+          name: redirectUri
+          required: true
+          description: "URI to redirect to after authentication. Will be app.trustfile.avalara.com/connectors/success followed by a stringified query param 'id', where 'id' is the TFToConnectorToken: app.trustfile.avalara.com/connectors/success?id=TFToConnectorToken (before uri-encoding)"
+          type: string
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad query response. e.g. if RedirectUri is not passed
+          schema:
+            $ref: '#/definitions/BadQueryError'
+        '404':
+          description: ConnectionId does not exist response
+        '500':
+          description: Error response
+          schema:
+            type: object
+            example:
+              message: Invalid query
+            properties:
+              message:
+                type: string
+                description: Reason for failure
+                example: Invalid query
+  # '/connections/{connectionId}/reauthentication':
+  #   get:
+  #     tags:
+  #       - Connections
+  #     summary: Re-authenticate with connection
+  #     description: 'This route serves to re-authenticate the user, e.g. if the user de-authorizes TrustFile from the connector side. Response will be rendered in a popup iframe to handle oAuth or other authentication mechanism. Once the user logs in or authorizes the connector, they will be redirected to the provided redirectUri, passing the TFToConnectorToken'
+  #     operationId: GetConnectionReauthenticate
+  #     parameters:
+  #       - in: path
+  #         name: connectionId
+  #         required: true
+  #         description: Used to identify the connection in the micro-service API
+  #         type: string
+  #       - in: query
+  #         name: redirectUri
+  #         required: true
+  #         description: "URI to redirect to after re-authentication. Will be app.trustfile.avalara.com/connectors/success followed by a stringified query param 'id', where 'id' is the TFToConnectorToken: app.trustfile.avalara.com/connectors/success?id=TFToConnectorToken (before uri-encoding)"
+  #         type: string
+  #     responses:
+  #       '200':
+  #         description: Successful response
+  #       '400':
+  #         description: Bad query response. e.g. if RedirectUri is not passed
+  #         schema:
+  #           $ref: '#/definitions/BadQueryError'
+  #       '401':
+  #         description: Authentication error response
+  #         schema:
+  #           $ref: '#/definitions/AuthError'
+  #       '404':
+  #         description: ConnectionId does not exist response
+  #       '500':
+  #         description: Error response
+  #         schema:
+  #           type: object
+  #           example:
+  #             message: Invalid query
+  #           properties:
+  #             message:
+  #               type: string
+  #               description: Reason for failure
+  #               example: Invalid query
+  #     security:
+  #       - Authorization: []
+  /connector:
+    get:
+      tags:
+        - Connector
+      summary: Get status of the connector
+      operationId: GetConnector
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ConnectorStatus'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '500':
+          description: Error response
+          schema:
+            type: object
+            example:
+              message: Unable to get status.
+            properties:
+              message:
+                type: string
+                description: Reason for failure
+                example: Unable to get status.
+      security:
+        - Authorization: []
+    put:
+      tags:
+        - Connector
+      summary: Enable/Disable connector
+      description: "Based on the 'enabled' query param, disables or enables the connector. When the connector is disabled, it stops synchronizing data with TrustFile until it is reenabled"
+      operationId: PutConnector
+      parameters:
+        - in: body
+          name: body
+          description: Contains boolean to enable or disable connector
+          schema:
+            example:
+              enabled: true
+            $ref: '#/definitions/ConnectoryPutBody'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ConnectorStatus'
+        '400':
+          description: Bad query response. e.g. if enabled property is not passed with a value in body
+          schema:
+            $ref: '#/definitions/BadQueryError'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '500':
+          description: Error response
+          schema:
+            type: object
+            example:
+              message: Unable to enable/disable connector
+            properties:
+              message:
+                type: string
+                description: Reason for failure
+                example: Unable to enable/disable connector
+      security:
+        - Authorization: []
+  /errors:
+    get:
+      tags:
+        - Errors
+      summary: Get connector errors
+      operationId: GetErrors
+      parameters:
+        - in: query
+          name: date
+          description: 'Retrieve errors occurring on or after this date. Default: retrieves all errors'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              errors:
+                type: object
+                properties:
+                  integration:
+                    type: array
+                    description: Errors due to throttling, timeouts/retries
+                    items:
+                      $ref: '#/definitions/ConnectorIntegrationError'
+                  connection:
+                    type: array
+                    description: Connection authorization errors
+                    items:
+                      $ref: '#/definitions/ConnectorConnectionError'
+                  system:
+                    type: array
+                    description: Internal issues (out of memory, database issues)
+                    items:
+                      $ref: '#/definitions/ConnectorSystemError'
+        '400':
+          description: "Bad query response"
+          schema:
+            $ref: '#/definitions/BadQueryError'
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '500':
+          description: Error response
+          schema:
+            $ref: '#/definitions/ConnectorLogError'
+      security:
+        - Authorization: []
+  /baditems:
+    get:
+      tags:
+        - BadItems
+      summary: Retrieve items that have errors or are malformed
+      operationId: GetBadItems
+      description: The connector should identify items that it receives that do not match the schema required by TrustFile. These items are stored and can be retrieved through GET to this route
+      parameters:
+        - in: query
+          name: date
+          description: 'Retrieve bad items errors occurring on or after this date. Default: retrieves all errors'
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - timestamp
+                    - message
+                  example:
+                    timestamp: "2015-07-06T22:26:28+00:00"
+                    message: "bad items"
+                    connectionId: ":ConnectionId"
+                    badItems: [{"itemId": "3002987","transactionDate": "2014-12-09T09:53:59","shipFromAddress":{"line1": "4077 West Clinton Avenue","City": "Fresno","State": "CA","Zip": "93722"},"shipToAddress":{"line1": "4077 West Clinton Avenue","city": "Fresno","state": "CA","zip": "93722"},"shippingAmount": 30.00,"shippingTax": 3.29,"salesAmount": 514.99,"salesTax": 42.36,"description": "Feenn Ruby Brooch","refund": false}, {"itemId": "3002988","transactionDate": "2014-12-09T09:54:02","shipFromAddress":{"line1": "4077 West Clinton Avenue","City": "Fresno","State": "CA","Zip": "93722"},"shipToAddress":{"line1": "4077 West Clinton Avenue","city": "Fresno","state": "CA","zip": "93722"},"shippingAmount": 30.00,"shippingTax": 3.29,"salesAmount": 514.99,"salesTax": 42.36,"description": "Feenn Ruby Brooch","refund": false}]
+                    friendlyMessage: "missing sales"
+                  properties:
+                    timestamp:
+                      type: string
+                      format: date-time
+                    message:
+                      type: string
+                    connectionId:
+                      type: string
+                      description: Used to identify the connection in the micro-service API. Also used to authorize access to a company when posting data to Trustfile
+                    badItems:
+                      type: array
+                      items:
+                        $ref: '#/definitions/Item'
+                    friendlyMessage:
+                      type: string
+        '401':
+          description: Authentication error response
+          schema:
+            $ref: '#/definitions/AuthError'
+        '500':
+          description: Error response
+          schema:
+            $ref: '#/definitions/ConnectorLogError'
+      security:
+        - Authorization: []
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Get health and availability of connector
+      description: "* Health check for connector, used for monitoring\n* Monitors verify all statuses report OK, or the health check will fail.\n* Will return an array of statuses of the three types: \n  * connector\n  * hostSystem\n  * trustfile\n* Possible statuses are: \n  * OK - nominal\n  * FAIL - integration point is non-responsive or failing\n  * DEGRADED - functional, but not functioning at full capacity\n"
+      operationId: GetConnectorHealth
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Health'
+        '500':
+          description: Error response
+          schema:
+            $ref: '#/definitions/HealthError'
+definitions:
+  AuthError:
+    type: object
+    example:
+      message: You are not authorized.
+    properties:
+      message:
+        type: string
+        example: 'You are not authorized'
+        description: Will be 'You are not authorized'
+  BadQueryError:
+    type: object
+    example:
+      message: "Missing connectionId"
+    properties:
+      message:
+        type: string
+        example: Missing connectionId
+        description: Reason for failure
+  ConnectorLogError:
+    type: object
+    example:
+      message: Unable to retrieve error logs
+    properties:
+      message:
+        type: string
+        description: Reason for failure
+        example: Unable to retrieve error logs
+  ConnectionId:
+    type: string
+    description: Used to identify the connection in the micro-service API
+  StartDate:
+    type: string
+    format: date
+    example: "5/1/10"
+    description: The connector will synchronize all the Sales / Tax data starting from the startDate into TrustFile. Must be a Date parseable string
+  ConnectionUpdate:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: Setting to true enables the connection; false disables the connection
+      connectionId:
+        $ref: '#/definitions/ConnectionId'
+        description: Changes the ConnectionId
+      startDate:
+        $ref: '#/definitions/StartDate'
+        description: Changes the date from which to begin syncing data
+  PostConnectionBody:
+    type: object
+    required:
+    - connectionId
+    - startDate
+    properties:
+      connectionId:
+        $ref: '#/definitions/ConnectionId'
+      startDate:
+        $ref: '#/definitions/StartDate'
+  ConnectionSummary:
+    type: object
+    example:
+      connectionId: aaaaa-aaaaa-aaaaa-aaaaaaa
+      startDate: '2015-09-30 17:00:00-07'
+      enabled: false
+    properties:
+      connectionId:
+        type: string
+      startDate:
+        $ref: '#/definitions/StartDate'
+      enabled:
+        type: boolean
+  ConnectionDetail:
+    type: object
+    example:
+      enabled: false
+      authorized: false
+      hostSystemIdentifier: "account 13222432"
+      startDate: "2015-07-06"
+      statusChangedAt: "2015-07-06T22:26:28+00:00"
+      lastSyncAt: "2015-07-06T22:26:28+00:00"
+      nextSyncAt: "2015-07-06T22:26:28+00:00"
+      statusMessage: "Trustfile is no longer authorized to access this Paypal account.  The connector has been disabled.  Reauthorize to re-nable synching."
+    properties:
+      enabled:
+        type: boolean
+        example: false
+      authorized:
+        type: boolean
+        example: false
+      hostSystemIdentifier:
+        type: string
+        description: The HostSystemIdentifier will be displayed to the user (if not null) in TF to identify which host account was used for this connector
+        example: account 13222432
+      startDate:
+        $ref: '#/definitions/StartDate'
+        example: '2015-07-06'
+      statusChangedAt:
+        type: string
+        format: date-time
+        example: '2015-07-06T22:26:28+00:00'
+      lastSyncAt:
+        type: string
+        format: date-time
+        example: '2015-07-06T22:26:28+00:00'
+      nextSyncAt:
+        type: string
+        format: date-time
+        example: '2015-07-06T22:26:28+00:00'
+      statusMessage:
+        type: string
+        description: The status message should be sufficient for the user to understand what state the connection is in and if there are any actions required of them to proceed.
+        example: Trustfile is no longer authorized to access this Paypal account.  The connector has been disabled.  Reauthorize to re-enable synching.
+  ConnectionActivity:
+    type: object
+    example:
+      timestamp: "2015-07-06T22:26:28+00:00"
+      action: "requested sales tax report for 6/2/2015"
+    properties:
+      timestamp:
+        type: string
+        format: date-time
+      action:
+        type: string
+  ConnectorStatus:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      userCount:
+        type: integer
+        format: int32
+  ConnectoryPutBody:
+    type: object
+    required:
+      - enabled
+    properties:
+      enabled:
+        type: boolean
+  ConnectorSystemError:
+    type: object
+    discriminator: type
+    required:
+      - type
+      - timestamp
+      - message
+    example:
+      type: "SYSTEM"
+      timestamp: "2015-07-06T22:26:28+00:00"
+      message: "% Memory Used met or exceeded 80%, increasing to 80% for 10 minutes at 02:30AM and continued until 06:20PM"
+    properties:
+      type:
+        type: string
+        enum:
+          - "SYSTEM"
+        description: 'Type will be "SYSTEM"'
+      timestamp:
+        type: string
+        format: date-time
+      message:
+        type: string
+  ConnectorIntegrationError:
+    type: object
+    discriminator: type
+    required:
+      - type
+      - timestamp
+      - message
+    example:
+      type: "INTEGRATION"
+      timestamp: "2015-07-06T22:26:28+00:00"
+      message: "request for token XYZ timed out"
+    properties:
+      type:
+        type: string
+        enum:
+          - "INTEGRATION"
+        description: 'Type will be "INTEGRATION"'
+      timestamp:
+        type: string
+        format: date-time
+      message:
+        type: string
+  ConnectorConnectionError:
+    type: object
+    discriminator: type
+    required:
+      - type
+      - timestamp
+      - message
+    example:
+      type: "CONNECTION"
+      timestamp: "2015-07-06T22:26:28+00:00"
+      message: "request for token ABC was throttled, retrying in 2 hours"
+    properties:
+      type:
+        type: string
+        enum:
+          - "CONNECTION"
+        description: 'Type will be "CONNECTION"'
+      timestamp:
+        type: string
+        format: date-time
+      message:
+        type: string
+  Item:
+    type: object
+    example:
+      itemId: "3002987"
+      transactionDate: "2014-12-09T09:53:59"
+      shipFromAddress:
+        line1: "4077 West Clinton Avenue"
+        city: "Fresno"
+        state: "CA"
+        zip: "93722"
+      shipToAddress:
+        line1: "4077 West Clinton Avenue"
+        city: "Fresno"
+        state: "CA"
+        zip: "93722"
+      shippingAmount: 30.00
+      shippingTax: 3.29
+      salesAmount: 514.99
+      salesTax: 42.36
+      description: "Feenn Ruby Brooch"
+      refund: false
+    properties:
+      itemId:
+        type: string
+        example: '3002987'
+      transactionDate:
+        type: string
+        format: date-time
+        example: '2014-12-09T09:53:59'
+      shipFromAddress:
+        $ref: '#/definitions/Address'
+      shipToAddress:
+        $ref: '#/definitions/Address'
+      shippingAmount:
+        type: number
+        format: double
+        example: 30
+      shippingTax:
+        type: number
+        format: double
+        example: 3.29
+      salesAmount:
+        type: number
+        format: double
+        example: 514.99
+      salesTax:
+        type: number
+        format: double
+        example: 42.36
+      description:
+        type: string
+        example: Feenn Ruby Brooch
+      refund:
+        type: boolean
+        example: false
+  Address:
+    type: object
+    required:
+    - line1
+    - city
+    - state
+    - zip
+    example:
+      "line1": '1000 W Main St'
+      "city": 'Seattle'
+      "state": 'WA'
+      "zip": '98101'
+    properties:
+      line1:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zip:
+        type: string
+  HealthError:
+    properties:
+      message:
+        type: string
+        example: 'Unable to get statuses'
+  HealthObject:
+    required:
+        - type
+        - status
+        - description
+    properties:
+      type:
+        type: string
+        enum:
+          - "connector"
+          - "hostSystem"
+          - "trustfile"
+        example: TrustFile
+      status:
+        type: string
+        enum:
+          - "OK"
+          - "FAIL"
+          - "DEGRADED"
+        example: OK
+      description:
+        type: string
+        example: NOMINAL
+  Health:
+    properties:
+      statuses:
+        type: array
+        items:
+          $ref: '#/definitions/HealthObject'
+    example:
+      stasues:
+        [{"type": "connector", "status": "OK", "description": "NOMINAL"},{"type": "hostSystem", "status": "OK", "description": "NOMINAL"},{"type": "trustfile", "status": "OK", "description": "NOMINAL"}]
