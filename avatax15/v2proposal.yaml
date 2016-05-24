@@ -1,6 +1,16 @@
 swagger: '2.0'
 info:
-  description: "This is a proposal for a v2 of the AvaTax REST API. This is a DESIGN DOCUMENT ONLY and is not intended to be used, since this API DOES NOT EXIST. 
+  description: "This is a proposal for a v2 of the AvaTax REST API. This is a DESIGN DOCUMENT ONLY and is not intended to be used, since this API DOES NOT EXIST. Following are the general API guidelines
+  
+    * Response body attributes shall use *camelCase* capitalization. Request body attributes shall also be camelCase and are case sensitive.
+    
+    * Primary key attribute for any resource shall always be *id*
+    
+    * Foreign keys shall be named *resourceNameId* e.g. *companyId*
+    
+    * Attributes that are common across resource areas shall be name identically, i.e. a name is always *name* and not e.g. *companyName*
+    
+    * Error responses shall be accompanied with a response body including a *message* attribute and if applicable, a *validationErrors* attribute whose keys correspond to the keys of the request body, and whose values consist of an array of error messages applying to the errant attribute.
     
     * All resources below map DIRECTLY to A16 resources. The request and response payloads are almost identical in format (but favor the flatter A15 style as opposed to the more nested A16 style), with allowances made for the different structures of A15 and A16. 
     
