@@ -1,0 +1,344 @@
+swagger: '2.0'
+info:
+  title: AvaTax for Communications - Geocoder Service
+  description: Documentation for using the AvaTax for Communication geocoding service
+  version: '1.0.0'
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, email requests to CommunicationSupport@avalara.com'
+    url: 'https://communications.avalara.com/'
+host: ezgeoasp.billsoft.com
+schemes:
+  - https
+produces:
+  - application/xml
+consumes:
+  - application/xml
+schemes:
+  - https
+x-ApiType: SOAP
+x-wsdlPath: "https://ezgeoasp.billsoft.com/LocatorService.svc?wsdl"
+x-basePath: "https://ezgeoasp.billsoft.com/LocatorService.svc"
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /LocatorService.svc?GeocodeAddress:
+    post:
+      description: This method accepts address information and determines exact location including PCode.
+      summary: GeocodeAddress
+      operationId: GeocodeAddress
+      parameters:
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
+          required: true
+          type: string
+        - in: body
+          description: GeocodeAddress SOAP Envelope
+          name: Envelope
+          required: true
+          schema:
+            $ref: '#/definitions/GeocodeAddressEnvelope'
+      responses:
+        '200':
+          description: A GeocodeAddressResult object that contains an AddressLocation object for the address supplied.
+        '400':
+          description: Bad Request
+  /LocatorService.svc?GeocodeLatLong:
+    post:
+      description: This method accepts longitude and latitude coordinates and determines exact location including PCode.
+      operationId: GeocodeLatLong
+      summary: GeocodeLatLong
+      parameters:
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
+          required: true
+          type: string
+        - in: body
+          name: Envelope
+          description: GeocodeLatLong Envelope
+          required: true
+          schema:
+            $ref: '#/definitions/GeocodeLatLongEnvelope'
+      responses:
+        '200':
+          description: A GeocodeLatLongResult object that contains geocode information about the address supplied.
+        '400':
+          description: Bad Request
+  /LocatorService.svc?GeocodeAllMatches:
+    post:
+      description: Get a list of address locations that match the street address information provided.
+      operationId: GeocodeAllMatches
+      summary: GeocodeAllMatches
+      parameters:
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
+          required: true
+          type: string
+        - in: body
+          name: Envelope
+          description: GeocodeAllMatches Envelope
+          required: true
+          schema:
+            $ref: '#/definitions/GeocodeAllMatchesEnvelope'
+      responses:
+        '200':
+          description: A GeocodeAllMatchesResult object that contains an array of AddressLocations limited in length to the supplied matchCount that match the input address information.
+        '400':
+          description: Bad Request
+  /LocatorService.svc?GetServerTime:
+    post:
+      description: Returns the time on the server of the AvaTax for Communications service.
+      summary: GetServerTime
+      operationId: GetServerTime
+      parameters:
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
+          required: true
+          type: string
+        - in: body
+          name: Envelope
+          description: GetServerTime SOAP Envelope
+          required: true
+          schema:
+            $ref: '#/definitions/GetServerTimeEnvelope'
+      responses:
+        '200':
+          description: The time on the AvaTax for Communications Web Service server.
+        '400':
+          description: Bad Request
+
+################################################################################
+#                                 Definitions                                  #
+################################################################################
+definitions:
+  Header:
+    description: 'The SOAP API uses standard security to authenticate the account or user.'
+    required:
+      - Security
+    properties:
+      Security:
+        $ref: '#/definitions/Security'
+    xml:
+      name: Header
+      prefix: 's'
+  Security:
+    description: 'SOAP element containing authentication strategy.'
+    required:
+      - UsernameToken
+    properties:
+      UsernameToken:
+        $ref: '#/definitions/UsernameToken'
+    xml:
+      name: Security
+      prefix: 'o'
+      namespace: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+  UsernameToken:
+    description: 'SOAP element containing username and password.'
+    required:
+      - Username
+      - Password
+    properties:
+      Username:
+        type: string
+        description: Username for accessing service.
+        xml:
+          name: Username
+          prefix: 'o'
+      Password:
+        type: string
+        description: Password for accessing service.
+        xml:
+          name: Password
+          prefix: 'o'
+  inputAddress:
+    xml:
+      name: inputAddress
+      namespace: "http://schemas.datacontract.org/2004/07/EZGeoSaaS"
+      prefix: a
+    properties:
+      CassCertify:
+        type: boolean
+        xml:
+          prefix: a
+      City:
+        type: string
+        xml:
+          prefix: a
+      CityStateZip:
+        type: string
+        xml:
+          prefix: a
+      MinimumScore:
+        type: number
+        format: float
+        xml:
+          prefix: a
+      Offset:
+        type: number
+        xml:
+          prefix: a
+      Options:
+        type: number
+        xml:
+          prefix: a
+      SecondaryUnit:
+        type: string
+        xml:
+          prefix: a
+      State:
+        type: string
+        xml:
+          prefix: a
+      StreetAddress:
+        type: string
+        xml:
+          prefix: a
+      Zip:
+        type: number
+        xml:
+          prefix: a
+  GeocodeAddressEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GeocodeAddressBody'
+  GeocodeAddressBody:
+    description: 'Container for the request payload.'
+    required:
+      - GeocodeAddressObject
+    properties:
+      GeocodeAddressObject:
+        $ref: '#/definitions/GeocodeAddressObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GeocodeAddressObject:
+    description: 'The object used for requesting a Geocode Address.'
+    required:
+      - inputAddress
+    properties:
+      inputAddress:
+        $ref: '#/definitions/inputAddress'
+    xml:
+      name: GeocodeAddress
+      prefix: tem
+      namespace: "http://tempuri.org/"
+  GeocodeLatLongEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GeocodeLatLongBody'
+  GeocodeLatLongBody:
+    description: 'Container for the request payload.'
+    required:
+      - GeocodeLatLongObject
+    properties:
+      GeocodeLatLongObject:
+        $ref: '#/definitions/GeocodeLatLongObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GeocodeLatLongObject:
+    description: 'The object used for requesting a Geocoded Latitude and Longitude.'
+    required:
+      - inputAddress
+    properties:
+      latitude:
+        type: number
+        format: float
+        xml:
+          prefix: tem
+      longitude:
+        type: number
+        format: float
+        xml:
+          prefix: tem
+    xml:
+      name: GeocodeLatLong
+      prefix: tem
+      namespace: "http://tempuri.org/"
+  GeocodeAllMatchesEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GeocodeAllMatchesBody'
+  GeocodeAllMatchesBody:
+    description: 'Container for the request payload.'
+    required:
+      - GeocodeAllMatchesObject
+    properties:
+      GeocodeAllMatchesObject:
+        $ref: '#/definitions/GeocodeAllMatchesObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GeocodeAllMatchesObject:
+    description: 'The object used for requesting all Geocode Address matches.'
+    required:
+      - inputAddress
+    properties:                      
+      inputAddress:
+        $ref: '#/definitions/inputAddress'
+    xml:
+      name: GeocodeAllMatches
+      prefix: tem
+      namespace: "http://tempuri.org/"
+  GetServerTimeEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GetServerTimeBody'
+  GetServerTimeBody:
+    description: 'Container for the request payload.'
+    required:
+      - GetServerTimeObject
+    properties:
+      GetServerTimeObject:
+        $ref: '#/definitions/GetServerTimeObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GetServerTimeObject:
+    description: 'The object used for requesting a the server time.'
+    xml:
+      name: GetServerTime
+      prefix: tem
+      namespace: "http://tempuri.org/"
