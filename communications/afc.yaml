@@ -1,9 +1,12 @@
----
 swagger: '2.0'
 info:
   title: AvaTax for Communications
-  description: An example of using the AvaTax for Communication web service
-  version: "1.0.0"
+  description: Documentation for using the AvaTax for Communication SOAP web service
+  version: '1.0.0'
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, email requests to CommunicationSupport@avalara.com'
+    url: 'https://communications.avalara.com/'
 host: eztaxasp.billsoft.com
 schemes:
   - https
@@ -12,332 +15,339 @@ produces:
   - application/xml
 consumes:
   - application/xml
+schemes:
+  - https
 x-ApiType: SOAP
-x-wsdlPath: "https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc?wsdl"
-x-basePath: "https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc"
+x-wsdlPath: 'https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc?wsdl'
+x-basePath: 'https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc'
+
+################################################################################
+#                                           Paths                              #
+################################################################################
 paths:
   /EZTaxWebService.svc?NpaNxxToPCode:
     post:
-      description: Returns the `PCode` that corresponds to an `NpaNxx` value.
+      summary: NpaNxxToPCode
       operationId: NpaNxxToPCode
-      summary: This method returns the PCode for the specified NpaNxx value.  If the NpaNxx value is invalid or has no EZtax jurisdiction the return will be NULL.
+      description: This method returns the PCode for the specified NpaNxx value. If the NpaNxx value is invalid or has no EZtax jurisdiction the return will be NULL. Returns the `PCode` that corresponds to an `NpaNxx` value.
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/NpaNxxToPCode"
-        - name: NpaNxxToPCodeRequest
-          in: body
+        - in: body
+          description: NpaNxxToPCode SOAP Envelope
+          name: Envelope
           required: true
-          description: NpaNxxToPCodeRequest object
           schema:
-            $ref: '#/definitions/NpaNxxToPCodeRequest'
+            $ref: '#/definitions/NpaNxxToPCodeEnvelope'
       responses:
         '200':
           description: A nullable unsigned `int` for the `PCode`.
         '400':
-          description: 'Bad Request'
-      tags:
-        - Utility
+          description: Bad Request
   /EZTaxWebService.svc?GetTaxRates:
     post:
-      description: Returns the tax rate information for a jurisdiction.
+      description: Determines the tax rate information for a jurisdiction identified by the input PCode.
       operationId: GetTaxRates
-      summary: Determines the tax rate information for a jurisdiction identified by the input PCode.
+      summary: GetTaxRates
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
+          description: Required header value to identify the web method
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/GetTaxRates"
-        - name: GetTaxRatesRequest
-          in: body
-          description: GetTaxRatesRequest object
+        - in: body
+          name: GetTaxRatesEnvelope
+          description: GetTaxRates SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/GetTaxRatesRequest'
+            $ref: '#/definitions/GetTaxRatesEnvelope'
       responses:
         '200':
           description: Tax Rate information for a jurisdiction.
         '400':
-          description: 'Bad Request'
-      tags:
-        - Utility
+          description: Bad Request
   /EZTaxWebService.svc?GetAddress:
     post:
-      description: Returns an array of addresses that correspond to a `PCode`
+      description: This method returns the addresses for the specified jurisdiction.  If the jurisdiction is invalid, the return will be NULL.
       operationId: GetAddress
-      summary: This method returns the addresses for the specified jurisdiction.  If the jurisdiction is invalid, the return will be NULL.
+      summary: GetAddress
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/GetAddress"
-        - name: GetAddressRequest
-          in: body
-          description: GetAddressRequest object
+        - in: body
+          name: GetAddressEnvelope
+          description: GetAddress SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/GetAddressRequest'
+            $ref: '#/definitions/GetAddressEnvelope'
       responses:
         '200':
-          description: An array of `AddressData` objects that contain the addresses for the jurisdiction specified by the supplied `PCode`.
+          description: An array of `AddressData` objects.
         '400':
-          description: 'Bad Request'
-      tags:
-        - Utility
+          description: Bad Request
   /EZTaxWebService.svc?GetVersion:
     post:
-      description: Returns the version of the AvaTax for Communications service.
+      description: Returns the current version of the AvaTax for Communications service.
       operationId: GetVersion
-      summary: This method returns the time on the AvaTax for Communications Web Service.
+      summary: GetVersion
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/GetVersion"
-        - name: GetVersionRequest
-          in: body
-          description: GetVersionRequest object
+        - in: body
+          name: GetVersionEnvelope
+          description: GetVersion SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/GetVersionRequest'
+            $ref: '#/definitions/GetVersionEnvelope'
       responses:
         '200':
-          description: The time on the AvaTax for Communications Web Service server.
+          description: The current version of AvaTax for Communications.
         '400':
-          description: 'Bad Request'
-      tags:
-        - Utility
+          description: Bad Request
   /EZTaxWebService.svc?CalcTaxesWithPCode:
     post:
-      description: Calculate taxes on supplied telecom transaction using `PCode`.
+      description: This method accepts transaction data and performs appropriate tax calculations.  Origination, Termination, and Bill To information is passed using PCodes.
       operationId: CalcTaxesWithPCode
-      summary: This method accepts transaction data and performs appropriate tax calculations.  Origination, Termination, and Bill To information is passed using PCodes.
+      summary: CalcTaxesWithPCode
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcTaxesWithPCode"
-        - name: CalcTaxesWithPCodeRequest
-          in: body
-          description: CalcTaxesWithPCodeRequest object
+        - in: body
+          name: CalcTaxesWithPCodeEnvelope
+          description: CalcTaxesWithPCode SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcTaxesWithPCodeRequest'
+            $ref: '#/definitions/CalcTaxesWithPCodeEnvelope'
       responses:
-        "200":
-          description: An array of TaxData objects that contain the information about the taxes applied.
-      tags:
-        - Telecom
+        '200':
+          description: An array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcAdjWithNpaNxx:
     post:
-      description: Calculate taxes on supplied telecom transaction using `NpaNxx`.
+      description: This method accepts transaction data and performs appropriate tax calculations.  Origination, Termination, and Bill To information is passed using NpaNxx.
       operationId: CalcAdjWithNpaNxx
-      summary: This method accepts transaction data and performs appropriate tax calculations.  Origination, Termination, and Bill To information is passed using NpaNxx.
+      summary: CalcAdjWithNpaNxx
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcAdjWithNpaNxx"
-        - name: CalcAdjWithNpaNxxRequest
-          in: body
-          description: CalcAdjWithNpaNxxRequest object
+          default: 'http://tempuri.org/IEZTaxWebService/CalcAdjWithNpaNxx'
+        - in: body
+          name: CalcAdjWithNpaNxxEnvelope
+          description: CalcAdjWithNpaNxx SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcAdjWithNpaNxxRequest'
+            $ref: '#/definitions/CalcAdjWithNpaNxxEnvelope'
       responses:
-        "200":
-          description: An array of TaxData objects that contain the information about the taxes applied.
-      tags:
-        - Telecom
+        '200':
+          description: An array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcReverseAdjWithFipsCode:
     post:
-      description: Performs a reverse adjustment to arrive at the base sale amount and taxes for the desired total charge using Fips Codes.
+      description: This method accepts transaction data and performs reverse adjustments in order to arrive at the base sale amount and taxes for the desired total charge. Origination, Termination, and Bill To information is passed using Fips Codes.
       operationId: CalcReverseAdjWithFipsCode
-      summary: This method accepts transaction data and performs reverse adjustments in order to arrive at the base sale amount and taxes for the desired total charge. Origination, Termination, and Bill To information is passed using Fips Codes.
+      summary: CalcReverseAdjWithFipsCode
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcReverseAdjWithFipsCode"
-        - name: CalcReverseAdjWithFipsCodeRequest
-          in: body
-          description: CalcReverseAdjWithFipsCodeRequest object
+        - in: body
+          name: CalcReverseAdjWithFipsCodeEnvelope
+          description: CalcReverseAdjWithFipsCode SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcReverseAdjWithFipsCodeRequest'
+            $ref: '#/definitions/CalcReverseAdjWithFipsCodeEnvelope'
       responses:
-        "200":
-          description: Contains the calculated base sale amount for the transaction and an array of TaxData objects that contain the information about the taxes applied.
-      tags:
-        - Telecom
+        '200':
+          description: The calculated base sale amount and an array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcProRatedTaxes:
     post:
-      description: Accepts a pro-rated percentage that is used to calculate the taxable amount on the transaction and perform tax calculations.
+      description: Accepts a pro-rated percentage that is used to calculate the taxable amount on the transaction and perform tax calculations. Bill To, Origination and Termination may be entered as PCode, FIPS Codes, ZipAddress or NpaNxx.
       operationId: CalcProRatedTaxes
-      summary: Accepts a pro-rated percentage that is used to calculate the taxable amount on the transaction and perform tax calculations. Bill To, Origination and Termination may be entered as PCode, FIPS Codes, ZipAddress or NpaNxx.
+      summary: CalcProRatedTaxes
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcProRatedTaxes"
-        - name: CalcProRatedTaxesRequest
-          in: body
-          description: CalcProRatedTaxesRequest object
+        - in: body
+          name: CalcProRatedTaxesEnvelope
+          description: CalcProRatedTaxes SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcProRatedTaxesRequest'
+            $ref: '#/definitions/CalcProRatedTaxesEnvelope'
       responses:
-        "200":
-          description: An array of TaxData objects that contain the information about the taxes applied.
-      tags:
-        - Telecom
+        '200':
+          description: An array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcJurisdiction:
     post:
       description: Determines the taxing jurisdiction for a transaction and returns the PCode at the lowest jurisdiction level.
       operationId: CalcJurisdiction
-      summary: Determines the taxing jurisdiction for a transaction and returns the PCode at the lowest jurisdiction level.
+      summary: CalcJurisdiction
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcJurisdiction"
-        - name: CalcJurisdictionRequest
-          in: body
-          description: CalcJurisdictionRequest object
+        - in: body
+          name: CalcJurisdictionEnvelope
+          description: CalcJurisdiction SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcJurisdictionRequest'
+            $ref: '#/definitions/CalcJurisdictionEnvelope'
       responses:
-        "200":
+        '200':
           description: PCode for taxing jurisdiction.
-      tags:
-        - Telecom
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcTaxesWithOverrides:
     post:
-      description: Calculate taxes with overrides on supplied telecom transaction using PCode, Fips Code, NpaNxx, or Zip Address.
+      description: This method accepts transaction and override data and performs appropriate tax calculations. Origination, Termination, and Bill To information is passed using PCode, Fips Code, NpaNxx, or ZipAddress.
       operationId: CalcTaxesWithOverrides
-      summary: This method accepts transaction and override data and performs appropriate tax calculations. Origination, Termination, and Bill To information is passed using PCode, Fips Code, NpaNxx, or ZipAddress.
+      summary: CalcTaxesWithOverrides
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcTaxesWithOverrides"
-        - name: CalcTaxesWithOverridesRequest
-          in: body
-          description: CalcTaxesWithOverridesRequest object
+        - in: body
+          name: CalcTaxesWithOverridesEnvelope
+          description: CalcTaxesWithOverrides SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcTaxesWithOverridesRequest'
+            $ref: '#/definitions/CalcTaxesWithOverridesEnvelope'
       responses:
-        "200":
-          description: An array of TaxData objects that contain the information about the taxes applied.
-      tags:
-        - Telecom
+        '200':
+          description: An array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcTaxesInCustMode:
     post:
       description: Processes a batch of telecom and/or sales and use transactions and adjustments in customer mode.
       operationId: CalcTaxesInCustMode
-      summary: This method processes a batch of telecom and/or sales and use transactions and adjustments in customer mode.
+      summary: CalcTaxesInCustMode
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcTaxesInCustMode"
-        - name: CalcTaxesInCustModeRequest
-          in: body
-          description: CalcTaxesInCustModeRequest object
+        - in: body
+          name: CalcTaxesInCustModeEnvelope
+          description: CalcTaxesInCustMode SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcTaxesInCustModeRequest'
+            $ref: '#/definitions/CalcTaxesInCustModeEnvelope'
       responses:
-        "200":
-          description: Data structure containing an array of TaxData objects for each individual transaction processed and CustomerTaxData array containing the summarized taxes for the customer batch.
-      tags:
-        - Telecom
+        '200':
+          description: An array of TaxData objects.
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?BeginCustomerBatch:
     post:
-      description: Flags the beginning of a customer transaction batch.
+      description: This method flags the beginning of a customer transaction batch and returns a customer batch ID that can be used to submit each transaction and process the entire batch.
       operationId: BeginCustomerBatch
-      summary: This method flags the beginning of a customer transaction batch and returns a customer batch ID that can be used to submit each transaction and process the entire batch.
+      summary: BeginCustomerBatch
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/BeginCustomerBatch"
-        - name: BeginCustomerBatchRequest
-          in: body
-          description: BeginCustomerBatchRequest object
+        - in: body
+          name: BeginCustomerBatchEnvelope
+          description: BeginCustomerBatch SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/BeginCustomerBatchRequest'
+            $ref: '#/definitions/BeginCustomerBatchEnvelope'
       responses:
-        "200":
+        '200':
           description: A unique identifier for the customer batch.
-      tags:
-        - Telecom
+        '400':
+          description: Bad Request
   /EZTaxWebService.svc?CalcCustAdj:
     post:
       description: Submits an adjustment for the specified customer batch.
       operationId: CalcCustAdj
-      summary: Submits a single adjustment to be processed for a customer batch.
+      summary: CalcCustAdj
       parameters:
-        - name: SOAPAction
-          in: header
+        - in: header
+          name: SOAPAction
           required: true
           type: string
-          default: "http://tempuri.org/IEZTaxWebService/CalcCustAdj"
-        - name: CalcCustAdjRequest
-          in: body
-          description: CalcCustAdjRequest object
+        - in: body
+          name: CalcCustAdjEnvelope
+          description: CalcCustAdj SOAP Envelope
           required: true
           schema:
-            $ref: '#/definitions/CalcCustAdjRequest'
+            $ref: '#/definitions/CalcCustAdjEnvelope'
       responses:
-        "200":
+        '200':
           description: Boolean indicating success or failure.
-      tags:
-        - Telecom
+        '400':
+          description: Bad Request
+
+################################################################################
+#                                 Definitions                                  #
+################################################################################
 definitions:
-  BasicHeader:
-    xml:
-      prefix: s
-    type: object
+  Header:
+    description: 'The SOAP API uses standard security to authenticate the account or user.'
+    required:
+      - Security
     properties:
       Security:
-        type: object
+        $ref: '#/definitions/Security'
+    xml:
+      name: Header
+      prefix: 's'
+  Security:
+    description: 'SOAP element containing authentication strategy.'
+    required:
+      - UsernameToken
+    properties:
+      UsernameToken:
+        $ref: '#/definitions/UsernameToken'
+    xml:
+      name: Security
+      prefix: 'o'
+      namespace: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+  UsernameToken:
+    description: 'SOAP element containing username and password.'
+    required:
+      - Username
+      - Password
+    properties:
+      Username:
+        type: string
+        description: Username for accessing service.
         xml:
-          namespace: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-          prefix: o
-        properties:
-          UsernameToken:
-            xml:
-              prefix: o
-            type: object
-            properties:
-              UserName:
-                type: string
-                xml:
-                  prefix: o
-              Password:
-                type: string
-                xml:
-                  prefix: o
+          name: Username
+          prefix: 'o'
+      Password:
+        type: string
+        description: Password for accessing service.
+        xml:
+          name: Password
+          prefix: 'o'
   Transaction:
     xml:
-      namespace: "http://schemas.datacontract.org/2004/07/EZTaxWebService"
+      namespace: 'http://schemas.datacontract.org/2004/07/EZTaxWebService'
       prefix: a
     properties:
       BillToPCode:
@@ -400,7 +410,7 @@ definitions:
           prefix: a
   Adjustment:
     xml:
-      namespace: "http://schemas.datacontract.org/2004/07/EZTaxWebService"
+      namespace: 'http://schemas.datacontract.org/2004/07/EZTaxWebService'
       prefix: a
     properties:
       BillToNpaNxx:
@@ -450,63 +460,91 @@ definitions:
         xml:
           prefix: a
   OverrideList:
-    type: object
     xml:
-      namespace: "http://schemas.datacontract.org/2004/07/EZTaxWebService.WrapperClasses"
+      namespace: 'http://schemas.datacontract.org/2004/07/EZTaxWebService'
       prefix: a
+    required:
+      - TaxRateOverrideInfo
     properties:
       TaxRateOverrideInfo:
-        type: object
-        xml:
-          prefix: a
-        properties:
-          BracketInfo:
-            type: object
-            xml:
-              prefix: a
-            properties:
-              TaxBracketInfo:
-                type: object
-                xml:
-                  prefix: a
-                properties:
-                  CountyOverrideOn:
-                    type: boolean
-                  CountyOverrideTax:
-                    type: number
-                  MaxBase:
-                    type: number
-                  Rate:
-                    type: number
-                    format: float
-                  StateOverrideOn:
-                    type: boolean
-                  StateOverrideTax:
-                    type: number
-          LevelExemptible:
-            type: boolean
-            xml:
-              prefix: a
-          Pcode:
-            type: number
-            xml:
-              prefix: a
-          Scope:
-            type: number
-            xml:
-              prefix: a
-          TaxLevel:
-            type: number
-            xml:
-              prefix: a
-          TaxType:
-            type: number
-            xml:
-              prefix: a
-  Exclusion:
-    type: object
+        $ref: '#/Definitions/TaxRateOverrideInfo'
+  TaxRateOverrideInfo:
     xml:
       prefix: a
+    required:
+      - TaxBracketInfo
+      - LevelExemptible
+      - Pcode
+      - Scope
+      - TaxLevel
+      - TaxType
+    properties:
+      TaxBracketInfo:
+        $ref: '#/Definitions/TaxBracketInfo'
+      LevelExemptible:
+        type: boolean
+        xml:
+          prefix: a
+      Pcode:
+        type: number
+        xml:
+          prefix: a
+      Scope:
+        type: number
+        xml:
+          prefix: a
+      TaxLevel:
+        type: number
+        xml:
+          prefix: a
+      TaxType:
+        type: number
+        xml:
+          prefix: a
+  TaxBracketInfo:
+    xml:
+      prefix: a
+    required:
+      - CountyOverrideOn
+      - CountyOverrideTax
+      - MaxBase
+      - Rate
+      - StateOverrideOn
+      - StateOverrideTax
+    properties:
+      CountyOverrideOn:
+        type: boolean
+        xml:
+          prefix: a
+      CountyOverrideTax:
+        type: number
+        xml:
+          prefix: a
+      MaxBase:
+        type: number
+        xml:
+          prefix: a
+      Rate:
+        type: number
+        format: float
+        xml:
+          prefix: a
+      StateOverrideOn:
+        type: boolean
+        xml:
+          prefix: a
+      StateOverrideTax:
+        type: number
+        xml:
+          prefix: a
+  Exclusion:
+    xml:
+      namespace: 'http://schemas.datacontract.org/2004/07/EZTaxWebService'
+      prefix: a
+    required:
+      - CountryISO
+      - ExclusionOn
+      - State
     properties:
       CountryISO:
         type: string
@@ -520,335 +558,457 @@ definitions:
         type: string
         xml:
           prefix: a
-  NpaNxxToPCodeRequest:
-    type: object
+  NpaNxxToPCodeEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              NpaNxxToPCode:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  anNpaNxx:
-                    description: The NpaNxx value.
-                    type: number
-                    xml:
-                      prefix: tem
-  GetTaxRatesRequest:
-    type: object
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/NpaNxxToPCodeBody'
+  NpaNxxToPCodeBody:
+    description: 'Container for the request payload.'
+    required:
+      - NpaNxxToPCodeObject
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              GetTaxRates:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aPCode:
-                    description: PCode for taxing jurisdiction.
-                    type: number
-                    xml:
-                      prefix: tem
-  GetAddressRequest:
-    type: object
+      NpaNxxToPCodeObject:
+        $ref: '#/definitions/NpaNxxToPCodeObject'
+    xml:
+      name: Body
+      prefix: 's'
+  NpaNxxToPCodeObject:
+    description: 'The object used for converting an NpaNxx to PCode.'
+    required:
+      - anNpaNxx
     properties:
-      Envelope:
-        type: object
+      anNpaNxx:
+        type: number
+        format: integer
         xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              GetAddress:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aPCode:
-                    description: The PCode for the desired jurisdiction.
-                    type: number
-                    xml:
-                      prefix: tem
-  GetVersionRequest:
-    type: object
+          prefix: tem
+    xml:
+      name: NpaNxxToPCode
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  GetTaxRatesEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              GetVersion:
-                type: string
-                description: No input parameters.
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-  CalcTaxesWithPCodeRequest:
-    type: object
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GetTaxRatesBody'
+  GetTaxRatesBody:
+    description: 'Container for the request payload.'
+    required:
+      - GetTaxRatesObject
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcTaxesWithPCode:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
-  CalcAdjWithNpaNxxRequest:
-    type: object
+      GetTaxRatesObject:
+        $ref: '#/definitions/GetTaxRatesObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GetTaxRatesObject:
+    description: 'The object used for getting tax rates.'
+    required:
+      - PCode
     properties:
-      Envelope:
-        type: object
+      PCode:
+        type: number
+        format: integer
         xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcAdjWithNpaNxx:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  anAdjustment:
-                    $ref: '#/definitions/Adjustment'
-  CalcReverseAdjWithFipsCodeRequest:
-    type: object
+          prefix: tem
+    xml:
+      name: GetTaxRates
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  GetAddressEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcReverseAdjWithFipsCode:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
-  CalcProRatedTaxesRequest:
-    type: object
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GetAddressBody'
+  GetAddressBody:
+    description: 'Container for the request payload.'
+    required:
+      - GetAddressObject
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcProRatedTaxes:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
-  CalcJurisdictionRequest:
-    type: object
+      GetAddressObject:
+        $ref: '#/definitions/GetAddressObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GetAddressObject:
+    description: 'The object used for getting an address.'
+    required:
+      - aPCode
     properties:
-      Envelope:
-        type: object
+      aPCode:
+        type: number
+        format: integer
         xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcJurisdiction:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
-  CalcTaxesWithOverridesRequest:
-    type: object
+          prefix: tem
+    xml:
+      name: GetAddress
+      prefix: tem
+      namespace: "http://tempuri.org/"
+  GetVersionEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcTaxesWithOverrides:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
-                  overrideList:
-                    $ref: '#/definitions/OverrideList'
-  CalcTaxesInCustModeRequest:
-    type: object
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/GetVersionBody'
+  GetVersionBody:
+    description: 'Container for the request payload.'
+    required:
+      - GetVersionObject
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcTaxesInCustMode:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  transactions:
-                    type: object
-                    properties:
-                      Transaction:
-                        $ref: '#/definitions/Transaction'
-                  adjustments:
-                    type: object
-                    properties:
-                      Transaction:
-                        $ref: '#/definitions/Adjustment'
-                  exclusions:
-                    type: object
-                    properties:
-                      Transaction:
-                        $ref: '#/definitions/Exclusion'
-  BeginCustomerBatchRequest:
-    type: object
+      GetVersionObject:
+        $ref: '#/definitions/GetVersionObject'
+    xml:
+      name: Body
+      prefix: 's'
+  GetVersionObject:
+    description: 'The object used for getting the version.'
+    xml:
+      name: GetVersion
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcTaxesWithPCodeEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              BeginCustomerBatch:
-                type: string
-                description: No input parameters.
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-  CalcCustAdjRequest:
-    type: object
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcTaxesWithPCodeBody'
+  CalcTaxesWithPCodeBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcTaxesWithPCodeObject
     properties:
-      Envelope:
-        type: object
-        xml:
-          namespace: "http://schemas.xmlsoap.org/soap/envelope/"
-          prefix: s
-        properties:
-          Header:
-            $ref: '#/definitions/BasicHeader'
-          Body:
-            xml:
-              prefix: s
-            type: object
-            properties:                      
-              CalcCustAdj:
-                type: object
-                xml:
-                  namespace: "http://tempuri.org/"
-                  prefix: tem
-                properties:
-                  aTransaction:
-                    $ref: '#/definitions/Transaction'
+      CalcTaxesWithPCodeObject:
+        $ref: '#/definitions/CalcTaxesWithPCodeObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcTaxesWithPCodeObject:
+    description: 'The object used for calculating taxes with PCode.'
+    required:
+      - aTransaction
+    properties:
+      aTransaction:
+        $ref: '#/definitions/Transaction'
+    xml:
+      name: CalcTaxesWithPCode
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcAdjWithNpaNxxEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcAdjWithNpaNxxBody'
+  CalcAdjWithNpaNxxBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcAdjWithNpaNxxObject
+    properties:
+      CalcAdjWithNpaNxxObject:
+        $ref: '#/definitions/CalcAdjWithNpaNxxObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcAdjWithNpaNxxObject:
+    description: 'The object used for calculating adjustments with NpaNxx.'
+    required:
+      - anAdjustment
+    properties:
+      anAdjustment:
+        $ref: '#/definitions/Adjustment'
+    xml:
+      name: CalcAdjWithNpaNxx
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcReverseAdjWithFipsCodeEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcReverseAdjWithFipsCodeBody'
+  CalcReverseAdjWithFipsCodeBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcReverseAdjWithFipsCodeObject
+    properties:
+      CalcReverseAdjWithFipsCodeObject:
+        $ref: '#/definitions/CalcReverseAdjWithFipsCodeObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcReverseAdjWithFipsCodeObject:
+    description: 'The object used for calculating reverse taxes with a FIPS code.'
+    required:
+      - anAdjustment
+    properties:
+      anAdjustment:
+        $ref: '#/definitions/Adjustment'
+    xml:
+      name: CalcReverseAdjWithFipsCode
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcProRatedTaxesEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcProRatedTaxesBody'
+  CalcProRatedTaxesBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcProRatedTaxesObject
+    properties:
+      CalcProRatedTaxesObject:
+        $ref: '#/definitions/CalcProRatedTaxesObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcProRatedTaxesObject:
+    description: 'The object used for calculating pro rated taxes.'
+    required:
+      - aTransaction
+    properties:
+      aTransaction:
+        $ref: '#/definitions/Transaction'
+    xml:
+      name: CalcProRatedTaxes
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcJurisdictionEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcJurisdictionBody'
+  CalcJurisdictionBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcJurisdictionObject
+    properties:
+      CalcJurisdictionObject:
+        $ref: '#/definitions/CalcJurisdictionObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcJurisdictionObject:
+    description: 'The object used for determining jurisdiction.'
+    required:
+      - transaction
+    properties:
+      transaction:
+        $ref: '#/definitions/Transaction'
+    xml:
+      name: CalcJurisdiction
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcTaxesWithOverridesEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcTaxesWithOverridesBody'
+  CalcTaxesWithOverridesBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcTaxesWithOverridesObject
+    properties:
+      CalcTaxesWithOverridesObject:
+        $ref: '#/definitions/CalcTaxesWithOverridesObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcTaxesWithOverridesObject:
+    description: 'The object used for calculating taxes with overrides.'
+    required:
+      - aTransaction
+      - overrideList
+    properties:
+      aTransaction:
+        $ref: '#/definitions/Transaction'
+      overrideList:
+        $ref: '#/definitions/OverrideList'
+    xml:
+      name: CalcTaxesWithOverrides
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcTaxesInCustModeEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcTaxesInCustModeBody'
+  CalcTaxesInCustModeBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcTaxesInCustModeObject
+    properties:
+      CalcTaxesInCustModeObject:
+        $ref: '#/definitions/CalcTaxesInCustModeObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcTaxesInCustModeObject:
+    description: 'The object used for calculating taxes in customer mode.'
+    required:
+      - aTransaction
+      - overrideList
+    properties:
+      transactions:
+        $ref: '#/definitions/Transaction'
+      adjustments:
+        $ref: '#/definitions/Adjustment'
+      exclusions:
+        $ref: '#/definitions/Exclusion'
+    xml:
+      name: CalcTaxesInCustMode
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  BeginCustomerBatchEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BeginCustomerBatchBody'
+  BeginCustomerBatchBody:
+    description: 'Container for the request payload.'
+    required:
+      - BeginCustomerBatchObject
+    properties:
+      BeginCustomerBatchObject:
+        $ref: '#/definitions/BeginCustomerBatchObject'
+    xml:
+      name: Body
+      prefix: 's'
+  BeginCustomerBatchObject:
+    description: 'The object used for starting a batch calculation.'
+    required:
+      - transaction
+    properties:
+      transaction:
+        $ref: '#/definitions/Transaction'
+    xml:
+      name: BeginCustomerBatch
+      prefix: tem
+      namespace: 'http://tempuri.org/'
+  CalcCustAdjEnvelope:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: 'http://schemas.xmlsoap.org/soap/envelope/'
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/CalcCustAdjBody'
+  CalcCustAdjBody:
+    description: 'Container for the request payload.'
+    required:
+      - CalcCustAdjObject
+    properties:
+      CalcCustAdjObject:
+        $ref: '#/definitions/CalcCustAdjObject'
+    xml:
+      name: Body
+      prefix: 's'
+  CalcCustAdjObject:
+    description: 'The object used for calculating a single batch.'
+    required:
+      - aTransaction
+    properties:
+      aTransaction:
+        $ref: '#/definitions/Transaction'
+    xml:
+      name: CalcCustAdj
+      prefix: tem
+      namespace: 'http://tempuri.org/'
