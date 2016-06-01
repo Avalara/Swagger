@@ -1,0 +1,231 @@
+swagger: "2.0"
+info:
+  version: "3.0.0"
+  title: TrustFile Provisioning API
+  description: |
+    Signup endpoints for TrustFile.  Provision users via API or add an iframe to a landing page with a signup form.
+  
+    #### Testing:
+    Test this endpoint @ https://stable.trustfile.avalara.com
+    
+    #### Security:
+    Authentication/Auth header is not required for either endpoint
+    
+    #### CORS:
+    Access-Control-Allow-Headers: X-Requested-With
+    
+  contact:
+    name: Trustfile API Support
+    url: trustfile.com
+    email: api@trustfile.com
+host: app.trustfile.avalara.com
+basePath: /v3
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /companies:
+    post:
+      tags:
+        - Api
+      operationId: PostCompanySignup
+      summary: Company signup via API POST
+      description: >
+        * All data is expected in the request body in a flat JSON format.
+
+        * User Fields: firstName lastName
+
+        * Company fields: companyName companyPhone companyLine1
+        companyLine2 companyLine3 companyCity companyZip companyState
+        companyCountry
+
+        * Optional Lead fields: campaignId lsmr integratorId salesUserId
+        salesUserEmail
+
+        * The new user will receive an email to set their password
+      
+        * user.connectionId will only be passed if the user completes the required fields AND provides a company address
+        
+      parameters:
+        - in: body
+          name: body
+          description: Company signup object
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+            example:
+              "email": "test.me@gmail.com"
+              "firstName": "firstname"
+              "lastName": "lastname"
+              "companyPhone": "4258776015"
+              "companyName": "Best Company Ever"
+              "companyLine1": "street address"
+              "companyCity": "city"
+              "companyZip": "98101"
+              "companyState": "WA"
+              "campaignId": "2"
+            properties:
+              email:
+                type: string
+                example: test.me@gmail.com
+              firstName:
+                type: string
+              lastName:
+                type: string
+              companyName:
+                type: string
+              companyPhone:
+                type: string
+              companyLine1:
+                type: string
+              companyLine2:
+                type: string
+              companyLine3:
+                type: string
+              companyState:
+                type: string
+              companyCity:
+                type: string
+              companyZip:
+                type: string
+              companyCountry:
+                type: string
+              campaignId:
+                type: string
+              lsmr:
+                type: string
+              integratorId:
+                type: string
+              salesUserId:
+                type: string
+              salesUserEmail:
+                type: string
+      responses:
+        '200':
+          description: "User creation successful response"
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  displayName:
+                    type: string
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+                    description: Hashed password
+                  connectionId:
+                    type: string
+                    description: connectionId. Will not be passed if the address is incomplete.
+                  accountSetup:
+                    type: boolean
+                  lastLoginAt:
+                    type: string
+                    format: date-time
+                  accountCreated:
+                    type: string
+                    format: date-time
+                  tos:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  company:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      isFba:
+                        type: boolean
+                      syncDate:
+                        type: string
+                        format: date-time
+                      fein:
+                        type: string
+                      phone:
+                        type: string
+                      fax:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+              notification:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  options:
+                    type: object
+                    properties:
+                      level:
+                        type: string
+        '400':
+          description: "User creation failure response"
+          schema:
+            type: object
+            example:
+              user: null
+              notification:
+                message: There was a problem creating your account. User could not be created.
+                options:
+                  level: error
+            properties:
+              user:
+                type: string
+                description: "Will be null for failed creation"
+              notification:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+                  options:
+                    type: object
+                    properties:
+                      level:
+                        type: string
+  /signup:
+    get:
+      tags:
+      - Iframe
+      operationId: GetIframeCompanySignup
+      summary: Company signup via website iFrame
+      description: |
+        Include code in your landing page to add a TrustFile signup form that passes CampaignId and Lsmr (via query) for campaign attribution to Eloqua.
+
+        An example of the embedded iframe can be found [here](https://trustfile.avalara.com/signup). An example of the page with the javascript code that passes the CampaignId and Lsmr can be found in this [gist](https://gist.github.com/anonymous/59ba103cd495fa69e3d3).
+        
+        If you desire, you can make a signup form yourself instead of the iFrame and pass the same query parameters.
+      externalDocs:
+        description: Example html/js code
+        url: https://gist.github.com/anonymous/b9768c9e7419539105f3
+      parameters:
+        - in: query
+          name: campaignId
+          description: CampaignId to pass to TrustFile. This is provided by Avalara Marketing to attribute the signup to the campaign
+          type: string
+        - in: query
+          name: lsmr
+          description: Lsmr to pass to TrustFile. This is provided by Avalara Marketing
+          type: string
+      responses:
+        '200':
+          description: Success response

@@ -1,0 +1,421 @@
+swagger: '2.0'
+info:
+  version: 3.0.0
+  title: TrustFile API
+  description: |
+    API for posting sales / refunds / freight into TrustFile
+    
+    #### Testing:
+
+    * Test this endpoint @ https://stable-api.trustfile.avalara.com:443 
+    * To test this endpoint, you'll need the connectorToTFToken
+    * Contact apis@trustfile.com to signup as an integrator and schedule certification
+
+    #### Tokens:
+    * connectorToTFToken: identifies the connector and restricts access to environments / version of TrustFile API the connector is certified for
+    * connectionId: identifies and authorizes access to the TF connection to push data into
+    
+    #### Security:
+    Authorization is done through header param
+    
+    ```
+    Authorization: Bearer connectorToTFToken
+    ```
+  contact:
+    name: Trustfile API Support
+    url: trustfile.com
+    email: api@trustfile.com
+host: api.trustfile.avalara.com
+basePath: /v3
+produces:
+  - application/json
+schemes:
+  - https
+securityDefinitions:
+  Authorization:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: Key should be 'Bearer ' followed by the connectorToTFToken
+paths:
+  /connections/{connectionId}/items:
+    post:
+      tags:
+        - Items
+      summary: Post items
+      description: >
+        * Creates new items or updates them if they already exist
+
+        * Send sale items or refund items (the refund boolean of the item determines this)
+  
+        * If refund is true, Taxes and Amounts are automatically made negative by TrustFile (negative amounts/taxes will remain negative)
+
+        * Addresses are used to source the jurisdictions involved in the sale
+
+        * Defaults are used for shipFromAddress if none provided or the address is
+        invalid. The default shipFromAddress can be retrieved with the GET /connections/{connectionID} route
+        
+        * In some cases, review by the user may be required (e.g. if the service does not provide taxes or shipping data for refunds). When this occurs, reviewRequired should be set to true and reviewMessage should be a string with the reason for the review.
+        
+        * Refunds should be pushed to TrustFile regardless of whether an original sale item exists
+        
+        * Maximum of 1000 items may be posted at one time
+      operationId: PostItems
+      parameters:
+        - in: path
+          name: connectionId
+          description: ID of the connection to post the items to
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Object containing items to post
+          required: false
+          schema:
+            $ref: '#/definitions/PostItemsBody'
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          description: "Successful response"
+          schema:
+            type: object
+            example:
+              processed: 0,
+              dateTime: "2015-04-10T07:00:00.000Z"
+            properties:
+              processed:
+                type: integer
+                format: int32
+                description: Number of items processed
+                example: 0
+              dateTime:
+                type: string
+                format: date-time
+                example: '2015-04-10T07:00:00.000Z'
+        '400':
+          description: "Bad request response"
+          schema:
+            type: object
+            example:
+              processed: 0,
+              dateTime: "2015-04-10T07:00:00.000Z"
+              errors: 
+              - keyword: maxItems
+                dataPath: .items
+                message: Should not have more than 1000 items
+                schema: 1000
+            properties:
+              processed:
+                type: integer
+                format: int32
+                description: Number of items processed; will be 0 in this case.
+                example: 0
+              dateTime:
+                type: string
+                format: date-time
+                example: '2015-04-10T07:00:00.000Z'
+              errors: 
+                type: array
+                items:
+                  $ref: '#/definitions/PostItemsError'
+        '401':
+          description: Authentication failure response
+          schema:
+            type: object
+            example:
+              message: You are not authorized
+            properties:
+              message:
+                type: string
+                description: Will be 'You are not authorized'
+        '404':
+          description: ConnectionId does not exist response
+        # '500':
+        #   description: Error response
+        #   schema:
+        #     type: object
+        #     properties:
+        #       status:
+        #         type: object
+        #         properties:
+        #           error
+        #             type: string
+        #             description: service unavailable
+  /connections/{connectionId}/items/{itemId}:
+    get:
+      tags:
+        - Items
+      summary: Retrieve items by itemId for the given connectionId
+      description: Get items of the provided itemId for the given connection. Will include both the item and the refund, if it exists
+      operationId: GetItems
+      parameters:
+        - in: path
+          name: connectionId
+          description: connectionId the item belongs to
+          required: true
+          type: string
+        - in: path
+          name: itemId
+          description: itemId of the item to retrieve
+          required: true
+          type: string
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items: 
+                  $ref: '#/definitions/Item'
+                description: Items in TrustFile matching this itemId for the passed connectionId. Will include both sales and refunds.
+        '400':
+          description: Bad query response
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: Reason for failure
+                example: 'connectionId must be passed as query'
+        '401':
+          description: Authentication failure response
+          schema:
+            type: object
+            example:
+              message: You are not authorized
+            properties:
+              message:
+                type: string
+                description: Will be 'You are not authorized'
+        '404':
+          description: ConnectionId or itemId does not exist response
+  /connections/{connectionId}:
+    get:
+      tags:
+        - Connections
+      summary: Retrieve connectionId information
+      description: Queries for the company information TrustFile has stored
+      operationId: GetCompanies
+      parameters:
+        - in: path
+          name: connectionId
+          description: connectionId that you wish to retrieve company information for
+          required: true
+          type: string
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              company:
+                $ref: '#/definitions/Company'
+        '401':
+          description: Authentication failure response
+          schema:
+            type: object
+            example:
+              message: You are not authorized
+            properties:
+              message:
+                type: string
+                description: Will be 'You are not authorized'
+        '404':
+          description: ConnectionId does not exist response
+definitions:
+  PostItemsError:
+    type: object
+    description: Object containing the error details that occurred when processing items
+    example:
+      "keyword": 'type'
+      "dataPath": '.items[0].shippingTax'
+      "message": 'should be number'
+      "schema": 'number'
+      "data": '.00'
+    properties:
+      keyword:
+        type: string
+        description: Type of error
+        example: format
+      dataPath:
+        type: string
+        description: Location of error in posted items array
+        example: '.items[0].orderDate'
+      message:
+        type: string
+        description: Error message
+        example: should match format dateTime
+      schema:
+        type: string
+        description: The format type that is expected in the item schema
+        example: dateTime
+      data:
+        type: string
+        description: Offending value
+        example: '2000-30-30'
+  PostItemsBody:
+    type: object
+    properties:
+      items:
+        type: array
+        example:
+          [{"itemId": "3002987",
+            "transactionDate": "2014-12-09T09:53:59",
+            "shipToAddress": {
+              "line1": "4077 West Clinton Avenue",
+              "city": "Fresno",
+              "state": "CA",
+              "zip": "93722",
+            },
+            "shippingAmount": 30.00,
+            "shippingTax": 3.29,
+            "salesAmount": 514.99,
+            "salesTax": 42.36,
+            "description": "Feenn Ruby Brooch",
+            "refund": false}, 
+            {"itemId": "3004342",
+            "transactionDate": "2014-11-09T09:53:59",
+            "shipToAddress": {
+              "line1": "4077 West Clinton Avenue",
+              "city": "Fresno",
+              "state": "CA",
+              "zip": "93722",
+            },
+            "shippingAmount": 20.00,
+            "shippingTax": 2.29,
+            "salesAmount": 420.99,
+            "salesTax": 38.36,
+            "description": "Ruby necklace",
+            "refund": false}]
+        items:
+          $ref: '#/definitions/Item'
+  Company:
+    type: object
+    properties:
+      name:	
+        type: string
+      syncDate:	
+        type: string
+      phone:	
+        type: string
+      fax:	
+        type: string
+      createdAt:	
+        type: string
+      updatedAt:	
+        type: string
+      address:
+        description: This address is used as the default shipFromAddress for an item if one is not provided
+        $ref: '#/definitions/Address'
+  Address:
+    type: object
+    example:
+      "line1": '1000 W Main St'
+      "city": 'Seattle'
+      "state": 'WA'
+      "zip": '98101'
+    properties:
+      line1:
+        type: string
+      line2:
+        type: string        
+      line3:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zip:
+        type: string
+  Item:
+    type: object
+    required:
+      - itemId
+      - transactionDate
+      - shipToAddress
+      - salesAmount
+      - salesTax
+      - shippingAmount
+      - shippingTax
+      - refund
+    properties:
+      itemId:
+        type: string
+        example: '3002987'
+      transactionDate:
+        type: string
+        format: date-time
+        example: '2014-12-09T09:53:59'
+      shipFromAddress:
+        type: object
+        example:
+          "line1": '1000 W Main St'
+          "city": 'Seattle'
+          "state": 'WA'
+          "zip": '98101'
+        properties:
+          line1:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          zip:
+            type: string
+      shipToAddress:
+        type: object
+        required:
+        - state
+        - zip
+        example:
+          "line1": '1000 W Main St'
+          "city": 'Seattle'
+          "state": 'WA'
+          "zip": '98101'
+        properties:
+          line1:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          zip:
+            type: string
+      shippingAmount:
+        type: number
+        format: double
+        description: Shipping cost (not including taxes)
+        example: 30
+      shippingTax:
+        type: number
+        format: double
+        example: 3.29
+      salesAmount:
+        type: number
+        format: double
+        description: Item cost (not including shipping or taxes)
+        example: 514.99
+      salesTax:
+        type: number
+        format: double
+        example: 42.36
+      description:
+        type: string
+        example: Feenn Ruby Brooch
+      refund:
+        type: boolean
+        example: false
+      reviewRequired:
+        type: boolean
+        description: Determines whether the user needs to review this item. This would be done when there are questions regarding whether the assumptions made by the connector result in the correct sales/refund/tax. Submitting this item as 'true' will make TrustFile flag the item to show to the user for approval.
+      reviewMessage:
+        type: string
+        description: Message to show the user as to what they should review
+        
