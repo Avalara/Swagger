@@ -1692,11 +1692,13 @@
         "DestinationCountryList": {
             "type": "string",
             "enum": [
+                "AR",
                 "AT",
                 "AU",
                 "AX",
                 "BE",
                 "BG",
+                "BR",
                 "CA",
                 "CC",
                 "CN",
@@ -1718,6 +1720,7 @@
                 "HU",
                 "IE",
                 "IM",
+                "IN",
                 "IO",
                 "IT",
                 "JE",
@@ -1733,6 +1736,7 @@
                 "NL",
                 "PL",
                 "PT",
+                "PY",
                 "RE",
                 "RO",
                 "SE",
@@ -1741,7 +1745,9 @@
                 "SK",
                 "SM",
                 "TK",
-                "US"
+                "US",
+                "UY",
+                "VE"
             ],
             "example": "CA"
         },
