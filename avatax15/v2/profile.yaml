@@ -1,0 +1,335 @@
+swagger: '2.0'
+info:
+  description: "This is a proposal for a v2 of the AvaTax REST API. This is a DESIGN DOCUMENT ONLY and is not intended to be used, since this API DOES NOT EXIST. 
+    
+    * All resources below map DIRECTLY to A16 resources. The request and response payloads are almost identical in format (but favor the flatter A15 style as opposed to the more nested A16 style), with allowances made for the different structures of A15 and A16. 
+
+    * This API is specific to company profile operations. For identity-based operations, see the identity API.
+
+    * Right now, this document only describes basic auth. If we want token-based auth as well, that would just be an additional security scheme.
+    
+    "
+  version: '2.0'
+  title: AvaTax v2 REST API Proposal
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, visit the Avalara Community'
+    url: 'https://community.avalara.com/avalara/category_sets/developers'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: profile.api.avalara.com
+basePath: /v2
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+security:
+  - basic_auth: []
+paths:
+  '/all':
+    get:
+      summary: Error Messages
+      description: "The following status codes can be returned by all operations."
+      operationId: all
+      responses:
+        '200':
+          description: "Successful operation"
+        '401':
+          description: "The authorization header was malformed, or the provided credentials were not valid."
+          schema:
+            $ref: '#/definitions/error'
+        '400':
+          description: "The request was invalid in form or data, and should be corrected before retrying. Additonal error information is provided in the response body. For tax calculation or address validation, this is returned when tax could not be calculated/ the address could not be validated."
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: "The requested resource was not found. This can be returned for CompanyNotFound or DocumentNotFound, or for an invalid DocType specified. Details are provided in the response body."
+          schema:
+            $ref: '#/definitions/error'
+        '503':
+          description: "The service is temporarily unavailable."
+          schema:
+            $ref: '#/definitions/error'
+  '/accounts/{accountId}/companies':
+    parameters:
+      - $ref: '#/parameters/accountId'
+    get:
+      operationId: listCompanies
+      tags:
+        - company
+      responses:
+        200:
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/company'
+    post:
+      operationId: createCompany
+      tags:
+        - company
+      responses:
+        200:
+          description: 'Successful operation' 
+          schema:
+            $ref: '#/definitions/company'
+  '/accounts/{accountId}/companies/{companyCode}':
+    parameters:
+      - $ref: '#/parameters/accountId'
+      - $ref: '#/parameters/companyCode'
+    get:
+      operationId: getCompany
+      tags:
+        - company
+      responses:
+        200:
+          description: 'Successful operation'
+    delete:
+      operationId: deleteCompany
+      responses:
+        204:
+          description: 'Successful operation'
+  '/accounts/{accountId}/companies/{companyCode}/nexus':
+    parameters:
+      - $ref: '#/parameters/accountId'
+      - $ref: '#/parameters/companyCode'
+    get:
+      operationId: listNexus
+      summary: List Nexus
+      responses:
+        '200':
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/nexusList'
+    post:
+      operationId: createNexus
+      summary: Create Nexus
+      responses:
+        200:
+          description: 'Successful operation'
+  '/accounts/{accountId}/companies/{companyCode}/nexus/{nexusId}':
+    parameters:
+      - $ref: '#/parameters/accountId'
+      - $ref: '#/parameters/companyCode'
+      - $ref: '#/parameters/nexusId'
+    get:
+      operationId: getNexus
+      summary: Get Nexus Details
+      responses:
+        '200':
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/nexusList'
+    put:
+      operationId: updateNexus
+      summary: Update a nexus record
+      parameters:
+        - name: nexusRequest
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/nexus'
+      responses:
+        '200':
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/nexus'
+    delete:
+      operationId: deleteNexus
+      summary: Delete a nexus record
+      responses:
+        '204':
+          description: 'Successful operation'
+
+####################################################            
+            
+securityDefinitions:
+  basic_auth:
+    type: basic
+    description: "You will not be able to make web service calls until you have received an active account number and license key via email, or a username and password from the [sandbox registration](http://developer.avalara.com/getting-started). Authentication is in the format `Basic [account number]:[license key]` encoded to Base64, as per basic access authentication. For example: `Authorization: Basic a2VlcG1vdmluZzpub3RoaW5nMnNlZWhlcmU=`"
+###################################################
+
+definitions:
+  message:
+    properties:
+      summary:
+        maxLength: 255
+        type: string
+        example: Company not found.  Verify the CompanyCode.
+        description: The message summary in short form.
+      details:
+        maxLength: 255
+        type: string
+        example: APITrialCompany
+        description: Description of the error or warning.
+      refersTo:
+        maxLength: 255
+        type: string
+        example: CompanyCode
+        description: The data used during the request that caused the message to be generated.
+      source:
+        maxLength: 255
+        type: string
+        example: Avalara.AvaTax.Services.Tax
+        description: The internal location that generated the message.
+      severity:
+        type: string
+        example: Error
+        description: "Classifies the severity of the message."
+        enum:
+          - Success
+          - Warning
+          - Error
+          - Exception  
+  error:
+    properties:
+      messages:
+        type: array
+        items:
+          $ref: '#/definitions/message'
+  userList:
+    type: array
+    items:
+      $ref: '#/definitions/user'
+  user:
+    properties:
+      accountId:
+        type: string
+      companyId:
+        type: string
+      userName:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      postalCode:
+        type: string
+      password:
+        type: string
+      passwordStatus:
+        type: string
+        enum:
+          - UserCanChange
+          - UserMustChange
+          - UserCannotChange
+      securityRoleId:
+        type: string
+        enum:
+          - NoAccess
+          - SiteAdmin
+          - AccountOperator
+          - AccountAdmin
+          - AccountUser
+          - SystemAdmin
+          - Registrar
+          - CSPTester
+          - CSPAdmin
+          - SystemOperator
+          - TechnicalSupportUser
+          - TechnicalSupportAdmin
+          - TreasuryUser
+          - TreasuryAdmin
+          - ComplianceUser
+          - ComplianceAdmin
+          - ProStoresOperator
+          - CompanyUser
+          - CompanyAdmin
+          - ComplianceTempUser
+          - ComplianceRootUser
+          - ComplianceOperator
+          - SSTAdmin
+      isActive:
+        type: boolean
+      createdDate:
+        type: string
+      createdBy:
+        type: number
+        format: integer
+      modifiedDate:
+        type: string
+      modifiedBy:
+        type: number
+        format: integer
+      failedLoginAttempt:
+        type: number
+        format: integer
+  nexus:
+    properties:
+      nexusId:
+        type: number
+        format: integer
+      companyId:
+        type: number
+        format: integer
+      country:
+        type: string
+      state:
+        type: string
+      jurisTypeId:
+        type: string
+        enum:
+          - STA
+          - CTY
+          - CIT
+          - STJ
+          - CNT
+      jurisCode:
+        type: string
+      jurisName:
+        type: string
+      shortName:
+        type: string
+      effDate:
+        type: string
+      endDate:
+        type: string
+      createdDate:
+        type: string
+      createdUserId:
+        type: number
+      modifiedDate:
+        type: string
+      modifiedUserId:
+        type: number
+      nexusTypeId:
+        type: string
+        enum: 
+          - None
+          - Volunteer
+          - NonVolunteer
+          - SSTVolunteer
+          - SSTNonVolunteer
+          - Collect
+          - Legal
+      accountingMethodId:
+        type: number
+      hasLocalNexus:
+        type: boolean
+      sourcing:
+        type: string
+      localNexusType:
+        type: string
+        enum:
+          - Selected
+          - StateAdministered
+          - All
+  nexusList:
+    type: array
+    items:
+      $ref: '#/definitions/nexus'
+  nexusId:
+    name: nexusId
+    type: string
+    in: path
+    required: true
+    description: "The unique, Avalara-assigned identifier of the nexus instance."
+  userId:
+    name: userId
+    type: string
+    in: path
+    required: true
+    description: "The unique, Avalara-assigned identifier of the user. If you use the special value `self`, everything will operate on the current user. NOTE: is there a way this can be username instead of userId? It's still globally unique."
