@@ -4,7 +4,7 @@ info:
     
     * All resources below map DIRECTLY to A16 resources. The request and response payloads are almost identical in format (but favor the flatter A15 style as opposed to the more nested A16 style), with allowances made for the different structures of A15 and A16. 
 
-    * This API is specific to identity operations. For company profile-based operations, see the profile API.
+    * This API is specific to identity operations. For company profile-based operations, see the profile API. For information about subscriptions and billing, internal applications should use the ZTB API.
 
     * Right now, this document only describes basic auth. If we want token-based auth as well, that would just be an additional security scheme.
     
@@ -53,74 +53,7 @@ paths:
           description: "The service is temporarily unavailable."
           schema:
             $ref: '#/definitions/error'
-  '/accounts':
-    get:
-      summary: Retrieve accessible accounts
-      operationId: listAccounts
-      tags:
-        - account
-      description: 'Get a list of all accounts the current user has access.'
-      responses:
-        200:
-          description: 'Successful operation'
-          schema:
-            $ref: '#/definitions/accountList'
-  '/accounts/{accountId}':
-    parameters:
-      - $ref: '#/parameters/accountId'
-    get:
-      summary: Retrieve account details
-      operationId: getAccount
-      tags:
-        - account
-      description: 'Get the details for a specific account. Note that any additional operations on an account should be tied in to ZTB and Registrar, and require further investigation. '
-      responses:
-        200:
-          description: 'Successful operation'
-          schema:
-            $ref: '#/definitions/companyList'
-  '/users':
-    get:
-      summary: Retrieve a list of users
-      operationId: listUsers
-      tags:
-        - user
-      description: 'Get a list of users that fit a set of filter criteria.'
-      responses:
-        '200':
-          description: 'Successful operation'
-          schema:
-            $ref: '#/definitions/userList'
-    post:
-      parameters:
-        - name: user
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/user'
-      summary: Create a user
-      operationId: createUser
-      tags:
-        - user
-      description: 'Create a user'
-      responses:
-        '200':
-          description: 'Successful operation'
-          schema:
-            $ref: '#/definitions/user'
-  '/users/{userId}':
-    parameters:
-      - $ref: '#/parameters/userId'
-    get:
-      summary: Get the details for a user
-      operationId: getUser
-      tags:
-        - user
-      responses:
-        '200':
-          description: 'Successful operation'
-          schema:
-            $ref: '#/definitions/user'
+
 
 ####################################################            
             
@@ -217,6 +150,84 @@ definitions:
         type: string
       companyCode:
         type: string
+  userList:
+    type: array
+    items:
+      $ref: '#/definitions/user'
+  user:
+    properties:
+      accountId:
+        type: string
+      companyId:
+        type: string
+      userName:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      postalCode:
+        type: string
+      password:
+        type: string
+      passwordStatus:
+        type: string
+        enum:
+          - UserCanChange
+          - UserMustChange
+          - UserCannotChange
+      securityRoleId:
+        type: string
+        enum:
+          - NoAccess
+          - SiteAdmin
+          - AccountOperator
+          - AccountAdmin
+          - AccountUser
+          - SystemAdmin
+          - Registrar
+          - CSPTester
+          - CSPAdmin
+          - SystemOperator
+          - TechnicalSupportUser
+          - TechnicalSupportAdmin
+          - TreasuryUser
+          - TreasuryAdmin
+          - ComplianceUser
+          - ComplianceAdmin
+          - ProStoresOperator
+          - CompanyUser
+          - CompanyAdmin
+          - ComplianceTempUser
+          - ComplianceRootUser
+          - ComplianceOperator
+          - SSTAdmin
+      isActive:
+        type: boolean
+      createdDate:
+        type: string
+      createdBy:
+        type: number
+        format: integer
+      modifiedDate:
+        type: string
+      modifiedBy:
+        type: number
+        format: integer
+      failedLoginAttempt:
+        type: number
+        format: integer
+####################################
+parameters:
+  accountId:
+    name: accountId
+    description: "The unique account number provided by Avalara for verification against the service."
+    type: string
+    in: path
+    required: true
+    maxLength: 10
   userId:
     name: userId
     type: string
