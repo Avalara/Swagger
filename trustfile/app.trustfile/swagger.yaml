@@ -182,7 +182,7 @@ paths:
           schema:
             type: object
             example:
-              user: null
+              user: 'null'
               notification:
                 message: There was a problem creating your account. User could not be created.
                 options:
