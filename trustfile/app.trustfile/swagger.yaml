@@ -202,30 +202,3 @@ paths:
                     properties:
                       level:
                         type: string
-  /signup:
-    get:
-      tags:
-      - Iframe
-      operationId: GetIframeCompanySignup
-      summary: Company signup via website iFrame
-      description: |
-        Include code in your landing page to add a TrustFile signup form that passes CampaignId and Lsmr (via query) for campaign attribution to Eloqua.
-
-        An example of the embedded iframe can be found [here](https://trustfile.avalara.com/signup). An example of the page with the javascript code that passes the CampaignId and Lsmr can be found in this [gist](https://gist.github.com/anonymous/59ba103cd495fa69e3d3).
-        
-        If you desire, you can make a signup form yourself instead of the iFrame and pass the same query parameters.
-      externalDocs:
-        description: Example html/js code
-        url: https://gist.github.com/anonymous/b9768c9e7419539105f3
-      parameters:
-        - in: query
-          name: campaignId
-          description: CampaignId to pass to TrustFile. This is provided by Avalara Marketing to attribute the signup to the campaign
-          type: string
-        - in: query
-          name: lsmr
-          description: Lsmr to pass to TrustFile. This is provided by Avalara Marketing
-          type: string
-      responses:
-        '200':
-          description: Success response
