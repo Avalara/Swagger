@@ -1,0 +1,942 @@
+swagger: '2.0'
+info:
+  description: "Avalara offers an alternate API for process batches of transactions with a single web service call. This API uses the same TaxSvc logic on the back end for tax calculation, but provides functions similar to the Upload feature available through the Admin Console. This means that you can process transaction batches, but also use it to import batches of tax rules, exemption certificate records, and locations.
+  
+    There are three primary resources in the BatchSvc: BatchSave, BatchFetch, and BatchFileFetch. Other functions are referenced in the WSDL, but we do not recommend using them in a standard use case.
+
+    Proxy DLLs are also maintained by AvaTax for this functionality, and can be downloaded from our [sample code page](http://developer.avalara.com/resources/api-sample-code).
+
+    Note that BatchSvc has some quirks to it: you will need to authenticate with an Account Admin level username/password combination, an account number/license key combination will not be sufficient. Also, you will need to know your CompanyId (which is not the same as the CompanyCode used in the standard TaxSvc functionality). To find your CompanyId, take a look at [this article](http://developer.avalara.com/api-docs/soap/finding-your-companyid)."
+  
+  version: '1.0'
+  title: AvaTax SOAP API
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, visit the Avalara Community'
+    url: 'https://community.avalara.com/avalara/category_sets/developers'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: development.avalara.net
+basePath: /
+schemes:
+  - https
+produces:
+  - text/xml
+consumes:
+  - text/xml
+x-ApiType: SOAP
+x-wsdlPath: "https://development.avalara.net/Batch/BatchSvc.wsdl"
+x-basePath: "https://development.avalara.net/Batch/BatchSvc.asmx"
+paths:
+  '/Batch/BatchSvc.asmx?BatchSave':
+    post:
+      operationId: batchSave
+      summary: Save a batch
+      description: "This function uses a Batch object to load and save a batch into the AvaTax system. It will automatically process the loaded batch. The file loaded needs to be in a .csv, .xls, or .xlsx format, with a header row, and data consistent with the appropriate import format. This import format is the same as the format required for imports through the Admin Console. Templates and information about these formats is available through our [Admin Console documentation](https://help.avalara.com/000_AvaTax_Calc/000AvaTaxCalc_User_Guide/055_Add_or_Import_Transactions?_ga=1.247157572.1375781175.1454001053)."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchSave" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchSave\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchSaveEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchSaveResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchFetch':
+    post:
+      operationId: batchFetch
+      summary: Retrieve a batch
+      description: "BatchFetch uses a generic FetchRequest object to return details about a specified batch or group of batches. Filters must be populated (as the service will otherwise return all accessible records of the specified type)."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFetch" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFetch\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchFetchEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchFetchResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchFileFetch':
+    post:
+      operationId: batchFileFetch
+      summary: Retrieve a file from a batch
+      description: "BatchFileFetch uses a generic FetchRequest object to return details about a specified batch file or group of batch files. Filters must be populated (as the service will otherwise return all accessible records of the specified type). Up to three batchFiles may be associated with a given completed batch: an input file, an error file, and a results file. For batches with no errors, no error file is generated. Similarly, for batches with no successfully processed records, no results file is generated."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileFetch" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileFetch\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchFileFetchEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchFileFetchResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchDelete':
+    post:
+      operationId: batchDelete
+      summary: Delete a batch
+      description: "Deletes a batch from the visible logs. Note that this operation does not delete any records that were created as a concequence of the batch being originally processed. As such, it is recommended that you do not use this method."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchDelete" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchDelete\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchDeleteEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchDeleteResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchProcess':
+    post:
+      operationId: batchProcess
+      summary: Process a batch
+      description: "A granular operation that allows a batch or group of batches to be processed. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchProcess" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchProcess\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchProcessEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchProcessResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchFileSave':
+    post:
+      operationId: batchFileSave
+      summary: Save a batch file
+      description: "A granular operation that allows a single batch file to be saved independent of a processing batch. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileSave" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileSave\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchFileSaveEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchFileSaveResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?BatchFileDelete':
+    post:
+      operationId: batchFileDelete
+      summary: Delete a batch file
+      description: "A granular operation that allows deletion of a batch file (or group of files) independently of a processing batch. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileDelete" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileDelete\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/BatchFileDeleteEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/BatchFileDeleteResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?Ping':
+    post:
+      operationId: ping
+      summary: Test service connectivity
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/Ping" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Ping\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/PingEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/PingResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Batch/BatchSvc.asmx?IsAuthorized':
+    post:
+      operationId: isAuthorized
+      summary: Test authorized operations
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/IsAuthorized" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/IsAuthorized\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/IsAuthorizedEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/IsAuthorizedResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+definitions:
+  BatchFetchEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchFetchBody'
+  BatchFetchBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchFetch
+    properties:
+      BatchFetch:
+        title: BatchFetch
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchFetchRequest:
+            $ref: '#/definitions/FetchRequest' 
+  BatchSaveEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchSaveBody'
+  BatchSaveBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchSave
+    properties:
+      BatchSave:
+        title: BatchSave
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          Batch:
+            $ref: '#/definitions/Batch' 
+  BatchFileFetchEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchFileFetchBody'
+  BatchFileFetchBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchFileFetch
+    properties:
+      BatchFileFetch:
+        title: BatchFileFetch
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchFileFetchRequest:
+            $ref: '#/definitions/FetchRequest' 
+  BatchDeleteEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchDeleteBody'
+  BatchDeleteBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchDelete
+    properties:
+      BatchDelete:
+        title: BatchDelete
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchDeleteRequest:
+            $ref: '#/definitions/BatchDeleteRequest' 
+  BatchProcessEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchProcessBody'
+  BatchProcessBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchProcess
+    properties:
+      BatchProcess:
+        title: BatchProcess
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchProcessRequest:
+            $ref: '#/definitions/FilterRequest' 
+  BatchFileSaveEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchFileSaveBody'
+  BatchFileSaveBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchFileSave
+    properties:
+      BatchFileSave:
+        title: BatchFileSave
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchFile:
+            $ref: '#/definitions/BatchFile' 
+  BatchFileDeleteEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/BatchFileDeleteBody'
+  BatchFileDeleteBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - BatchFileDelete
+    properties:
+      BatchFileDelete:
+        title: BatchFileDelete
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          BatchFileDeleteRequest:
+            $ref: '#/definitions/BatchFileDeleteRequest' 
+  PingEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/PingBody'
+  PingBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - Ping
+    properties:
+      Ping:
+        $ref: '#/definitions/Ping' 
+  IsAuthorizedEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/IsAuthorizedBody'
+  IsAuthorizedBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - IsAuthorized
+    properties:
+      IsAuthorized:
+        title: IsAuthorized
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          IsAuthorizedRequest:
+            $ref: '#/definitions/IsAuthorizedRequest' 
+  Ping:
+    xml:
+      namespace: "http://avatax.avalara.com/services"
+    required:
+      - Message
+    properties:
+      Message:
+        type: string
+        description: "A message recorded in server-side audit logs. Can be empty."
+        maxLength: 255
+  IsAuthorizedRequest:
+    required:
+      - Operations
+    properties:
+      Operations:
+        type: string
+        maxLength: 255
+        description: "The list of operations that you would like to test."
+  ResultCode:
+    type: string
+    example: Success
+    description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
+  UnauthorizedError:
+    xml:
+      name: Envelope
+      prefix: s
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    properties:
+      Body:
+        title: Body
+        type: object
+        xml:
+          prefix: s
+        properties:
+          Fault:
+            title: Fault
+            type: object
+            xml:
+              prefix: s
+            properties:
+              faultcode:
+                type: string
+                example: 's:Client'
+              faultstring:
+                type: string
+                example: 'The user or account could not be authenticated.'
+  Message:
+    xml:
+      name: Message
+    properties:
+      Summary:
+        maxLength: 255
+        type: string
+        example: Company not found.  Verify the CompanyCode.
+        description: The message summary in short form.
+      Details:
+        maxLength: 255
+        type: string
+        example: APITrialCompany
+        description: Description of the error or warning.
+      RefersTo:
+        maxLength: 255
+        type: string
+        example: CompanyCode
+        description: The data used during the request that caused the message to be generated.
+      Source:
+        maxLength: 255
+        type: string
+        example: Avalara.AvaTax.Services.Tax
+        description: The internal location that generated the message.
+      Severity:
+        type: string
+        example: Error
+        description: "Classifies the severity of the message. One of: Success, Warning, Error, Exception."
+  BatchFileFetchResponse:
+    properties:
+      BatchFetchResult:
+        allOf:
+        - $ref: '#/definitions/FilterResult' 
+        - type: object
+          properties:
+            BatchFiles:
+              type: array
+              xml: 
+                wrapped: true
+              items:
+                $ref: '#/definitions/BatchFile'
+  BatchFetchResponse:
+    properties:
+      BatchFetchResult:
+        allOf:
+        - $ref: '#/definitions/FilterResult' 
+        - type: object
+          properties:
+            Batches:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                $ref: '#/definitions/Batch'
+  BatchSaveResponse:
+    properties:
+      BatchSaveResult:
+        type: object
+        title: BatchSaveResult
+        properties:
+          BatchId:
+            description: "The BatchId uniquely identifies the batch in the Avalara system. A unique BatchId will be assigned upon saving the batch."
+            type: number
+            format: integer
+          EstimatedCompletion:
+            description: "Estimated time to complete the processing of the batch. Formatted as a DateTime."
+            type: string
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: "The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting."
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  BatchFileSaveResponse:
+    properties:
+      BatchFileSaveResult:
+        type: object
+        properties:
+          BatchFileId:
+            description: "Upon saving a batch file, the system assigns that file a unique BatchFileId."
+            type: number
+            format: integer
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: "The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting."
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  BatchProcessResponse:
+    properties:
+      BatchProcessResult:
+        $ref: '#/definitions/FilterResult'
+  BatchDeleteRequest:
+    properties:
+      DeleteRequest:
+        $ref: '#/definitions/FilterRequest'
+  BatchDeleteResponse:
+    properties:
+      DeleteResult:
+        $ref: '#/definitions/FilterResult'
+  BatchFileDeleteRequest:
+    properties:
+      DeleteRequest:
+        $ref: '#/definitions/FilterRequest'
+  BatchFileDeleteResponse:
+    properties:
+      DeleteResult:
+        $ref: '#/definitions/FilterResult'
+  Batch:
+    properties:
+      AccountId:
+        description: Account number of the target account (e.g. 1100012345).
+        type: number
+        format: integer
+      BatchId:
+        description: A unique Id assigned by the Avalara system to the given batch.
+        type: number
+        format: integer
+      BatchStatusId:
+        description: "This value is used to display the batch status on when viewed on the Admin Console. Possible values are Waiting, Processing, Completed, Errors. Result/Error files are only available for batches with a status of Completed or Errors."
+        type: string
+      BatchTypeId:
+        description: "An indicator of the type of batch. Permitted values are: TransactionImport, TaxRuleImport, ExemptCertImport, CompanyLocationImport, ItemImport."
+        type: string
+      CompanyId:
+        description: "The unique identifier of the target company. Note that this is different from the CompanyCode. For information on finding your CompanyId, look here."
+        type: number
+        format: integer
+      CreatedDate:
+        description: "Date the batch was created in the AvaTax system.  Formatted as a DateTime."
+        type: string
+      CreatedUserId:
+        description: "UserId of the user who created the Batch in the system."
+        type: number
+        format: integer
+      CompletedDate:
+        description: "Date the batch process was completed.  Formatted as a DateTime."
+        type: string
+      Files:
+        description: "An array of files associated with the batch. There may be up to three files: an input file, a results file (of those records that were successfully processed), and an error file (of those records which were not successfully processed)."
+        type: array
+        items:
+          $ref: '#/definitions/BatchFile'
+        xml:
+          wrapped: true
+      ModifiedDate:
+        description:  Date the batch was last modified in the database. Formatted as a DateTime.
+        type: string
+      ModifiedUserId:
+        description:  UserId of the user who last modified the batch.
+        type: number
+        format: integer
+      Name:
+        description:  Name of the batch – this will be the same as the Name of the input file.
+        type: string
+      Options:
+        description: For internal use only.
+        type: string
+      RecordCount:
+        description: For internal use only.
+        type: number
+        format: integer
+      CurrentRecord:
+        description: For internal use only.
+        type: number
+        format: integer
+  BatchFile:
+    properties:
+      BatchFileId:
+        description: A system-assigned unique identifier of the file.
+        type: number
+        format: integer
+      BatchId:
+        description: Unique identifier for the uploaded batch, matches the BatchId specified in the containing Batch object.
+        type: number
+        format: integer
+      Content:
+        description: "File content, as a byte array. Note that this is not returned in BatchFetch, and must be retrieved with BatchFileFetch. encoded as base64Binary"
+        type: string
+      ContentType:
+        description: MIME type of file contained in Content.
+        type: string
+      Ext:
+        description: Extension of the file.
+        type: string
+      FilePath:
+        description:  Applicable only for input, is not returned.
+        type: string
+      Name:
+        description:  Name of the file.
+        type: string
+      Size:
+        description:  Size of byte array in Content.
+        type: number
+        format: integer
+      ErrorCount:
+        description:  Number of records contained in the file (for error files only).
+        type: number
+        format: integer
+  PingResponse:
+    description: Result data returned from Ping.
+    properties:
+      PingResult:
+        type: object
+        title: PingResult
+        xml: 
+          namespace: "http://avatax.avalara.com/services"
+        properties: 
+          Version:
+            description: The service version of the AvaTax service.
+            maxLength: 15
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml: 
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  IsAuthorizedResponse:
+    description: Result data returned from IsAuthorized.
+    properties:
+      IsAuthorizedResult:
+        title: IsAuthorizedResult
+        type: object
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        properties:
+          Expires:
+            description: The date and time at which your AvaTax account will expire. DateTime in the format YYYY-MM-DD
+            type: string
+            maxLength: 10
+          Operations:
+            type: string
+            description: "The operations that the current user is authorized to use. Determined from the list provided in the IsAuthorized call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
+            maxLength: 255
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  FetchRequest:
+    properties:
+      Fields:
+        description: "Allows the user to specify which properties of the specified object are desired. If not populated, all fields at the root level will be returned. Default and optional fields are documented at the operation level."
+        type: string
+      Filters:
+        description: "Allows the user to specify filter criteria for the result set. e.g. to return all batches with BatchId=12345, the filter would be 'BatchId=12345'. Not required, but highly recommended"
+        type: string
+      Sort:
+        description: "Returns the records sorted by the specified field. Especially useful when used with RecordCount."
+        type: string
+      MaxCount:
+        description: "Maximum number of records to be returned"
+        type: number
+        format: integer
+      PageIndex:
+        description: "PageIndex and PageSize (along with Sort) allow for pagination of records. PageIndex will determine the page number returned, as determined by Sort and PageSize from the result set."
+        type: number
+        format: integer
+      PageSize:
+        description: "See PageIndex."
+        type: number
+        format: integer
+      RecordCount:
+        description: "Specifies the maximum number of records to be returned. Note that there is a service-level RecordCount limit of 100,000."
+        type: number
+        format: integer
+  FilterRequest:
+    properties:
+      Filters:
+        description: "Allows the user to specify filter criteria for the result set. e.g. to return all batches with BatchId=12345, the filter would be 'BatchId=12345'. Not required, but highly recommended"
+        type: string
+      MaxCount:
+        description: "Maximum number of records to be returned"
+        type: number
+        format: integer
+  FilterResult:
+    properties:
+      RecordCount:
+        description: "The number of records found that fit the filter criteria specified in the request."
+        type: number
+        format: integer
+      TransactionId:
+        type: string
+        maxLength: 19
+        description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+      ResultCode:
+        $ref: '#/definitions/ResultCode'
+      Messages:
+        type: array
+        xml:
+          wrapped: true
+        items:
+          $ref: '#/definitions/Message'
+  Header:
+    description: 'The SOAP API uses standard WSS (Web Service Security) token to authenticate the account or user, and additional `Profile` information to describe the agent calling the service.'
+    required:
+      - Security
+      - Profile
+    properties:
+      Security:
+        $ref: '#/definitions/Security'
+      Profile:
+        $ref: '#/definitions/Profile'
+    xml:
+      prefix: 'SOAP-ENV'
+  Security:
+    required:
+      - UsernameToken
+    properties:
+      UsernameToken:
+        $ref: '#/definitions/UsernameToken'
+      'SOAP-ENV:actor':
+        type: string
+        example: "http://schemas.xmlsoap.org/soap/actor/next"
+        description: 'The WS-Security standard requires the wsse:Security element contains a SOAP-ENV:actor attribute.'
+        xml:
+          attribute: true
+    xml:
+      prefix: 'wsse'
+      namespace: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+  UsernameToken:
+    description: Either an Account/LicenseKey or a Username/Password is required to authenticate the request. AccountNumber/LicenseKey is preferred.
+    xml:
+      prefix: 'wsse'
+    required:
+      - Account
+      - LicenseKey
+    properties:
+      Account:
+        type: string
+        maxLength: 10
+        description: The unique account number provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use Username.
+        example: 1234567890
+        xml:
+          prefix: 'wsse'
+      LicenseKey:
+        type: string
+        maxLength: 16
+        description: The unique alpha-numeric key provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use Password.
+        example: A1B2C3D4E5F6G7H8
+        xml:
+          prefix: 'wsse'
+      Username:
+        type: string
+        maxLength: 50
+        description: Your AvaTax Admin Console username. Usually an email address.
+        xml:
+          prefix: 'wsse'
+      Password: 
+        type: string
+        maxLength: 50
+        description: Your AvaTax Admin Console password.
+        xml:
+          prefix: 'wsse'
+  Profile: 
+    required:
+      - Client
+      - Adapter
+      - Name
+      - Machine
+    xml:
+      namespace: 'http://avatax.avalara.com/services'
+    properties:
+      Client: 
+        type: string
+        maxLength: 50
+        description: 'Client application name and version. This should unique identify the software client that is calling the AvaTax service, and should be consistent across all deployments of that client version. e.g. “Drupal Commerce 5.7”'
+      Adapter: 
+        type: string
+        maxLength: 50
+        description: Name and version of the adapter. This is set automatically by the .NET, PHP, and Java adapters.
+      Machine:
+        type: string
+        maxLength:  50
+        description: The NetBIOS name of the local computer. This is set automatically by the .NET, PHP, and Java adapters.
+      Name:
+        type: string
+        maxLength: 50
+        description: Reference to a named profile.
