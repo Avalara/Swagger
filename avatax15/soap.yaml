@@ -212,6 +212,55 @@ paths:
           description: 'An Error Occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
+  '/Tax/TaxSvc.asmx?ApplyPayment':
+    post:
+      operationId: applyPayment
+      deprecated: true
+      summary: DEPRECATED Change payment date
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/ApplyPayment" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/ApplyPayment\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/ApplyPaymentEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/ApplyPaymentResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/Tax/TaxSvc.asmx?ReconcileTaxHistory':
+    post:
+      operationId: reconcileTaxHistory
+      summary: DEPRECATED Mark documents as Reconciled
+      deprecated: true
+      parameters:
+        - in: header
+          name: SOAPAction
+          required: true
+          description: 'SOAPAction must be "http://avatax.avalara.com/services/ReconcileTaxHistory" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/ReconcileTaxHistory\""`'
+          type: string
+        - in: body
+          name: Envelope
+          schema:
+            $ref: '#/definitions/ReconcileTaxHistoryEnvelope'
+      responses:
+        '200':
+          description: 'The operation was completed. Refer to the response property `ResultCode` to determine operation success or error.'
+          schema: 
+            $ref: '#/definitions/ReconcileTaxHistoryResponse'
+        '400':
+          description: 'An Error Occurred. Check the error message text to find more information.'
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+
   '/Address/AddressSvc.asmx?Validate':
     post:
       summary: Validate an Address
@@ -238,6 +287,180 @@ paths:
           schema:
             $ref: '#/definitions/UnauthorizedError'
 definitions:
+  ApplyPaymentEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/ApplyPaymentBody'
+  ApplyPaymentBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - ApplyPayment
+    properties:
+      ApplyPayment:
+        title: ApplyPayment
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          ApplyPaymentRequest:
+            $ref: '#/definitions/ApplyPaymentRequest' 
+  ReconcileTaxHistoryEnvelope:
+    xml:
+      name: Envelope
+      prefix: SOAP-ENV
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Header
+      - Body
+    properties:
+      Header:
+        $ref: '#/definitions/Header'
+      Body:
+        $ref: '#/definitions/ReconcileTaxHistoryBody'
+  ReconcileTaxHistoryBody:
+    xml:
+      name: Body
+      prefix: SOAP-ENV
+    required:
+      - ReconcileTaxHistory
+    properties:
+      ReconcileTaxHistory:
+        title: ReconcileTaxHistory
+        xml:
+          namespace: "http://avatax.avalara.com/services"
+        type: object
+        properties: 
+          ReconcileTaxHistoryRequest:
+            $ref: '#/definitions/ReconcileTaxHistoryRequest' 
+  ReconcileTaxHistoryRequest:
+    required:
+      - Reconciled
+      - StartDate
+      - EndDate
+      - DocStatus
+      - DocType
+      - LastDocCode
+      - PageSize
+    properties:
+      CompanyCode:
+        type: string
+        description: "Client application company reference code. Not required if the documents are identified by DocId."
+      LastDocId:
+        type: string
+        description: "Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode to identify a range of documents."
+      Reconciled:
+        type: boolean
+        description: "Allows previously reconciled documents to be ignored. Please note that documents currently cannot be set to the 'Reconciled' status."
+      StartDate:
+        type: string
+        description: "The starting document date for the range of documents desired. In the format YYYY-MM-DD."
+      EndDate:
+        type: string
+        description: "The ending document date for the range of documents desired. In the format YYYY-MM-DD."
+      DocStatus:
+        type: string
+        description: "Allows filtering of results by status. Possible statuses are: Saved, Posted, Comitted, Cancelled, Adjusted, Any."
+      DocType:
+        type: string
+        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by DocId."
+      LastDocCode:
+        type: string
+        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.) – specifies that this document and all more recent documents are desired. Not required if the documents are identified by DocId."
+      PageSize:
+        type: number
+        format: integer
+        description: "Allows for pagination and limitation of the number of results returned."
+  ApplyPaymentRequest:
+    required:
+      - DocType
+      - PaymentDate
+    properties:
+      CompanyCode:
+        type: string
+        description: "Client application company reference code. Not required if the documents are identified by DocId."
+      DocType:
+        type: string
+        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by DocId."
+      DocCode:
+        type: string
+        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by DocId."
+      PaymentDate:
+        type: string
+        description: "The desired payment date to be recorded on the specified document record."
+      DocId:
+        type: string
+        description: "Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode."
+  ApplyPaymentResponse:
+    properties:
+      ApplyPaymentResult:
+        type: object
+        title: ApplyPaymentResult
+        properties:
+          DocId:
+            type: string
+            maxLength: 19
+            description: The unique document ID assigned by AvaTax to the document modified. This value need only be retained for troubleshooting.
+          TransactionId:
+            type: string
+            maxLength: 19
+            description: The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting.
+          ResultCode:
+            $ref: '#/definitions/ResultCode'
+          Messages:
+            type: array
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/definitions/Message'
+  ReconcileTaxHistoryResponse:
+    properties:
+      ReconcileTaxHistoryResult:
+        type: object
+        title: ReconcileTaxHistoryResult
+        properties:
+          RecordCount:
+            type: number
+            format: integer
+            description: "The number of records found that fit the filter criteria specified in the request."
+          SearchTaxHistoryResult:
+            type: object
+            title: SearchTaxHistoryResult
+            properties:
+              GetTaxResults:
+                type: array
+                xml: 
+                  wrapped: true
+                items:
+                  $ref: '#/definitions/GetTaxResult'
+              LastDocId:
+                type: string
+                description: "Avatax-assigned unique Document Id of the most recent document that was retrieved."
+              LastDocCode:
+                type: string
+                description: "Client application identifier describing the most recent document that was retrieved."
+              TransactionId:
+                type: string
+                maxLength: 19
+                description: "The unique transaction ID assigned by AvaTax to this request/response set. This value need only be retained for troubleshooting."
+              ResultCode:
+                $ref: '#/definitions/ResultCode'
+              Messages:
+                type: array
+                xml:
+                  wrapped: true
+                items:
+                  $ref: '#/definitions/Message'
   CommitTaxEnvelope:
     xml:
       name: Envelope
