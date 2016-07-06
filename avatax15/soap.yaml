@@ -256,7 +256,7 @@ definitions:
       name: Body
       prefix: SOAP-ENV
     required:
-      - CommitTaxRequest
+      - CommitTax
     properties:
       CommitTax:
         title: CommitTax
@@ -538,7 +538,7 @@ definitions:
         format: decimal
         description: The total tax for the document.
   CommitTaxRequest:
-    description: Input for CommitTax indicating the document that should be committed. You may use just the DocId to locate and commit the document (5.8 adapter and earlier, or 14.2 and later), or you may use all three of CompanyCode, DocType and DocCode.
+    description: "Input for CommitTax indicating the document that should be committed. You may use just the DocId to locate and commit the document (5.8 adapter and earlier, or 14.2 and later), or you may use all three of CompanyCode, DocType and DocCode."
     required:
       - CompanyCode
       - DocType
@@ -1023,38 +1023,12 @@ definitions:
     type: string
     example: Success
     description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
-  ErrorResultCode:
-    type: string
-    example: Error
-    xml:
-      name: ResultCode
-    description: 'Classifies severity of message. One of: Success, Warning, Error, Exception'
   Country:
     maxLength: 2
     type: string
     example: US
     pattern: '^[A-Z][A-Z]$'
     description: Two character ISO country code.
-  Error:
-    properties:
-      ResultCode:
-        $ref: '#/definitions/ResultCode'
-      Messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-    example: {
-                "ResultCode": "Error",
-                "Messages": [
-                  {
-                  "Summary": "Company not found.  Verify the CompanyCode.",
-                  "Details": "abcd",
-                  "RefersTo": "CompanyCode",
-                  "Severity": "Error",
-                  "Source": "Avalara.AvaTax.Services.Tax"
-                  }
-                ]
-            }
   UnauthorizedError:
     xml:
       name: Envelope
@@ -1238,7 +1212,7 @@ definitions:
           $ref: '#/definitions/TaxDetail'
       TaxAddresses:
         xml:
-          type: true
+          wrapped: true
         type: array
         items:
           $ref: '#/definitions/TaxAddress'
@@ -1635,6 +1609,3 @@ definitions:
         type: string
         maxLength: 50
         description: Reference to a named profile.
-          
-                  
-        
