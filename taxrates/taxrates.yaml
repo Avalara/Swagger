@@ -1,0 +1,182 @@
+swagger: '2.0'
+info:
+  description: "The TaxRates API provides a free rates lookup tool to allow merchants to retreive tax rates by location. You can use this REST API to get the sales tax rate for a five digit zip code in the United State or get the sales tax rate for a specific street address in the United States.
+  
+    To ensure that the service is available for as many people as possible, we have a rate limit of 15 tax rate requests every 1 minute. If you get a response that you’ve exceeded the rate limit, we suggest waiting 60 seconds before making your next request.
+  
+  "
+  
+  version: '1.0'
+  title: TaxRates API
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, visit the Avalara Community'
+    url: 'https://community.avalara.com/avalara/category_sets/developers'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: development.avalara.net
+basePath: /
+schemes:
+  - https
+consumes:
+  - text/json
+produces:
+  - text/json
+security:
+  - Authorization: []
+  - apikey: []
+paths:
+  '/address':
+    get:
+      summary: Rates by Street Address
+      description: 'Retrieves the composite and local jurisdictional standard sales tax rates for a given street address.'
+      operationId: address
+      parameters:
+        - name: street
+          in: query
+          required: true
+          description: "first line of the address e.g. `1101 Alaskan Way`"
+          type: string
+        - name: city
+          in: query
+          required: false
+          description: "city of the address e.g. `Seattle`"
+          type: string
+        - name: state
+          in: query
+          required: false
+          description: "state or region of the address e.g. `WA` or `Washington`"
+          type: string
+        - name: country
+          in: query
+          required: true
+          description: "country code in ISSO 3166-1 alpha-3 format e.g. `USA`"
+          type: string
+        - name: postal
+          in: query
+          required: false
+          description: "zip code of the address e.g. `98101`"
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: 'Invalid input was provided. One of the following error messages will be returned:
+            * Unable to resolve one or more document addresses
+            * Value cannot be null. Parameter name: [parameter]
+            * The postal code you provided was not valid. Please check you postal code before retrying.
+          '
+          schema: 
+            $ref: '#/definitions/addressError'
+        '401':
+          description: 'The call could not be authorized. One of the following error messages will be returned:
+          * No authorization was provided. Please check the documentation to determine proper type for this API
+          * The HTTP Authorization header you provided used an invalid scheme or the credentials were missing.
+          * The credentials you provided were not accepted.
+          * Your request provided two forms of authentication. Please check the documentation for the API to determine which form to use.'
+          schema: 
+            $ref: '#/definitions/authorizationError'
+        '429':
+          description: 'Rate limiting exceeded. To ensure that the service is available for as many people as possible, we have a rate limit of 15 tax rate requests every 1 minute. If you get a response that you’ve exceeded the rate limit, we suggest waiting 60 seconds before making your next request.'
+          schema:
+            $ref: '#/definitions/rateLimitingError'
+  '/postal':
+    get:
+      summary: Rates by Zip Code
+      description: 'Retrieves the composite and local jurisdictional standard sales tax rates for a given zip5 location.'
+      operationId: postal
+      parameters:
+        - name: country
+          in: query
+          required: true
+          description: "country code in ISSO 3166-1 alpha-3 format e.g. `USA`"
+          type: string
+        - name: postal
+          in: query
+          required: true
+          description: "zip code of the address e.g. `98101`"
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: 'Invalid input was provided. One of the following error messages will be returned:
+            * Unable to resolve one or more document addresses
+            * Value cannot be null. Parameter name: [parameter]
+            * The postal code you provided was not valid. Please check you postal code before retrying.
+          '
+          schema: 
+            $ref: '#/definitions/addressError'
+        '401':
+          description: 'The call could not be authorized. One of the following error messages will be returned:
+          * No authorization was provided. Please check the documentation to determine proper type for this API
+          * The HTTP Authorization header you provided used an invalid scheme or the credentials were missing.
+          * The credentials you provided were not accepted.
+          * Your request provided two forms of authentication. Please check the documentation for the API to determine which form to use.'
+          schema: 
+            $ref: '#/definitions/authorizationError'
+        '429':
+          description: 'Rate limiting exceeded. To ensure that the service is available for as many people as possible, we have a rate limit of 15 tax rate requests every 1 minute. If you get a response that you’ve exceeded the rate limit, we suggest waiting 60 seconds before making your next request.'
+          schema:
+            $ref: '#/definitions/rateLimitingError'
+securityDefinitions:
+  Authorization:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: "Avalara expects for the API key to be included in all API requests to the server in a header that looks like this: `Authorization: AvalaraApiKey {apikey}` where `{apikey}` is replaced with your personal API key."
+  apikey:
+    type: apiKey
+    name: apikey
+    in: query
+    description: "Althernately, you can pass the API key in the querystring as one of the parameters instead of passing it in a header. i.e: `https://taxrates.api.avalara.com/postal?country=USA&postal=98101&apikey={apikey}`"
+definitions:
+  Success:
+    properties:
+      totalRate:
+        type: number
+        format: decimal
+        example: 9.50000
+        description: "Contains the total tax rate for the location in question. Note that it is not a percentage; in the example above, the totalRate of 0.086 represents a tax rate of 8.6%."
+      rates:
+        type: array
+        description: "Each object in the rates array represents a single jurisdiction’s contribution to the totalRate."
+        items:
+          $ref: '#/definitions/rate'
+  rate:
+    properties:
+      rate:
+        type: number
+        format: decimal
+        example: 3.00000
+        description: "Note that a rate field may not always be present; in these cases, the contribution is 0.0%."
+      name:
+        type: string
+        example: WASHINGTON
+      type:
+        type: string
+        example: City
+  addressError:
+    properties:
+      message:
+        type: string
+        example: "Unable to resolve one or more document addresses"
+  authorizationError:
+    properties:
+      message:
+        type: string
+        example: "No authorization was provided. Please check the documentation to determine proper type for this API"
+  rateLimitingError:
+    properties:
+      message:
+        type: string
+        example: "Rate limiting has been exceeded. Try again later."
+  
+    
+      
+        
