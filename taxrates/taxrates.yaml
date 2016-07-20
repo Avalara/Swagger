@@ -15,7 +15,7 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: development.avalara.net
+host: taxrates.api.avalara.com
 basePath: /
 schemes:
   - https
