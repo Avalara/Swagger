@@ -1,0 +1,718 @@
+swagger: '2.0'
+info:
+  description: "The Avalara AvaTax Excise Web Service is a SOAP web service that is the external programmatic interface into the Avalara AvaTax Excise application. It provides for a platform independent mechanism to obtain tax calculation information. This document defines the object structure, and an introduction on how to consume the web service for use in customer programs.
+
+At this time, Excise sample code/libraries are available in .NET only.
+
+**Versioning**: The Excise Tax SOAP API currently implements inline explicit versioning. The method name contains the version number. In the example provided, 5_18_0 is the current version of the service. Please replace this when using newer or older versions of the service.
+
+Please note the application name changes effective 7/31/2014:
+
+  * Avalara Returns Excise replaces Zytax Compliance
+  
+  * Avalara AvaTax Excise replaces Zytax Determination
+  
+  * Avalara Government replaces Zytax Government
+
+### URLs
+
+* Development Authentication Service: https://psd.avalara.net/authenticationservice.asmx?wsdl
+
+* Development Tax Determination: https://psd.avalara.net/determination/taxdetermination.asmx?wsdl
+
+* User Acceptance Authentication Service: https://exciseua.avalara.net/authenticationservice.asmx?wsdl
+
+* User Acceptance Tax Determination: https://exciseua.avalara.net/determination/taxdetermination.asmx?wsdl
+
+* Production Authentication Service: https://excise.avalara.net/authenticationservice.asmx?wsdl
+
+* Production Tax Determination: https://excise.avalara.net/determination/taxdetermination.asmx?wsdl"
+  
+  version: '5_18_0'
+  title: Excise API
+  termsOfService: 'http://www.avalara.com/terms/'
+  contact:
+    name: 'For support, visit the Avalara Community'
+    url: 'https://community.avalara.com/avalara/category_sets/developers'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: excise.avalara.net
+basePath: /
+schemes:
+  - https
+consumes:
+  - application/xml
+produces:
+  - application/xml
+paths:
+  '/authenticationservice.asmx?login':
+    post:
+      operationId: login
+      summary: Log in
+      description: Authenticates the user against the configured membership provider and verifies they have access to the specified company. If successful, an authentication token is return as a cookie.
+      parameters:
+        - name: SOAPAction
+          in: header
+          required: true
+          description: ""
+          type: string
+        - name: Envelope
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/loginRequest'
+      responses:
+        200:
+          description: "Successful Operation"
+        500:
+          description: "An error occurred."
+  '/authenticationservice.asmx?logout':
+    post:
+      operationId: logout
+      summary: Log out
+      description: Logs the current user out of the system and clears their authentication cookie.
+      parameters:
+        - name: SOAPAction
+          in: header
+          required: true
+          description: ""
+          type: string
+        - name: Envelope
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/logoutRequest'
+      responses:
+        200:
+          description: "Successful Operation"
+        500:
+          description: "An error occurred."
+  '/taxdetermination.asmx?processTransactions':
+    post:
+      operationId: processTransactions
+      summary: Process Transactions
+      description: The ProcessTransactions method uses an array of Transactions to calculate taxes based on scenarios predefined in the Avalara AvaTax Excise application.
+      parameters:
+        - name: SOAPAction
+          in: header
+          required: true
+          description: ""
+          type: string
+        - name: Envelope
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/processTransactionsRequest'
+      responses:
+        200:
+          description: "Successful Operation"
+        500:
+          description: "An error occurred."
+definitions:
+  loginRequest:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Body
+    properties:
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        properties:
+          'xmlns:xsi':
+            type: string
+            xml: 
+              attribute: true
+            example: "http://www.w3.org/2001/XMLSchema-instance"
+          'xmlns:xsd':
+            type: string
+            xml:
+              attribute: true
+            example: "http://www.w3.org/2001/XMLSchema"
+          Login:
+            type: object
+            xml:
+              namespace: "http://taxes.services.fuelquest.com/"
+            properties:
+              userName: 
+                type: string
+                example: username
+              password: 
+                type: string
+                example: password
+              companyName:
+                type: string
+                example: Determination Oil Company
+  logoutRequest:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Body
+    properties:
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        properties:
+          'xmlns:xsi':
+            type: string
+            xml: 
+              attribute: true
+            example: "http://www.w3.org/2001/XMLSchema-instance"
+          'xmlns:xsd':
+            type: string
+            xml:
+              attribute: true
+            example: "http://www.w3.org/2001/XMLSchema"
+          Logout:
+            type: string
+            xml:
+              namespace: "http://taxes.services.fuelquest.com/"
+  processTransactionsRequest:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Body
+    properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        required:
+          - ProcessTransactions_5_18_0
+        properties:
+          ProcessTransactions_5_18_0:
+            type: object
+            xml:
+              namespace: "http://taxes.services.fuelquest.com/"
+            properties:
+              Transactions:
+                type: array
+                items:
+                  $ref: '#/definitions/Transaction_5_18_0'
+                xml:
+                  wrapped: true
+  Transaction_5_18_0:
+    type: object
+    required:
+      - Company
+      - EffectiveDate
+      - TransactionType
+      - TitleTransferCode
+    properties:
+      Company: 
+        type: string
+        maxLength: 100
+        description: "The Name of a company that matches to the name field in the companies table within the Avalara AvaTax Excise application Control Database (eg. Determination Sample)"
+      EffectiveDate: 
+        type: string
+        description: "The date of the physical product movement (eg. 3/27/2009)"
+      InvoiceNumber: 
+        type: string
+        maxLength: 12
+        description: "An identifying number of the invoice to be taxed (eg. INV1011)"
+      InvoiceDate: 
+        type: string
+        description: "The date of the invoice to be taxed (eg. 3/27/2009)"
+      FuelUseCode: 
+        type: string
+        maxLength: 3
+        description: "A code to describe the fuel use. Currently not used but included for future taxation scenarios"
+      TransactionType: 
+        type: string
+        maxLength: 20
+        description: "Type of transactions on this invoice (eg, Above, Below, Rack)"
+      TransportationModeCode: 
+        type: string
+        maxLength: 3
+        description: "Type of transportation mode used to transport fuel between locations (eg, J, PL, R)"
+      TitleTransferCode: 
+        type: string
+        maxLength: 4
+        description: "Definition of where the title transfer takes place (eg, ORIG, DEST)"
+      Seller: 
+        type: string
+        maxLength: 35
+        description: "Unique ID for the seller which must match the custom_id field on the business_entities table in the Avalara AvaTax Excise application client database (eg, Sel321, 7, sel345)"
+      Buyer: 
+        type: string
+        maxLength: 35
+        description: "Unique ID for the buyer which must match the custom_id on the business_ entities table in the Avalara AvaTax Excise application client database (eg, Buy784, 24324, buy97887)"
+      PreviousSeller: 
+        type: string
+        maxLength: 35
+        description: "ID of the Previous Seller (eg, Sel321, 7, sel345)"
+      NextBuyer: 
+        type: string
+        maxLength: 35
+        description: "ID of the Next Buyer (eg, Buy784, 24324, buy97887)"
+      SellerVATNumber: 
+        type: string
+        maxLength: 20
+        description: "Seller VAT Registration Number (eg, 1234567890123456790)"
+      BuyerVATNumber: 
+        type: string
+        maxLength: 20
+        description: "Buyer VAT Registration Number (eg, 1234567890123456790)"
+      CustomStatus: 
+        type: string
+        maxLength: 30
+        description: "Indicates the Customs status for VAT (eg, EUY,EUN)"
+      FormAPresentedInd: 
+        type: string
+        maxLength: 1
+        description: "Indicates if Form A is Presented for VAT (eg, Y,N)"
+      SimplifiedProcedureInd: 
+        type: string
+        maxLength: 1
+        description: "Indicates if the simplified procedure is used for VAT (eg, Y,N)"
+      Incoterms: 
+        type: string
+        maxLength: 3
+        description: "International Chamber of Commerce (ICC) rules for the use of domestic and international trade terms (eg, EXW, FCA, FAS, FOB, CFR, CIF, CPT, CIP, DAF, DES, DEQ, DDU, DDP)"
+      UserData: 
+        type: string
+        maxLength: 255
+        description: "String to hold any data you may want to pass into a transaction and potentially receive back untouched. May also be used for customizing calculations based on business rules"
+      UserTranId: 
+        type: string
+        maxLength: 50
+        description: "A unique Id for the transaction as defined by the calling application (eg, 678, 23823982, 32324)"
+      SourceSystem: 
+        type: string
+        maxLength: 100
+        description: "Hard coded string to identify which system is calling the application with this transaction. Useful when more than a single system is using the application or to separate GUI calls from web service calls (eg, SAAS, iLynx, etc)"
+      CustomString1: 
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, TEST, Purple, 111)"
+      CustomString2: 
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, TEST, Purple, 111)"
+      CustomString3: 
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, TEST, Purple, 111)"
+      CustomNumeric1: 
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, 100, 0.0125, 500000000)"
+      CustomNumeric2: 
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, 100, 0.0125, 500000000)"
+      CustomNumeric3: 
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. (eg, 100, 0.0125, 500000000)"
+      OrderType: 
+        type: string
+        maxLength: 50
+        description: "A code to describe the order type. Currently not used but included for future taxation scenarios."
+      SaveTransactionInd: 
+        type: string
+        maxLength: 1
+        description: "Indicates if the transaction should be saved to the database. Not saving can have a significant performance improvement. If this value is not defined in the transaction the Saving of Transactions is controlled by the Company Setting in the GUI. (eg, Y,N, )"
+      DebugInd: 
+        type: string
+        maxLength: 1
+        description: "Indicates if the transaction should be calculated with debugging enabled. (eg, Y,N)"
+      CalculationMethod: 
+        type: string
+        maxLength: 20
+        description: "Indicates which company specific configuration should be used when calculating the transaction. (eg, NORMAL, WITHOUT_COMPANY, PROFILES_ONLY, LICENSES_ONLY)"
+      TotalDyedUnits: 
+        type: number
+        format: decimal
+        description: "The total amount of dyed product purchased by the customer for the month of the transaction. (eg, 100, 345.3, 4005)"
+      TotalReportingTaxes: 
+        type: number
+        format: decimal
+        description: "Sum of all resulting taxes from the reporting_tax_amount field (eg, 2.00, 0.82)"
+      ReportingCurrency: 
+        type: string
+        maxLength: 10
+        description: "Currency the taxes need to be reported in which may differ from the currency of tax rate (eg, USD, GBP, EUR)"
+      TransactionLines: 
+        type: array
+        items:
+        	$ref: '#/definitions/TransactionLine_5_18_0'
+        description: "An array of transaction lines which are invoice line items that contain the product and origin and destination information for a transaction"
+        xml:
+          wrapped: true
+      TransactionExchangeRates: 
+        type: array
+        items:
+        	$ref: '#/definitions/ExchangeRate_5_18_0'
+        description: "An array of transaction Exchange Rates which are exchange rate definitions to be used to calculate the taxes and return tax amounts."
+        xml:
+          wrapped: true
+  TransactionLineMeasure_5_18_0:
+    type: object
+    required:
+      - MeasureValue
+    properties:
+      QuantityInd:
+        type: string
+        maxLength: 1
+        description: "Type of Quantity for the Line referencing Billed, Net or Gross Value B, N, G"
+      UnitOfMeasure:
+        type: string
+        maxLength: 10
+        description: "The Measurement type the Measure Value is defined in BRL, GAL, LTR"
+      MeasureValue:
+        type: number
+        format: decimal
+        description: "Numeric Unit of the Quanity indicator type 100, 200, 300"
+  ExchangeRate_5_18_0:
+    type: object
+    required:
+      - EffectiveDate
+      - ConversionFactor
+    properties:
+      FromCurrency:
+        type: string
+        maxLength: 10
+        description: "Currency type Value must start with USD, EUR, GBP"
+      ToCurrency:
+        type: string
+        maxLength: 10
+        description: "Currency type Value will end up as USD, EUR, GBP"
+      EffectiveDate:
+        type: string
+        description: "Date the Conversion Factor is valid for 4/23/2009, 5/17/2009"
+      ConversionFactor:
+        type: number
+        format: decimal
+        description: "Numeric Amount determining the conversion factor between the from and to currencies 0.123234, 4.3245"
+  TransactionLineJurisdiction_5_18_0:
+    type: object
+    required:
+      - SpecialJurisdictionCode
+      - SpecialJurisdictionType
+    properties:
+      SpecialJurisdictionCode:
+        type: string
+        maxLength: 30
+        description: "The unique code of the special jurisdiction."
+      SpecialJurisdictionType: 
+        type: string
+        maxLength: 30
+        description: "The local jurisdiction type of the special jurisdiction."
+  TransactionLine_5_18_0:
+    type: object
+    required:
+      - InvoiceLine
+      - ProductCode
+    properties:
+      InvoiceLine:
+        type: number
+        format: integer
+        description: "A unique identifier within the transaction for the invoice line item (eg, 1, 2, 3)"
+      MovementStartDate:
+        type: string
+        description: "The date that the product on the line item begins to be transported from the origin (eg, 3/27/2009)"
+      MovementEndDate:
+        type: string
+        description: "The date that the product on the line item reaches its destination (eg, 3/27/2009)"
+      ProductCode:
+        type: string
+        maxLength: 10
+        description: "Identifying code of the product being transported in the line item which needs to match either a product code or an alternate product code in the Avalara AvaTax Excise application client database (eg, 065, E00, 241)"
+      BlendToProductCode:
+        type: string
+        maxLength: 10
+        description: "If used in blending the product code of the final product which needs to match a product code or an alternate product code in the Avalara AvaTax Excise application client database (eg, B10, E10)"
+      UnitPrice:
+        type: number
+        format: decimal
+        description: "The price per unit of the product (eg, 1.37, 2.29, 44.34)"
+      NetUnits:
+        type: number
+        format: decimal
+        description: "The net units of product (eg, 100, 345.3, 4005)"
+      GrossUnits:
+        type: number
+        format: decimal
+        description: "The gross units of product (eg, 100, 345.3, 4005)"
+      BilledUnits:
+        type: number
+        format: decimal
+        description: "The billed units of product (eg, 100, 345.3, 4005)"
+      LineAmount:
+        type: number
+        format: decimal
+        description: "The total amount of value of product on the line item calculated by BilledUnits * UnitPrice, If left blank the Avalara AvaTax Excise application calculate (eg, 137.00, 456.58, 5213.47)"
+      BillOfLadingNumber,:
+        type: string
+        maxLength: 50
+        description: "Bill of lading or Manifest number of the load (eg, Bol4585, 100458)"
+      BillOfLadingDate:
+        type: string
+        description: "Bill of lading or Manifest Date of the load (eg, 3/27/2009)"
+      OriginCountryCode:
+        type: string
+        maxLength: 3
+        description: "ISO standard 3 character country code of the origin location (eg, USA, CAN)"
+      OriginJurisdiction:
+        type: string
+        maxLength: 10
+        description: "State or Region code of the originating location of the load (eg, WI, TX, ID)"
+      OriginCounty:
+        type: string
+        maxLength: 30
+        description: "County name of the origin location that must match a GNIS defined County name in the local_jurisdictions table of the Avalara AvaTax Excise application Client database; or a cross reference entry in the common_codes (eg, Brown, Ada, Marathon)"
+      OriginCity:
+        type: string
+        maxLength: 30
+        description: "City name of the origin location that must match a GNIS defined City name in the local_jurisdictions table of the Avalara AvaTax Excise application client database; or a cross reference entry in the common_codes (eg, Boise, Houston, Milwaukee)"
+      OriginPostalCode:
+        type: string
+        maxLength: 11
+        description: "Postal Code of the origin location that is available here for information purposes only. Not used in calculation of taxes at this time. 54126, 70012, 80013"
+      OriginType:
+        type: string
+        maxLength: 10
+        description: "Type of facility that the product originates from PIPELINE, REFINERY, TERMINAL, TRUCK"
+      Origin:
+        type: string
+        maxLength: 35
+        description: "A unique id for the origin location that should match to a custom_id from the locations table in the Avalara AvaTax Excise application client database Loc4528"
+      OriginOutCityLimitInd:
+        type: string
+        maxLength: 1
+        description: "Single character that specifies if the origin location resides within or outside of the city limits Y, N"
+      OriginExciseWarehouse:
+        type: string
+        maxLength: 20
+        description: "Excise Warehouse Number of the Origin Free-form"
+      OriginSpecialJurisdictionInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if the origin has special jurisdictions. Y, N"
+      OriginSpecialJurisdictions:
+        type: string
+        maxLength: 1
+        description: "Array of special jurisdictions for the origin. N/A"
+      DestinationCountryCode:
+        type: string
+        maxLength: 3
+        description: "ISO standard 3 character country code of the destination location USA, CAN"
+      DestinationJurisdiction:
+        type: string
+        maxLength: 10
+        description: "State or Region code of the destination location of the load WI, TX, ID"
+      DestinationCounty:
+        type: string
+        maxLength: 30
+        description: "County name of the destination location that must match a GNIS defined County name in the local_jurisdictions table of the Avalara AvaTax Excise application Client database; or a cross reference entry in the common_codes Brown, Ada, Marathon"
+      DestinationCity:
+        type: string
+        maxLength: 30
+        description: "City name of the destination location that must match a GNIS defined City name in the local_jurisdictions table of the Avalara AvaTax Excise application client database; or a cross reference entry in the common_codes Boise, Houston, Milwaukee"
+      DestinationPostalCode:
+        type: string
+        maxLength: 11
+        description: "Postal Code of the destination location that is available here for information purposes only. Not used in calculation of taxes at this time. 54126, 70012, 80013"
+      DestinationType:
+        type: string
+        maxLength: 10
+        description: "Type of receiving facility for the product PIPELINE, REFINERY, TERMINAL, TRUCK"
+      Destination:
+        type: string
+        maxLength: 35
+        description: "A unique id for the destination location that should match to a custom_id from the locations table in the Avalara AvaTax Excise application client database Loc4528"
+      DestinationOutCityLimitInd:
+        type: string
+        maxLength: 1
+        description: "Single character that specifies if the destination location resides within or outside of the city limits Y, N"
+      DestinationSpecialJurisdicitonInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if the destination has special jurisdictions. Y, N"
+      DestinationSpecialJurisdictions:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionLineJurisdiction_5_18_0'
+        description: "Array of special jurisdictions for the destination. N/A"
+      DestinationExciseWarehouse:
+        type: string
+        maxLength: 20
+        description: "Excise Warehouse Number of the Destination Free-form"
+      SaleCountryCode:
+        type: string
+        maxLength: 3
+        description: "ISO standard 3 character country code of the Sale location USA, CAN"
+      SaleJurisdiction:
+        type: string
+        maxLength: 10
+        description: "State or Region code of the Sale location of the load WI, TX, ID"
+      SaleCounty:
+        type: string
+        maxLength: 30
+        description: "County name of the Sale location that must match a GNIS defined County name in the local_jurisdictions table of the Avalara AvaTax Excise application Client database; or a cross reference entry in the common_codes Brown, Ada, Marathon"
+      SaleCity:
+        type: string
+        maxLength: 30
+        description: "City name of the Sale location that must match a GNIS defined City name in the local_jurisdictions table of the Avalara AvaTax Excise application client database; or a cross reference entry in the common_codes Boise, Houston, Milwaukee"
+      SalePostalCode:
+        type: string
+        maxLength: 11
+        description: "Postal Code of the Sale location that is available here for information purposes only. Not used in calculation of taxes at this time. 54126, 70012, 80013"
+      SaleType:
+        type: string
+        maxLength: 10
+        description: "Type of receiving facility for the product PIPELINE, REFINERY, TERMINAL, TRUCK"
+      SaleLocation:
+        type: string
+        maxLength: 35
+        description: "A unique id for the Sale location that should match to a custom_id from the locations table in the Avalara AvaTax Excise application client database Loc4528"
+      SaleOutCityLimitInd:
+        type: string
+        maxLength: 1
+        description: "Single character that specifies if the Sale location resides within or outside of the city limits Y, N"
+      SaleExciseWarehouse:
+        type: string
+        maxLength: 20
+        description: "Excise Warehouse Number of the Sale Location Free-form"
+      SaleSpecialJurisdictionInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if the sale locaiton has special jurisdictions. Y, N"
+      SaleSpecialJurisdictions:
+        type: array
+        items: 
+          $ref: '#/definitions/TransactionLineJurisdiction_5_18_0'
+        description: "Array of special jurisdictions for the sale location. N/A"
+      CounterCountryCode:
+        type: string
+        maxLength: 3
+        description: "ISO standard 3 character country code of the Counter location USA, CAN"
+      CounterJurisdiction:
+        type: string
+        maxLength: 10
+        description: "State or Region code of the Counter location of the load WI, TX, ID"
+      CounterCounty:
+        type: string
+        maxLength: 30
+        description: "County name of the Counter location that must match a GNIS defined County name in the local_jurisdictions table of the Avalara AvaTax Excise application Client database; or a cross reference entry in the common_codes Brown, Ada, Marathon"
+      CounterCity:
+        type: string
+        maxLength: 30
+        description: "City name of the Counter location that must match a GNIS defined City name in the local_jurisdictions table of the Avalara AvaTax Excise application client database; or a cross reference entry in the common_codes Boise, Houston, Milwaukee"
+      CounterPostalCode:
+        type: string
+        maxLength: 11
+        description: "Postal Code of the Counter location that is available here for information purposes only. Not used in calculation of taxes at this time. 54126, 70012, 80013"
+      CounterType:
+        type: string
+        maxLength: 10
+        description: "Type of receiving facility for the product PIPELINE, REFINERY, TERMINAL, TRUCK"
+      CounterParty:
+        type: string
+        maxLength: 35
+        description: "A unique id for the Counter location that should match to a custom_id from the locations table in the Avalara AvaTax Excise application client database Loc4528"
+      CounterOutCityLimitInd:
+        type: string
+        maxLength: 1
+        description: "Single character that specifies if the Counter location resides within or outside of the city limits Y, N"
+      CounterSpecialJurisdicitonInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if the Counter has special jurisdictions. Y, N"
+      CounterExciseWarehouse:
+        type: string
+        maxLength: 20
+        description: "Excise Warehouse Number of the Counter Free-form"
+      CounterFiscalRepInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if the Counter is a fiscal rep. Y, N"
+      UserData:
+        type: string
+        maxLength: 255
+        description: "String to hold any data you may want to pass into a transaction and potentially receive back untouched. May also be used for customizing calculations based on business rules"
+      AlternativeFuelContent:
+        type: number
+        format: decimal
+        description: "Numeric value that represents the percentage of alternative fuel contained in the product 0.10, 0.85"
+      BlendToAltFuelContent:
+        type: number
+        format: decimal
+        description: "Numeric Value that represents the percentage of alternative fuel found in the blend to product 0.10, 0.85"
+      BlendToInd:
+        type: string
+        maxLength: 1
+        description: "Indicates if this record refers to a blended product Y, N"
+      Currency:
+        type: string
+        maxLength: 10
+        description: "Type of Currency the line item Unit Price and Line Amount are defined in USD, EUR, GBP"
+      UnitofMeasure:
+        type: string
+        maxLength: 10
+        description: "The Unit of Measure the line item Net, Gross, and Billed units are defined in BRL, GAL, LTR"
+      FreightUnitPrice:
+        type: number
+        format: decimal
+        description: "The price per unit of the freight 1.37, 2.29, 44.34"
+      FreightType:
+        type: string
+        maxLength: 30
+        description: "The type of freight. NONE, ITEMIZED_COMMON_CARRIER, NONITEMIZED_NOT_COMMON_CARRIER"
+      FreightLineAmount:
+        type: number
+        format: decimal
+        description: "The total amount of value of product on the line item calculated by BilledUnits * FreightUnitPrice, If left blank the Avalara AvaTax Excise application will calculate 137.00, 456.58, 5213.47"
+      TransactionLineMeasures:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionLineMeasure_5_18_0'
+        description: "Array of Measures to convert the input value to for this transaction line element N/A"
+      CustomString1:
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. TEST, Purple, 111"
+      CustomString2:
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. TEST, Purple, 111"
+      CustomString3:
+        type: string
+        maxLength: 128
+        description: "String to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. TEST, Purple, 111"
+      CustomNumeric1:
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. 100, 0.0125, 500000000"
+      CustomNumeric2:
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. 100, 0.0125, 500000000"
+      CustomNumeric3:
+        type: number
+        format: decimal
+        description: "Decimal to hold data you want to pass into a transaction to be used for customizing calculations based on business rules. 100, 0.0125, 500000000"
+      NthTimeSale:
+        type: number
+        format: decimal
+        description: "Decimal to tell how many times a product has been sold in the supply chain. 1,2,3"
