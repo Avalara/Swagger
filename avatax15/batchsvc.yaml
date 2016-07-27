@@ -129,7 +129,7 @@ paths:
     post:
       operationId: batchProcess
       summary: Process a batch
-      description: "A granular operation that allows a batch or group of batches to be processed. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
+      description: "This method is intended for *internal use only* and may be changed or removed without warning. A granular operation that allows a batch or group of batches to be processed. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
       parameters:
         - in: header
           name: SOAPAction
