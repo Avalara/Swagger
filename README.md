@@ -6,9 +6,3 @@ If you want to view a swagger doc in a format that's prettier than json/yaml, yo
 A hosted copy of Swagger UI is available here: http://petstore.swagger.io/
 In the URL field, enter the 'raw' URL of the swagger file e.g.: `https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/petstore-expanded.yaml`
 
-## Direct Links
-* [Avatax16 V2][1]
-* [Avatax16 V3][2]
-
-[1]:http://petstore.swagger.io/?url=https://raw.githubusercontent.com/Avalara/Swagger/master/avatax16/v2.yaml
-[2]:http://petstore.swagger.io/?url=https://raw.githubusercontent.com/Avalara/Swagger/master/avatax16/v3.yaml
