@@ -26,8 +26,21 @@ Please note the application name changes effective 7/31/2014:
 
 * Production Authentication Service: https://excise.avalara.net/authenticationservice.asmx?wsdl
 
-* Production Tax Determination: https://excise.avalara.net/determination/taxdetermination.asmx?wsdl"
-  
+* Production Tax Determination: https://excise.avalara.net/determination/taxdetermination.asmx?wsdl
+
+### Authentication
+
+The Excise Platform Authentication Web Service is a SOAP/XML web service that is the external programmatic interface for authentication against the Excise Platform. It provides for a platform independent mechanism to obtain an authorization token which can be used when calling other web services. This document defines the object structure, and an introduction on how to consume the web service for use in customer programs.
+
+Web service authentication in the Excise platform has 3 basic forms:
+
+* Anonymous: no authentication required to call a web service
+
+* Forms: Forms authentication requires calling the AuthenticationService.asmx before calling other web services. This function returns an ASP.Net Forms authentication cookie with the response which needs to be passed along with each future web service call. Users wishing to use Forms authentication should see the `Login` and `Logout` methods documented below.
+
+* NTLM: NTLM authentication does not require calling the AuthenticationService.asmx before calling other web services. At the beginning of the call to the web service, the user is authenticated, and if successful, the call is processed normally. The web service will attach a Forms Authentication cookie to the response to improve performance in subsequent calls, but it is not required to use the cookie (the caller can be re-authenticated each time). The client must keep the TCP connection alive in between calls in order to re-use the cookie while configured to use NTLM. Each new TCP connection will require re-authentication.
+
+"  
   version: '5_18_0'
   title: Excise API
   termsOfService: 'http://www.avalara.com/terms/'
@@ -49,8 +62,8 @@ paths:
   '/authenticationservice.asmx?login':
     post:
       operationId: login
-      summary: Log in
-      description: Authenticates the user against the configured membership provider and verifies they have access to the specified company. If successful, an authentication token is return as a cookie.
+      summary: Login
+      description: "*For use with Forms Authentication.* Forms authentication requires calling the AuthenticationService.asmx before calling other web services. This function returns an ASP.Net Forms authentication cookie with the response which needs to be passed along with each future web service call. Authenticates the user against the configured membership provider and verifies they have access to the specified company. If successful, an authentication token is return as a cookie."
       parameters:
         - name: SOAPAction
           in: header
@@ -65,13 +78,13 @@ paths:
       responses:
         200:
           description: "Successful Operation"
-        500:
-          description: "An error occurred."
+          schema:
+            $ref: '#/definitions/loginResponse'
   '/authenticationservice.asmx?logout':
     post:
       operationId: logout
-      summary: Log out
-      description: Logs the current user out of the system and clears their authentication cookie.
+      summary: Logout
+      description: "*For use with Forms Authentication.* Logs the current user out of the system and clears their authentication cookie."
       parameters:
         - name: SOAPAction
           in: header
@@ -86,8 +99,8 @@ paths:
       responses:
         200:
           description: "Successful Operation"
-        500:
-          description: "An error occurred."
+          schema:
+            $ref: '#/definitions/logoutResponse'
   '/taxdetermination.asmx?processTransactions':
     post:
       operationId: processTransactions
@@ -107,8 +120,8 @@ paths:
       responses:
         200:
           description: "Successful Operation"
-        500:
-          description: "An error occurred."
+          schema:
+            $ref: '#/definitions/processTransactionsResponse'
 definitions:
   loginRequest:
     xml:
@@ -118,21 +131,21 @@ definitions:
     required:
       - Body
     properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
       Body:
         type: object
         xml:
           prefix: soap
         properties:
-          'xmlns:xsi':
-            type: string
-            xml: 
-              attribute: true
-            example: "http://www.w3.org/2001/XMLSchema-instance"
-          'xmlns:xsd':
-            type: string
-            xml:
-              attribute: true
-            example: "http://www.w3.org/2001/XMLSchema"
           Login:
             type: object
             xml:
@@ -147,6 +160,35 @@ definitions:
               companyName:
                 type: string
                 example: Determination Oil Company
+  loginResponse:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        properties:
+          LoginResponse:
+            type: object
+            xml:
+              namespace: "http://taxes.services.fuelquest.com/"
+            properties:
+              LoginResult: 
+                type: boolean
+                example: true
   logoutRequest:
     xml:
       name: Envelope
@@ -155,22 +197,47 @@ definitions:
     required:
       - Body
     properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
       Body:
         type: object
         xml:
           prefix: soap
         properties:
-          'xmlns:xsi':
-            type: string
-            xml: 
-              attribute: true
-            example: "http://www.w3.org/2001/XMLSchema-instance"
-          'xmlns:xsd':
+          Logout:
             type: string
             xml:
-              attribute: true
-            example: "http://www.w3.org/2001/XMLSchema"
-          Logout:
+              namespace: "http://taxes.services.fuelquest.com/"
+  logoutResponse:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        properties:
+          LogoutResponse:
             type: string
             xml:
               namespace: "http://taxes.services.fuelquest.com/"
@@ -353,17 +420,17 @@ definitions:
         maxLength: 10
         description: "Currency the taxes need to be reported in which may differ from the currency of tax rate (eg, USD, GBP, EUR)"
       TransactionLines: 
+        description: "An array of transaction lines which are invoice line items that contain the product and origin and destination information for a transaction"
         type: array
         items:
-        	$ref: '#/definitions/TransactionLine_5_18_0'
-        description: "An array of transaction lines which are invoice line items that contain the product and origin and destination information for a transaction"
+          $ref: '#/definitions/TransactionLine_5_18_0'
         xml:
           wrapped: true
       TransactionExchangeRates: 
+        description: "An array of transaction Exchange Rates which are exchange rate definitions to be used to calculate the taxes and return tax amounts."
         type: array
         items:
-        	$ref: '#/definitions/ExchangeRate_5_18_0'
-        description: "An array of transaction Exchange Rates which are exchange rate definitions to be used to calculate the taxes and return tax amounts."
+          $ref: '#/definitions/ExchangeRate_5_18_0'
         xml:
           wrapped: true
   TransactionLineMeasure_5_18_0:
@@ -716,3 +783,281 @@ definitions:
         type: number
         format: decimal
         description: "Decimal to tell how many times a product has been sold in the supply chain. 1,2,3"
+  processTransactionsResponse:
+    xml:
+      name: Envelope
+      prefix: soap
+      namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+    required:
+      - Body
+    properties:
+      'xmlns:xsi':
+        type: string
+        xml: 
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema-instance"
+      'xmlns:xsd':
+        type: string
+        xml:
+          attribute: true
+        example: "http://www.w3.org/2001/XMLSchema"
+      Body:
+        type: object
+        xml:
+          prefix: soap
+        properties:
+          ProcessTransactions_5_18_0Response:
+            type: object
+            xml:
+              namespace: "http://taxes.services.fuelquest.com/"
+            properties:
+              ProcessTransactions_5_18_0Result:
+                type: object
+                properties:
+                  TransactionResultSummary_5_18_0:
+                    type: object
+                    properties:
+                      NumberProcessed:
+                        type: number
+                        format: integer
+                        description: "Number of transactions processed during the call to ProcessTransactions_5_18_0"
+                      NumberSuccess:
+                        type: number
+                        format: integer
+                        description: "Number of transactions processed that did not contain errors and returned a valid result"
+                      NumberFailed:
+                        type: number
+                        format: integer
+                        description: "Number of transactions processed that did contain errors"
+                      TransactionResults:
+                        type: array
+                        description: "An array of actual transaction results returned from the call to ProcessTransactions_5_18_0"
+                        items:
+                          $ref: '#/definitions/TransactionResult_5_18_0'
+                        xml:
+                          wrapped: true
+  TransactionResult_5_18_0:
+    type: object
+    required:
+      - TranId
+      - ReturnCode
+      - TotalTaxAmount
+    properties:
+      UserTranId:
+        type: string
+        maxLength: 50
+        description: "A unique Id for the transaction as defined by the calling application which was passed in by the calling application in the Transaction_5_18_0 object"
+      TranId:
+        type: number
+        format: integer
+        description: "Unique Id assigned to the Transaction by the Avalara AvaTax Excise application"
+      Status:
+        type: string
+        maxLength: 20
+        description: "String defining the status of the transaction in the Tax Determination System"
+      ReturnCode:
+        type: number
+        format: integer
+        description: "A numeric representation of the success or failure of the transaction"
+      TotalTaxAmount:
+        type: number
+        format: decimal
+        description: "Sum of all taxes on all line items and on the invoice itself"
+      TransactionTaxes:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionTax_5_18_0'
+        description: "Object defining the individual taxes returned from the transaction"
+        xml:
+          wrapped: true
+      TrasactionErrors:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionError_5_18_0'
+        description: "Object defining the individual errors returned from the transaction"
+        xml:
+          wrapped: true
+      UserReturnValue:
+        type: string
+        maxLength: 512
+        description: "String that returns the UserData field passed into the Transactions_5_18_0 object"
+  TransactionTax_5_18_0:
+    type: object
+    required:
+        - SequenceId
+        - ProductCategory
+    properties:
+      SequenceId:
+        type: number
+        format: integer
+        description: "Avalara AvaTax Excise application calculated value that uniquely identifies the tax item within the transaction results 1, 2, 3"
+      TransactionLine:
+        type: number
+        format: integer
+        description: "The Transaction Line number passed in from the customer in the TransactionLine_2_0 object 1, 2, 3"
+      InvoiceLine:
+        type: number
+        format: integer
+        description: "The numeric invoice line passed in the calling application 1, 2, 3"
+      CountryCode:
+        type: string
+        maxLength: 3
+        description: "3 Character ISO country code USA, CAN"
+      Jurisdiction:
+        type: string
+        maxLength: 10
+        description: "2 Character code for the taxing jurisdiction ID, US, TX"
+      LocalJurisdiction:
+        type: string
+        maxLength: 30
+        description: "GNIS standard name for a local jurisdiction such as a city or county. If a tax is not a result of a local jurisdiction it’s set to NONE Boise, NONE, Ada"
+      ProductCategory:
+        type: number
+        format: decimal
+        description: "Numeric representation of the type of fuel being taxed defined in the product_categories table in the Avalara AvaTax Excise application 1, 4, 22"
+      TaxingLevel:
+        type: string
+        maxLength: 20
+        description: "Government level of taxation for the current tax item from the rates table in the Avalara AvaTax Excise application FEDERAL, STATE, LOCAL"
+      TaxType:
+        type: string
+        maxLength: 30
+        description: "Type of tax for the current tax item from the rates table in the Avalara AvaTax Excise application FUEL, SALESUSE"
+      RateType:
+        type: string
+        maxLength: 30
+        description: "Type of rate for the current tax item from the rates table in the Avalara AvaTax Excise application TAX, FEE"
+      RateSubtype:
+        type: string
+        maxLength: 30
+        description: "Further definition of the rate for the current tax item from the rates table in the Avalara AvaTax Excise application NONE, REFUND, HIGH"
+      CalculationTypeInd:
+        type: string
+        maxLength: 1
+        description: "Type of calculation for the rate as defined in the rates table in the Avalara AvaTax Excise application C (currency per unit), P (percentage), F (fixed)"
+      TaxRate:
+        type: number
+        format: decimal
+        description: "The tax rate for the current tax item .025, .05"
+      TaxQuantity:
+        type: number
+        format: decimal
+        description: "Number of units of product being taxed in this tax item 100, 4000, 3214"
+      TaxAmount:
+        type: number
+        format: decimal
+        description: "Calculated tax amount for the tax line 2.50, 50.00"
+      TaxExemptionInd:
+        type: string
+        maxLength: 1
+        description: "Indication of whether a tax is exempt or not Y, N"
+      DeferredInd:
+        type: string
+        maxLength: 1
+        description: "Indication of whether a tax is deferred or not Y, N"
+      PayableToCode:
+        type: string
+        maxLength: 50
+        description: "(eg, R,S)"
+      SalesTaxBaseAmount:
+        type: number
+        format: decimal
+        description: "Amount of Sales tax for the current tax item 234.00, 554.00"
+      LicenseNumber:
+        type: string
+        maxLength: 40
+        description: "The tax jurisdiction license number that applies for this transaction. 200984235, 894234567"
+      UserReturnedValue:
+        type: string
+        maxLength: 512
+        description: "String to hold any data you may want to pass into a transaction and potentially receive back untouched. May also be used for customizing calculations based on business rules"
+      ScenarioId:
+        type: number
+        format: integer
+        description: "A definition of the scenario that was applied in this tax item 100123, 119123"
+      ScenarioTaxGroupId:
+        type: number
+        format: integer
+        description: "A definition of the scenario tax group that was applied in this tax item 8245,321"
+      ScenarioSequence:
+        type: number
+        format: integer
+        description: "Sequence Id of the scenario_taxes table record used for this tax item 1, 2, 3, 4"
+      RateDescription:
+        type: string
+        maxLength: 256
+        description: "A short text description (pulled from the comments field of the rate table) of the rate that is being applied with this tax item Texas Delivery Fee"
+      Currency:
+        type: string
+        maxLength: 10
+        description: "Type of Currency the line item Unit Price and Tax Amount are defined in USD, EUR, GBP"
+      UnitofMeasure:
+        type: string
+        maxLength: 10
+        description: "The Unit of Measure the tax quantity isdefined in BRL, GAL, LTR"
+      SubtotalInd:
+        type: string
+        maxLength: 2
+        description: "Indication of which field(s) to use for the sales tax base of the tax. (Freight Only, Unit Price Only, Combined). C, F, U"
+      TransactionTaxAmounts:
+        type: array
+        items:
+          $ref: '#/definitions/TransactionTaxAmount_5_18_0'
+        description: "An Array of Tax Amounts in requested Currencies N/A"
+        xml:
+          wrapped: true
+      StatusCode:
+        type: string
+        maxLength: 30
+        description: "The calculation status of the tax. ACTIVE, INACTIVE, EXCLUDED"
+      QuantityInd:
+        type: string
+        maxLength: 1
+        description: "Type of Quantity used to calculate the tax referencing Billed, Net or Gross Value B, N, G"
+      ReportingTaxAmount:
+        type: number
+        format: decimal
+        description: "Tax Amount Converted to the Reporting Currency specified on the header 0.82, 2.90"
+      ReportingTaxCurrency:
+        type: string
+        maxLength: 10
+        description: "Currency requested in the reporting currency field on the header USD, EUR, GBP"
+  TransactionTaxAmount_5_18_0:
+    type: object
+    required:
+      - SequenceId
+      - TaxAmount
+    properties:
+      SequenceId:
+        type: number
+        format: integer
+        description: "Ordinal id for the Tax Amount"
+      Currency:
+        type: string
+        maxLength: 10
+        description: "Currency type of the tax amount"
+      TaxAmount:
+        type: number
+        format: decimal
+        description: "Amount of tax in the defined currency"
+  TransactionError_5_18_0:
+    type: object
+    required:
+      - SequenceId
+    properties:
+      SequenceId:
+        type: number
+        format: integer
+        description: "Ordinal id for the error 1, 2, 3"
+      ErrorCode:
+        type: string
+        maxLength: 10
+        description: "Numeric code representing an error in the Avalara AvaTax Excise application. -890, -892"
+      ErrorMessage:
+        type: string
+        maxLength: 2000
+        description: "String description of the error Rate for CountryCode: USA,Jurisdiction: ID,LocalJurisdiction: NONE,EffectiveDate: 3/27/2009 12:00:00 AM TaxingLevel: STATE TaxType: SALESUSE RateType: TAX,RateSubtype: NONE,ProductCategory: 0 was not found."
+      ErrorLevelInd:
+        type: string
+        maxLength: 1
+        description: "Text describing the severity of the error. C - Critical, W - Warning"
