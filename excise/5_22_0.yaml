@@ -4,7 +4,7 @@ info:
 
 At this time, Excise sample code/libraries are available in .NET only.
 
-**Versioning**: The Excise Tax SOAP API currently implements inline explicit versioning. The method name contains the version number. This document describes version 5_18_0, which is NOT is the current version of the service. Please replace this when using newer or older versions of the service.
+**Versioning**: The Excise Tax SOAP API currently implements inline explicit versioning. The method name contains the version number. In the example provided, 5_22_0 is the current version of the service. Please replace this when using newer or older versions of the service.
 
 Please note the application name changes effective 7/31/2014:
 
@@ -149,7 +149,7 @@ definitions:
           Login:
             type: object
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
             properties:
               userName: 
                 type: string
@@ -184,7 +184,7 @@ definitions:
           LoginResponse:
             type: object
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
             properties:
               LoginResult: 
                 type: boolean
@@ -215,7 +215,7 @@ definitions:
           Logout:
             type: string
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
   logoutResponse:
     xml:
       name: Envelope
@@ -240,7 +240,7 @@ definitions:
           LogoutResponse:
             type: string
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
   processTransactionsRequest:
     xml:
       name: Envelope
@@ -264,20 +264,20 @@ definitions:
         xml:
           prefix: soap
         required:
-          - ProcessTransactions_5_18_0
+          - ProcessTransactions_5_22_0
         properties:
-          ProcessTransactions_5_18_0:
+          ProcessTransactions_5_22_0:
             type: object
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
             properties:
               Transactions:
                 type: array
                 items:
-                  $ref: '#/definitions/Transaction_5_18_0'
+                  $ref: '#/definitions/Transaction_5_22_0'
                 xml:
                   wrapped: true
-  Transaction_5_18_0:
+  Transaction_5_22_0:
     type: object
     required:
       - Company
@@ -331,14 +331,8 @@ definitions:
         type: string
         maxLength: 35
         description: "ID of the Next Buyer (eg, Buy784, 24324, buy97887)"
-      SellerVATNumber: 
+      Middleman: 
         type: string
-        maxLength: 20
-        description: "Seller VAT Registration Number (eg, 1234567890123456790)"
-      BuyerVATNumber: 
-        type: string
-        maxLength: 20
-        description: "Buyer VAT Registration Number (eg, 1234567890123456790)"
       CustomStatus: 
         type: string
         maxLength: 30
@@ -355,6 +349,10 @@ definitions:
         type: string
         maxLength: 3
         description: "International Chamber of Commerce (ICC) rules for the use of domestic and international trade terms (eg, EXW, FCA, FAS, FOB, CFR, CIF, CPT, CIP, DAF, DES, DEQ, DDU, DDP)"
+      PerspectiveBusinessType:
+        type: string
+      ChainLeg:
+        type: string
       UserData: 
         type: string
         maxLength: 255
@@ -423,17 +421,17 @@ definitions:
         description: "An array of transaction lines which are invoice line items that contain the product and origin and destination information for a transaction"
         type: array
         items:
-          $ref: '#/definitions/TransactionLine_5_18_0'
+          $ref: '#/definitions/TransactionLine_5_22_0'
         xml:
           wrapped: true
       TransactionExchangeRates: 
         description: "An array of transaction Exchange Rates which are exchange rate definitions to be used to calculate the taxes and return tax amounts."
         type: array
         items:
-          $ref: '#/definitions/ExchangeRate_5_18_0'
+          $ref: '#/definitions/ExchangeRate_5_22_0'
         xml:
           wrapped: true
-  TransactionLineMeasure_5_18_0:
+  TransactionLineMeasure_5_22_0:
     type: object
     required:
       - MeasureValue
@@ -450,7 +448,7 @@ definitions:
         type: number
         format: decimal
         description: "Numeric Unit of the Quanity indicator type 100, 200, 300"
-  ExchangeRate_5_18_0:
+  ExchangeRate_5_22_0:
     type: object
     required:
       - EffectiveDate
@@ -471,7 +469,7 @@ definitions:
         type: number
         format: decimal
         description: "Numeric Amount determining the conversion factor between the from and to currencies 0.123234, 4.3245"
-  TransactionLineJurisdiction_5_18_0:
+  TransactionLineJurisdiction_5_22_0:
     type: object
     required:
       - SpecialJurisdictionCode
@@ -485,7 +483,7 @@ definitions:
         type: string
         maxLength: 30
         description: "The local jurisdiction type of the special jurisdiction."
-  TransactionLine_5_18_0:
+  TransactionLine_5_22_0:
     type: object
     required:
       - InvoiceLine
@@ -572,6 +570,10 @@ definitions:
         type: string
         maxLength: 20
         description: "Excise Warehouse Number of the Origin Free-form"
+      OriginAddress1:
+        type: string
+      OriginAddress2:
+        type: string
       OriginSpecialJurisdictionInd:
         type: string
         maxLength: 1
@@ -619,12 +621,16 @@ definitions:
       DestinationSpecialJurisdictions:
         type: array
         items:
-          $ref: '#/definitions/TransactionLineJurisdiction_5_18_0'
+          $ref: '#/definitions/TransactionLineJurisdiction_5_22_0'
         description: "Array of special jurisdictions for the destination. N/A"
       DestinationExciseWarehouse:
         type: string
         maxLength: 20
         description: "Excise Warehouse Number of the Destination Free-form"
+      DestinationAddress1:
+        type: string
+      DestinationAddress2:
+        type: string
       SaleCountryCode:
         type: string
         maxLength: 3
@@ -668,7 +674,7 @@ definitions:
       SaleSpecialJurisdictions:
         type: array
         items: 
-          $ref: '#/definitions/TransactionLineJurisdiction_5_18_0'
+          $ref: '#/definitions/TransactionLineJurisdiction_5_22_0'
         description: "Array of special jurisdictions for the sale location. N/A"
       CounterCountryCode:
         type: string
@@ -753,7 +759,7 @@ definitions:
       TransactionLineMeasures:
         type: array
         items:
-          $ref: '#/definitions/TransactionLineMeasure_5_18_0'
+          $ref: '#/definitions/TransactionLineMeasure_5_22_0'
         description: "Array of Measures to convert the input value to for this transaction line element N/A"
       CustomString1:
         type: string
@@ -806,21 +812,21 @@ definitions:
         xml:
           prefix: soap
         properties:
-          ProcessTransactions_5_18_0Response:
+          ProcessTransactions_5_22_0Response:
             type: object
             xml:
-              namespace: "http://taxes.services.fuelquest.com/"
+              namespace: "https://excise.avalara.net/"
             properties:
-              ProcessTransactions_5_18_0Result:
+              ProcessTransactions_5_22_0Result:
                 type: object
                 properties:
-                  TransactionResultSummary_5_18_0:
+                  TransactionResultSummary_5_22_0:
                     type: object
                     properties:
                       NumberProcessed:
                         type: number
                         format: integer
-                        description: "Number of transactions processed during the call to ProcessTransactions_5_18_0"
+                        description: "Number of transactions processed during the call to ProcessTransactions_5_22_0"
                       NumberSuccess:
                         type: number
                         format: integer
@@ -831,12 +837,12 @@ definitions:
                         description: "Number of transactions processed that did contain errors"
                       TransactionResults:
                         type: array
-                        description: "An array of actual transaction results returned from the call to ProcessTransactions_5_18_0"
+                        description: "An array of actual transaction results returned from the call to ProcessTransactions_5_22_0"
                         items:
-                          $ref: '#/definitions/TransactionResult_5_18_0'
+                          $ref: '#/definitions/TransactionResult_5_22_0'
                         xml:
                           wrapped: true
-  TransactionResult_5_18_0:
+  TransactionResult_5_22_0:
     type: object
     required:
       - TranId
@@ -846,7 +852,7 @@ definitions:
       UserTranId:
         type: string
         maxLength: 50
-        description: "A unique Id for the transaction as defined by the calling application which was passed in by the calling application in the Transaction_5_18_0 object"
+        description: "A unique Id for the transaction as defined by the calling application which was passed in by the calling application in the Transaction_5_22_0 object"
       TranId:
         type: number
         format: integer
@@ -866,22 +872,22 @@ definitions:
       TransactionTaxes:
         type: array
         items:
-          $ref: '#/definitions/TransactionTax_5_18_0'
+          $ref: '#/definitions/TransactionTax_5_22_0'
         description: "Object defining the individual taxes returned from the transaction"
         xml:
           wrapped: true
       TrasactionErrors:
         type: array
         items:
-          $ref: '#/definitions/TransactionError_5_18_0'
+          $ref: '#/definitions/TransactionError_5_22_0'
         description: "Object defining the individual errors returned from the transaction"
         xml:
           wrapped: true
       UserReturnValue:
         type: string
         maxLength: 512
-        description: "String that returns the UserData field passed into the Transactions_5_18_0 object"
-  TransactionTax_5_18_0:
+        description: "String that returns the UserData field passed into the Transactions_5_22_0 object"
+  TransactionTax_5_22_0:
     type: object
     required:
         - SequenceId
@@ -1002,7 +1008,7 @@ definitions:
       TransactionTaxAmounts:
         type: array
         items:
-          $ref: '#/definitions/TransactionTaxAmount_5_18_0'
+          $ref: '#/definitions/TransactionTaxAmount_5_22_0'
         description: "An Array of Tax Amounts in requested Currencies N/A"
         xml:
           wrapped: true
@@ -1022,7 +1028,7 @@ definitions:
         type: string
         maxLength: 10
         description: "Currency requested in the reporting currency field on the header USD, EUR, GBP"
-  TransactionTaxAmount_5_18_0:
+  TransactionTaxAmount_5_22_0:
     type: object
     required:
       - SequenceId
@@ -1040,10 +1046,11 @@ definitions:
         type: number
         format: decimal
         description: "Amount of tax in the defined currency"
-  TransactionError_5_18_0:
+  TransactionError_5_22_0:
     type: object
     required:
       - SequenceId
+      - TransactionLine
     properties:
       SequenceId:
         type: number
@@ -1061,3 +1068,6 @@ definitions:
         type: string
         maxLength: 1
         description: "Text describing the severity of the error. C - Critical, W - Warning"
+      TransactionLine:
+        type: number
+        format: integer
