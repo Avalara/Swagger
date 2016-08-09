@@ -194,6 +194,8 @@ definitions:
       - CompanyCode
       - DocCode
       - DocType
+    x-excludedProperties:
+      - DocId
     properties:
       CancelCode:
         type: string
@@ -217,6 +219,18 @@ definitions:
       - CustomerCode
       - Addresses
       - Lines
+    x-excludedProperties:
+      - BusinessIdentificationNo
+      - CurrencyCode
+      - CustomerUsageType
+      - ExemptionNo
+      - DetailLevel
+      - Discount
+      - LocationCode
+      - PosLaneCode
+      - PurchaseOrderNo
+      - ReferenceCode
+      - TaxOverride
     properties:
       BusinessIdentificationNo:
         maxLength: 25
@@ -324,6 +338,14 @@ definitions:
       - LineNo
       - DestinationCode
       - OriginCode
+    x-excludedProperties:
+      - CustomerUsageType
+      - BusinessIdentificationNo
+      - Discounted
+      - TaxIncluded
+      - Ref1
+      - Ref2
+      - TaxOverride
     properties:
       LineNo:
         maxLength: 50
@@ -424,6 +446,8 @@ definitions:
       - City
       - Region
       - PostalCode
+    x-excludedProperties:
+      - TaxRegionId
     properties:
       AddressCode:
         type: string
