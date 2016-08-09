@@ -404,7 +404,7 @@ definitions:
         description: "This provides the reason for a tax override for audit purposes. Typical reasons include: 'Return', 'Layaway', 'Imported'."
       TaxOverrideType:
         type: string
-        example: ref456
+        example: TaxDate
         description: "Must be one of the following: \n None: Default \n TaxAmount: The TaxAmount overrides the total tax for the document. This is used for imported documents, returns, and layaways where the tax has already been calculated either by AvaTax or another means. \n Exemption: Exemption certificates are overridden making the document taxable. This may be used for situations where a normally exempt entity needs to be treated as not exempt. \n TaxDate: The TaxDate overrides the DocDate as the effective date used for tax calculation. This may effect rates, rules and other factors."
       TaxDate:
         type: string
