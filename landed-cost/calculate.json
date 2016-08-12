@@ -33,7 +33,7 @@
     "paths": {
         "/v3/validate-creds": {
             "get": {
-                "summary":"Validate credentials",
+                "summary":"Validate Credentials",
                 "tags": [
                     "Landed Cost Calculation API"
                 ],
@@ -50,7 +50,7 @@
         },
         "/v3/calculate": {
             "post": {
-                "summary":"Calculate landed cost",
+                "summary":"Calculate Landed Cost",
                 "x-swagger-router-controller": "calculate",
                 "operationId": "calculate",
                 "tags": [
@@ -86,7 +86,7 @@
         },
         "/v3/rates": {
             "post": {
-                "summary":"Get rates",
+                "summary":"Get Rates",
                 "x-swagger-router-controller": "rates",
                 "operationId": "rates",
                 "tags": [
@@ -123,7 +123,7 @@
         },
         "/v3/units": {
             "post": {
-                "summary":"Get rate units",
+                "summary":"Get Rate Units",
                 "x-swagger-router-controller": "rates",
                 "operationId": "units",
                 "tags": [
@@ -160,7 +160,7 @@
         },
         "/v2/countries": {
             "get": {
-                "summary":"Get countries",
+                "summary":"Get Countries",
                 "description": "Returns the countries we currently support, along with most common classification system for both import and export.\n No request parameters are required for this call. The method returns a full list of supported countries",
                 "tags": [
                     "[v2]Country and Classification API"
@@ -182,7 +182,7 @@
         },
         "/v2/systems": {
             "get": {
-                "summary":"Get systems",
+                "summary":"Get Systems",
                 "description": "Returns a pair of classification (import and export) systems for trade between two countries",
                 "tags": [
                     "[v2]Country and Classification API"
@@ -221,7 +221,7 @@
         },
         "/v2/browse": {
             "get": {
-                "summary":"Get hs code trees",
+                "summary":"Get HS Code Trees",
                 "description": "Presents all of the available Harmonized Codes as a browesable tree. Each request specifies a parent node, and the response lists all child nodes of that parent. If no parent node is specified, all root-level nodes will be returned",
                 "tags": [
                     "[v2]Harmonized Codes API"
@@ -263,7 +263,7 @@
         },
         "/v2/hscodes": {
             "get": {
-                "summary":"Get hs code details including rates",
+                "summary":"Get HS Code Details Including Rates",
                 "description": "Search for Duty Rates for a harmonized code. Rates are dependant on at least a destination country",
                 "tags": [
                     "[v2]Harmonized Codes API"
@@ -321,7 +321,7 @@
         },
         "/v2/hscodes/{system}/{code}": {
             "get": {
-                "summary":"Get hs code details",
+                "summary":"Get HS Code Details",
                 "description": "Allows for the traversal of classification system, harmonized codes, and duty rates, allowing the user to browse the available content",
                 "tags": [
                     "[v2]Harmonized Codes API"
