@@ -20,6 +20,7 @@
       post: 
         operationId: "createAccount"
         description: "An account represents a single AvaTax client. Note that a single account may have multiple company profiles, each representing a single legal entity under the single AvaTax client contract. \n This resource creates an account with a functional but minimal company profile setup. It creates a single account with: \n * one Account Admin-level user\n * one default company profile\n * one defined location\n * nexus designated for the single location"
+        summary: Create an Account
         parameters: 
           - 
             name: "createAccountRequest"
@@ -40,6 +41,7 @@
       get: 
         operationId: "getAccount"
         description: "Retrieves the account details for a single specified account."
+        summary: Get an Account
         parameters: 
           - name: "accountId"
             in: "path"
@@ -58,6 +60,7 @@
     /accounts/{accountId}/companies:
       post:
         operationId: "createCompany"
+        summary: Create a Company
         description: "A company represents a single legal or reporting entity within an Account. An account may have many companies. Note that if you have created an account with `POST /accounts`, a single default company profile has already been created on the account."
         parameters:
           - name: "accountId"
@@ -83,6 +86,7 @@
       get:
         operationId: "getCompany"
         description: "Retrieves the company details for a single specified company on an account."
+        summary: Get a Company
         parameters:
           - name: "accountId"
             in: "path"
@@ -106,6 +110,7 @@
     /accounts/{accountId}/companies/{companyCode}/locations:
       post:
         operationId: "createLocations"
+        summary: Create Locations
         description: "Locations belong to a specific company profile and represent physical locations associated with the business, for example, office locations, retail locations, or warehouses. Locations are uniquely identified by the user-defined LocationCode within the context of their parent company. \n Allows for the creation of one or more locations associated with a single company profile. Note that if the account/company was created with `POST /accounts`, a default location has already been created for the initial company."
         parameters:
           - name: "accountId"
@@ -136,6 +141,7 @@
       get:
         operationId: "getLocation"
         description: "Retrieves a single specified location entry."
+        summary: Get a Location
         parameters:
           - name: "accountId"
             in: "path"
@@ -164,6 +170,7 @@
     /accounts/{accountId}/companies/{companyCode}/nexuses:
       post:
         operationId: "createNexus"
+        description: Create Nexus
         description: "Nexus tells the AvaTax calculation where the business entity is required to collect and remit taxes. If no nexus is selected for a given state, no taxes will be calculated for that state. \n Adds all nexus jurisdictions triggered by an address. Note that companies created by calling `POST /accounts` start with nexus already designated for the address provided at that time - this method need only be used if additional nexus jurisdictions are required for this business."
         parameters:
           - name: "accountId"
@@ -192,6 +199,7 @@
               $ref: "#/definitions/Error"
       get:
         operationId: "getNexus"
+        summary: Get Nexus Settings
         description: "Retrieves all nexus settings for a specified company."
         parameters:
           - name: "accountId"

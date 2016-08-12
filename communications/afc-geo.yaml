@@ -27,7 +27,7 @@ paths:
   /LocatorService.svc?GeocodeAddress:
     post:
       description: This method accepts address information and determines exact location including PCode.
-      summary: GeocodeAddress
+      summary: Geocode Address
       operationId: GeocodeAddress
       parameters:
         - in: header
@@ -50,7 +50,7 @@ paths:
     post:
       description: This method accepts longitude and latitude coordinates and determines exact location including PCode.
       operationId: GeocodeLatLong
-      summary: GeocodeLatLong
+      summary: Geocode Lat Long
       parameters:
         - in: header
           name: SOAPAction
@@ -72,7 +72,7 @@ paths:
     post:
       description: Get a list of address locations that match the street address information provided.
       operationId: GeocodeAllMatches
-      summary: GeocodeAllMatches
+      summary: Geocode All Matches
       parameters:
         - in: header
           name: SOAPAction
@@ -93,7 +93,7 @@ paths:
   /LocatorService.svc?GetServerTime:
     post:
       description: Returns the time on the server of the AvaTax for Communications service.
-      summary: GetServerTime
+      summary: Get Server Time
       operationId: GetServerTime
       parameters:
         - in: header

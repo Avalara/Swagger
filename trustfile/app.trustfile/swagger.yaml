@@ -33,7 +33,7 @@ paths:
       tags:
         - Api
       operationId: PostCompanySignup
-      summary: Company signup via API POST
+      summary: Company Signup
       description: >
         * All data is expected in the request body in a flat JSON format.
 

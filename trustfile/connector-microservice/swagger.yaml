@@ -61,7 +61,7 @@ paths:
     get:
       tags:
         - Connections
-      summary: Get list of Connections
+      summary: Get List of Connections
       description: "Returns list of connectionId's of the given enabled state"
       operationId: GetConnections
       parameters:
@@ -88,7 +88,7 @@ paths:
     post:
       tags:
         - Connections
-      summary: Creates a connection
+      summary: Create a Connection
       description: |
                    This will create a connection with the posted connectionId and startDate.
                    
@@ -132,7 +132,7 @@ paths:
         - Authorization: []
   '/connections/{connectionId}':
     head:
-      summary: Determine if connection with connectionId exists
+      summary: Determine if Connection Exists
       tags:
         - Connections
       operationId: HeadConnectionDetail
@@ -152,7 +152,7 @@ paths:
       security:
         - Authorization: []
     get:
-      summary: Get information about connection
+      summary: Get a Connection
       description: |
         * Returns the status and other information about the connection
         identified by 'connectionId'
@@ -188,7 +188,7 @@ paths:
     put:
       tags:
         - Connections
-      summary: Update the connection with the given connectionId
+      summary: Update a Connection
       operationId: PutConnection
       parameters:
         - in: path
@@ -222,7 +222,7 @@ paths:
     delete:
       tags:
         - Connections
-      summary: Delete a connection
+      summary: Delete a Connection
       description: Deletes the connection from the database given the connectionId and stops syncing data from it
       operationId: DeleteConnection
       parameters:
@@ -253,7 +253,7 @@ paths:
     get:
       tags:
         - Connections
-      summary: Get activity logs for connection
+      summary: Get Activity Logs for Connection
       description: "Returns a log of all activities up to a max of 365 days. The activity logs should be sufficient to help the user understand what's going on synchronizing their account with Trustfile"
       operationId: GetConnectionActivities
       parameters:
@@ -304,7 +304,7 @@ paths:
     get:
       tags:
         - Connections
-      summary: Authenticate with connection
+      summary: Authenticate with Connection
       description: 'Redirects user to the connection authentication. Response will be rendered in a popup iframe to handle oAuth or other authentication mechanism. Once the user logs in or authorizes the connector, they will be redirected to the provided redirectUri, passing the TFToConnectorToken'
       operationId: GetConnectionAuthenticate
       parameters:
@@ -386,7 +386,7 @@ paths:
     get:
       tags:
         - Connector
-      summary: Get status of the connector
+      summary: Get Status of a Connector
       operationId: GetConnector
       responses:
         '200':
@@ -413,7 +413,7 @@ paths:
     put:
       tags:
         - Connector
-      summary: Enable/Disable connector
+      summary: Enable/Disable Connector
       description: "Based on the 'enabled' query param, disables or enables the connector. When the connector is disabled, it stops synchronizing data with TrustFile until it is reenabled"
       operationId: PutConnector
       parameters:
@@ -454,7 +454,7 @@ paths:
     get:
       tags:
         - Errors
-      summary: Get connector errors
+      summary: Get Connector Errors
       operationId: GetErrors
       parameters:
         - in: query
@@ -503,7 +503,7 @@ paths:
     get:
       tags:
         - BadItems
-      summary: Retrieve items that have errors or are malformed
+      summary: Retrieve Bad Items
       operationId: GetBadItems
       description: The connector should identify items that it receives that do not match the schema required by TrustFile. These items are stored and can be retrieved through GET to this route
       parameters:
@@ -559,7 +559,7 @@ paths:
     get:
       tags:
         - Health
-      summary: Get health and availability of connector
+      summary: Get Connector Health
       description: "* Health check for connector, used for monitoring\n* Monitors verify all statuses report OK, or the health check will fail.\n* Will return an array of statuses of the three types: \n  * connector\n  * hostSystem\n  * trustfile\n* Possible statuses are: \n  * OK - nominal\n  * FAIL - integration point is non-responsive or failing\n  * DEGRADED - functional, but not functioning at full capacity\n"
       operationId: GetConnectorHealth
       responses:

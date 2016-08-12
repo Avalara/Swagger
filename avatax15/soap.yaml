@@ -140,7 +140,7 @@ paths:
           schema: 
             $ref: '#/definitions/AdjustTaxResponse'
         '400':
-          description: 'An Error Occurred. Check the error message text to find more information.'
+          description: 'An error occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?GetTaxHistory':
@@ -169,7 +169,7 @@ paths:
   '/Tax/TaxSvc.asmx?Ping':
     post:
       operationId: ping
-      summary: Test service connectivity
+      summary: Test Service Connectivity
       parameters:
         - in: header
           name: SOAPAction
@@ -186,13 +186,13 @@ paths:
           schema: 
             $ref: '#/definitions/PingResponse'
         '400':
-          description: 'An Error Occurred. Check the error message text to find more information.'
+          description: 'An error occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?IsAuthorized':
     post:
       operationId: isAuthorized
-      summary: Test authorized operations
+      summary: Test Authorized Operations
       parameters:
         - in: header
           name: SOAPAction
@@ -216,7 +216,7 @@ paths:
     post:
       operationId: applyPayment
       deprecated: true
-      summary: DEPRECATED Change payment date
+      summary: Change Payment Date (deprecated)
       parameters:
         - in: header
           name: SOAPAction
@@ -233,13 +233,13 @@ paths:
           schema: 
             $ref: '#/definitions/ApplyPaymentResponse'
         '400':
-          description: 'An Error Occurred. Check the error message text to find more information.'
+          description: 'An error occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
   '/Tax/TaxSvc.asmx?ReconcileTaxHistory':
     post:
       operationId: reconcileTaxHistory
-      summary: DEPRECATED Mark documents as Reconciled
+      summary: Mark Documents as Reconciled (deprecated)
       deprecated: true
       parameters:
         - in: header
@@ -257,7 +257,7 @@ paths:
           schema: 
             $ref: '#/definitions/ReconcileTaxHistoryResponse'
         '400':
-          description: 'An Error Occurred. Check the error message text to find more information.'
+          description: 'An error occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
 
@@ -283,7 +283,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateResponse'
         '500':
-          description: 'An Error Occurred. Check the error message text to find more information.'
+          description: 'An error occurred. Check the error message text to find more information.'
           schema:
             $ref: '#/definitions/UnauthorizedError'
 definitions:
@@ -355,13 +355,13 @@ definitions:
     properties:
       CompanyCode:
         type: string
-        description: "Client application company reference code. Not required if the documents are identified by DocId."
+        description: "Client application company reference code. Not required if the documents are identified by `DocId`."
       LastDocId:
         type: string
-        description: "Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode to identify a range of documents."
+        description: "Avatax-assigned unique document Id, can be used in place of `DocCode`, `DocType`, and `CompanyCode` to identify a range of documents."
       Reconciled:
         type: boolean
-        description: "Allows previously reconciled documents to be ignored. Please note that documents currently cannot be set to the 'Reconciled' status."
+        description: "Allows previously reconciled documents to be ignored. Please note that documents currently cannot be set to the `Reconciled` status."
       StartDate:
         type: string
         description: "The starting document date for the range of documents desired. In the format YYYY-MM-DD."
@@ -373,10 +373,10 @@ definitions:
         description: "Allows filtering of results by status. Possible statuses are: Saved, Posted, Comitted, Cancelled, Adjusted, Any."
       DocType:
         type: string
-        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by DocId."
+        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by `DocId`."
       LastDocCode:
         type: string
-        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.) – specifies that this document and all more recent documents are desired. Not required if the documents are identified by DocId."
+        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.) – specifies that this document and all more recent documents are desired. Not required if the documents are identified by `DocId`."
       PageSize:
         type: number
         format: integer
@@ -388,19 +388,19 @@ definitions:
     properties:
       CompanyCode:
         type: string
-        description: "Client application company reference code. Not required if the documents are identified by DocId."
+        description: "Client application company reference code. Not required if the documents are identified by `DocId`."
       DocType:
         type: string
-        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by DocId."
+        description: "Value describing what type of tax document is being requested. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the documents are identified by `DocId`."
       DocCode:
         type: string
-        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by DocId."
+        description: "Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by `DocId`."
       PaymentDate:
         type: string
         description: "The desired payment date to be recorded on the specified document record."
       DocId:
         type: string
-        description: "Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode."
+        description: "Avatax-assigned unique document ID, can be used in place of DocCode, DocType, and CompanyCode."
   ApplyPaymentResponse:
     properties:
       ApplyPaymentResult:
@@ -445,7 +445,7 @@ definitions:
                   $ref: '#/definitions/GetTaxResult'
               LastDocId:
                 type: string
-                description: "Avatax-assigned unique Document Id of the most recent document that was retrieved."
+                description: "Avatax-assigned unique document IDof the most recent document that was retrieved."
               LastDocCode:
                 type: string
                 description: "Client application identifier describing the most recent document that was retrieved."
@@ -656,13 +656,13 @@ definitions:
             properties:
               Coordinates:
                 type: boolean
-                description: Indicates whether latitude and longitude values should be returned in the ValidateResult object. Default is false.
+                description: Indicates whether latitude and longitude values should be returned in the `ValidateResult` object. Default is `false`.
               Taxability:
                 type: boolean
-                description: Indicates whether the AvaTax TaxRegionId should be returned in the ValidateResult object. Default is false.
+                description: Indicates whether the AvaTax `TaxRegionId` should be returned in the `ValidateResult` object. Default is `false`.
               TextCase:
                 type: string
-                description: "The casing to apply to the valid address(es) returned in the validation result. Default is Mixed Case. Must be one of: Default, Mixed, Upper"
+                description: "The casing to apply to the valid address(es) returned in the validation result. Default is `Mixed` case. Must be one of: Default, Mixed, Upper"
                 example: Default
               Address:
                 $ref: '#/definitions/Address'
@@ -733,7 +733,7 @@ definitions:
     properties:
       Commit:
         type: boolean
-        description: If set to True, AvaTax will Post and Commit the document in one call.
+        description: If set to `true`, AvaTax will post and commit the document in one call.
       CompanyCode:
         type: string
         maxLength: 25
@@ -744,14 +744,14 @@ definitions:
         description: The internal reference code (invoice number) used by the client application.
       DocDate:
         type: string
-        description: "The Document Date, i.e. the date on the invoice, purchase order, etc. In the format YYYY-MM-DD"
+        description: "The document date, i.e. the date on the invoice, purchase order, etc. In the format YYYY-MM-DD"
       DocType:
         type: string
-        description: The original document's type, such as SalesInvoice or PurchaseInvoice.
+        description: The original document's type, such as `SalesInvoice` or `PurchaseInvoice`.
       NewDocCode:
         type: string
         maxLength: 50
-        description: New Document Code for the document if desired.
+        description: New `DocumentCode` for the document if desired.
       TotalAmount:
         type: number
         format: decimal
@@ -761,7 +761,7 @@ definitions:
         format: decimal
         description: The total tax for the document.
   CommitTaxRequest:
-    description: "Input for CommitTax indicating the document that should be committed. You may use just the DocId to locate and commit the document (5.8 adapter and earlier, or 14.2 and later), or you may use all three of CompanyCode, DocType and DocCode."
+    description: "Input for `CommitTax` indicating the document that should be committed. You may use just the `DocId` to locate and commit the document (5.8 adapter and earlier, or 14.2 and later), or you may use all three of `CompanyCode`, `DocType` and `DocCode`."
     required:
       - CompanyCode
       - DocType
@@ -777,13 +777,13 @@ definitions:
         description: The internal reference code (invoice number) used by the client application.
       DocType:
         type: string
-        description: The original document's type, such as SalesInvoice or PurchaseInvoice.
+        description: The original document's type, such as `SalesInvoice` or `PurchaseInvoice`.
       DocId:
         type: string
         maxLength: 19
-        description: Avatax-assigned unique Document Id, can be used in place of CompanyCode, DocType and DocCode.
+        description: Avatax-assigned unique document ID, can be used in place of `CompanyCode`, `DocType` and `DocCode`.
   AdjustTaxRequest:
-    description: Input for adjusting documents. An AdjustTaxRequest consists of the body of a regular GetTaxRequest plus the addition of the AdjustTaxRequest object and calling method. The GetTaxRequest specified will replace the original document. All original values that aren’t being modified need to be populated in this object in addition to any values that are being modified.
+    description: Input for adjusting documents. An `AdjustTaxRequest` consists of the body of a regular `GetTaxRequest` plus the addition of the `AdjustTaxRequest` object and calling method. The `GetTaxRequest` specified will replace the original document. All original values that aren’t being modified need to be populated in this object in addition to any values that are being modified.
     required:
       - AdjustmentReason
       - AdjustmentDescription
@@ -792,7 +792,7 @@ definitions:
       AdjustmentReason:
         type: number
         format: integer
-        description: "Sets a valid reason for the given AdjustTax call. AdjustmentReason is a high level classification of why an Original Document is being modified. Must be one of:
+        description: "Sets a valid reason for the given `AdjustTax` call. `AdjustmentReason` is a high level classification of why an original document is being modified. Must be one of:
             0 - Not Adjusted
             1 - Sourcing Issue
             2 - Reconciled with General Ledger
@@ -801,17 +801,17 @@ definitions:
             5 - Item Returned
             6 - Item Exchanged
             7 - Bad Debt
-            8 - Other (Explain) Must provide AdjustmentDescription"
+            8 - Other (Explain) Must provide `AdjustmentDescription`"
         example: 8
       AdjustmentDescription:
         type: string
         maxLength: 255
-        description: Should be used when AdjustmentReason is “Other” for enhanced traceability. Leave empty for all AdjustmentReason selections except 8 - Other.
+        description: Should be used when `AdjustmentReason` is "other" for enhanced traceability. Leave empty for all `AdjustmentReason` selections except `8`.
         example: "Invoice Adjusted"
       GetTaxRequest:
         $ref: '#/definitions/GetTaxRequest'
   GetTaxHistoryRequest:
-    description: Input for GetTaxHistory indicating the document for which history should be retrieved. The request must specify all of CompanyCode, DocCode, and DocType in order to uniquely identify the document.
+    description: Input for `GetTaxHistory` indicating the document for which history should be retrieved. The request must specify all of `CompanyCode`, `DocCode`, and `DocType` in order to uniquely identify the document.
     required:
       - CompanyCode
       - DocType
@@ -871,17 +871,17 @@ definitions:
       CompanyCode:
         maxLength: 25
         type: string
-        description: Client application company reference code. Not required if the document is identified by DocId.
+        description: Client application company reference code. Not required if the document is identified by `DocId`.
       DocCode:
         maxLength: 50
         type: string
-        description: 'Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by DocId.'
+        description: 'Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by `DocId`.'
       DocType:
         type: string
-        description: 'Value describing what type of tax document is being cancelled. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the document is identified by DocId.'
+        description: 'Value describing what type of tax document is being cancelled. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the document is identified by `DocId`.'
       DocId:
         type: string
-        description: 'Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode'
+        description: 'Avatax-assigned unique document ID, can be used in place of DocCode, DocType, and CompanyCode'
   GetTaxRequest:
     required:
       - CustomerCode
@@ -892,11 +892,11 @@ definitions:
         maxLength: 25
         type: string
         example: '234234'
-        description: 'The buyer’s VAT id. Using this value will force VAT rules to be considered for the transaction. This may be set on the document or the line. Note that this must be a valid VAT number, and this field should not be used for any other purpose.'
+        description: 'The buyer’s VAT ID. Using this value will force VAT rules to be considered for the transaction. This may be set on the document or the line. Note that this should be a valid VAT number, and this field should not be used for any other purpose.'
       Commit:
         type: boolean
         example: 'false'
-        description: 'Default is false. Setting this value to true will put the document in a Committed status, preventing further document status changes, except voiding with CancelTax.'
+        description: 'Default is `false`. Setting this value to true will put the document in a committed status, preventing further document status changes, except voiding with `CancelTax`.'
       CompanyCode:
         maxLength: 25
         type: string
@@ -911,16 +911,20 @@ definitions:
         maxLength: 3
         type: string
         example: USD
-        description: '3 character ISO 4217 compliant currency code. If unspecified, a default of USD will be used.'
+        description: '3 character ISO 4217 compliant currency code. If unspecified, a default of `USD` will be used.'
       CustomerUsageType:
         maxLength: 25
         type: string
         example: G
-        description: "The client application customer or usage type. More information about this value is available in the [Avalara Help Center](https://help.avalara.com/kb/001/What_are_the_Entity_Use_Codes_used_for_Avalara_AvaTax%3F). \n The standard values for the CustomerUsageType are: \n A - Federal Government \n B - State/Local Govt.\n C - Tribal Government\n D - Foreign Diplomat\n E - Charitable Organization\n F - Religious/Education\n G - Resale\n H - Agricultural Production\n I - Industrial Prod/Mfg.\n J - Direct Pay Permit\n K - Direct Mail\n L - Other\n N - Local Government\n P - Commercial Aquaculture (Canada)\n Q - Commercial Fishery (Canada)\n R - Non-resident (Canada)\n MED1 - US MDET with exempt sales tax\n MED2 - US MDET with taxable sales tax "
+        description: "The client application customer or usage type. More information about this value is available in the [Avalara Help Center](https://help.avalara.com/kb/001/What_are_the_Entity_Use_Codes_used_for_Avalara_AvaTax%3F). "
       DetailLevel:
         type: string
         example: Tax
-        description: "Specifies the level of detail to return.\n Summary - summarizes document and jurisdiction detail with no line breakout \n Document - only document detail \n Line - document and line detail \n Tax - document, line and jurisdiction detail"
+        description: "Specifies the level of detail to return.
+        Summary - summarizes document and jurisdiction detail with no line breakout 
+        Document - only document detail 
+        Line - document and line detail 
+        Tax - document, line and jurisdiction detail"
       Discount:
         type: number
         format: float
@@ -934,7 +938,13 @@ definitions:
       DocType:
         type: string
         example: SalesOrder
-        description: 'The document type specifies the category of the document and affects how the document is treated after a tax calculation. If no DocType is specified in the request, SalesOrder will be used. \n SalesOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. \n SalesInvoice: The document is a permanent invoice; document and tax calculation results are saved in the tax history. GetTaxResult will return with a DocStatus of Saved. \n PurchaseOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. \n PurchaseInvoice : The document is a permanent invoice; document and tax calculation results are saved in the tax history. GetTaxResult will return with a DocStatus of Saved. \n ReturnOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. \n ReturnInvoice: The document is a permanent sales return invoice; document and tax calculation results are saved in the tax history GetTaxResult will return with a DocStatus of Saved.'
+        description: 'The document type specifies the category of the document and affects how the document is treated after a tax calculation. If no DocType is specified in the request, SalesOrder will be used. 
+         SalesOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. 
+         SalesInvoice: The document is a permanent invoice; document and tax calculation results are saved in the tax history. GetTaxResult will return with a DocStatus of Saved. 
+         PurchaseOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. 
+         PurchaseInvoice : The document is a permanent invoice; document and tax calculation results are saved in the tax history. GetTaxResult will return with a DocStatus of Saved. 
+         ReturnOrder: This is a temporary document type and is not saved in tax history. GetTaxResult will return with a DocStatus of Temporary. 
+         ReturnInvoice: The document is a permanent sales return invoice; document and tax calculation results are saved in the tax history GetTaxResult will return with a DocStatus of Saved.'
       DocDate:
         type: string
         format: date
@@ -949,12 +959,12 @@ definitions:
         maxLength: 25
         type: string
         example: '01'
-        description: 'Also referred to as a Store Location, Outlet Id, or Outlet code. Location code is a value assigned by some State jurisdictions that identifies a particular store location. These States may require tax liabilities to be broken out separately for each store Location'
+        description: 'Also referred to as a store location, outlet id, or outlet code. Location code is a value assigned by some state jurisdictions that identifies a particular store location. These states may require tax liabilities to be broken out separately for each store location'
       PosLaneCode:
         maxLength: 50
         type: string
         example: 09
-        description: Permits a Point of Sale application to record the unique code / ID / number associated with the terminal processing a sale.
+        description: Permits a point of sale application to record the unique code / ID / number associated with the terminal processing a sale.
       PurchaseOrderNo:
         maxLength: 50
         type: string
@@ -964,32 +974,32 @@ definitions:
         maxLength: 50
         type: string
         example: ''
-        description: 'For returns, refers to the DocCode of the original invoice.'
+        description: 'For returns, refers to the `DocCode` of the original invoice.'
       DestinationCode:
         type: string
         example: '01'
-        description: Destination (ship-to) address code.DestinationCode references an address from the Addresses collection.
+        description: Destination (ship-to) address code. `DestinationCode` references an address from the `Addresses` collection.
       OriginCode:
         type: string
         example: '02'
-        description: Origination (ship-from) address code. OriginCode references an address from the Addresses
+        description: Origination (ship-from) address code. `OriginCode` references an address from the `Addresses`
       ServiceMode:
         type: string
-        description: "AvaTaxLocal function - provides the ability to control whether a tax is calculated locally or AvaTax web service. The default is Automatic which calculates locally unless a remote connection is necessary for “send sales” not configured at the local server level. One of: Automatic, Local, Remote"
+        description: "AvaTaxLocal function - provides the ability to control whether a tax is calculated locally or AvaTax web service. The default is `Automatic` which calculates locally unless a remote connection is necessary for “send sales” not configured at the local server level. One of: Automatic, Local, Remote"
         example: Automatic
       PaymentDate:
         type: string
-        description: "PaymentDate indicates the date that a payment was received for the document. It is only applicable for cash-basis accounting and does not need to be set. The default value is 1900-01-01 which indicates no payment received."
+        description: "Deprecated. Will be ignored if specified."
         example: '1900-01-01'
       ExchangeRate:
         type: number
         format: decimal
-        description: "Exchange Rate indicates the currency exchange rate from the transaction currency (indicated by CurrencyCode) to the company’s base currency. Note: ExchangeRate need only be set if the transaction currency is different that of the company’s base currency. Default is 1.0"
+        description: "Indicates the currency exchange rate from the transaction currency (indicated by `CurrencyCode`) to the company’s base currency. Note: ExchangeRate need only be set if the transaction currency is different that of the company’s base currency. Default is `1.0`"
         default: 1.0
         example: 1.0
       ExchangeRateEffDate:
         type: string
-        description: ExchangeRateEffDate indicates the effective date of the exchange rate and works in tandem with ExchangeRate. Default is the DocDate if null. Date is in the format YYYY-MM-DD.
+        description: Indicates the effective date of the exchange rate and works in tandem with `ExchangeRate`. Default is the `DocDate` if null. Date is in the format YYYY-MM-DD.
         example: '1900-01-01'
       TaxOverride:
         $ref: '#/definitions/TaxOverride'
@@ -1021,17 +1031,17 @@ definitions:
         maxLength: 50
         type: string
         example: '1'
-        description: 'Line item identifier. LineId uniquely identifies the line item row.'
+        description: 'Line item identifier. Uniquely identifies the line item row.'
         xml: 
           name: 'No'
       DestinationCode:
         type: string
         example: '01'
-        description: 'Destination (ship-to) address code.DestinationCode references an address from the Addresses collection.'
+        description: 'Destination (ship-to) address code. `DestinationCode` references an address from the `Addresses` collection.'
       OriginCode:
         type: string
         example: '02'
-        description: 'Origination (ship-from) address code. OriginCode references an address from the Addresses collection.'
+        description: 'Origination (ship-from) address code. `OriginCode` references an address from the `Addresses` collection.'
       ItemCode:
         maxLength: 50
         type: string
@@ -1046,7 +1056,7 @@ definitions:
         maxLength: 25
         type: string
         example: L
-        description: 'The client application customer or usage type. CustomerUsageType determines the exempt status of the transaction based on the exemption tax rules for the jurisdictions involved. Can also be referred to as Entity/Use Code. More information about this value is available in the Avalara Help Center.'
+        description: 'The client application customer or usage type. `CustomerUsageType` determines the exempt status of the transaction based on the exemption tax rules for the jurisdictions involved. Can also be referred to as Entity/Use Code. More information about this value is available in the Avalara Help Center.'
       BusinessIdentificationNo:
         maxLength: 25
         type: string
@@ -1060,7 +1070,7 @@ definitions:
       Qty:
         type: number
         example: '1'
-        description: 'Item quantity. The tax engine does NOT use this as a multiplier with price to get the Amount.'
+        description: 'Item quantity. The tax engine does NOT use this as a multiplier with price to get the `Amount`.'
       Amount:
         type: number
         example: '10'
@@ -1072,21 +1082,21 @@ definitions:
       TaxIncluded:
         type: boolean
         example: 'false'
-        description: 'Should be set to true if the tax is already included, and sale amount and tax should be back-calculated from the provided Line.Amount. Defaults to false.'
+        description: 'Should be set to true if the tax is already included, and sale amount and tax should be back-calculated from the provided `Line.Amount`. Defaults to false.'
       Ref1:
         maxLength: 250
         type: string
         example: ref123
-        description: Value stored with SalesInvoice DocType that is submitter dependent.
+        description: Stored with a line. Does not affect tax calculation.
       Ref2:
         maxLength: 250
         type: string
         example: ref456
-        description: Value stored with SalesInvoice DocType that is submitter dependent.
+        description: Stored with a line. Does not affect tax calculation.
       TaxOverride:
           $ref: '#/definitions/TaxOverride'
   TaxOverride:
-    description: 'Nested object describing any tax override applied to the document. TaxOverride only needs to be included when there is need to override our tax calculation. Most commonly on ReturnInvoices. For each document, this may be done at either the document or line level, but not both on the same document.'
+    description: 'Nested object describing any tax override applied to the document. `TaxOverride` only needs to be included when there is need to override our tax calculation, most commonly on product returns. For each document, this may be done at either the document or line level, but not both on the same document.'
     required:
       - Reason
       - TaxOverrideType
@@ -1099,17 +1109,21 @@ definitions:
       TaxOverrideType:
         type: string
         example: None
-        description: "Must be one of the following: \n None: Default \n TaxAmount: The TaxAmount overrides the total tax for the document. This is used for imported documents, returns, and layaways where the tax has already been calculated either by AvaTax or another means. \n Exemption: Exemption certificates are overridden making the document taxable. This may be used for situations where a normally exempt entity needs to be treated as not exempt. \n TaxDate: The TaxDate overrides the DocDate as the effective date used for tax calculation. This may effect rates, rules and other factors."
+        description: "Must be one of the following: 
+        None: Default 
+        TaxAmount: The TaxAmount overrides the total tax for the document. This is used for imported documents, returns, and layaways where the tax has already been calculated either by AvaTax or another means. 
+        Exemption: Exemption certificates are overridden making the document taxable. This may be used for situations where a normally exempt entity needs to be treated as not exempt. 
+        TaxDate: The TaxDate overrides the DocDate as the effective date used for tax calculation. This may effect rates, rules and other factors."
       TaxDate:
         type: string
         example: '2015-01-01'
-        description: 'Must be valid date, required if TaxOverrideType is TaxDate The override tax date to use. This is used when the tax has been previously calculated as in the case of a layaway, return or other reason indicated by the Reason element. If the date is not overridden, then it should be set to the same as the DocDate.'
+        description: 'Must be valid date, required if `TaxOverrideType` is `TaxDate`. The override tax date to use. This is used when the tax has been previously calculated as in the case of a layaway, return or other reason indicated by the `Reason` element. If the date is not overridden, then it should be set to the same as the `DocDate`.'
       TaxAmount:
         type: string
         example: '14.26'
-        description: 'Must be numeric, required if TaxOverrideType is TaxAmount. The overriding amount of tax to apply. If at the document level, this is distributed across all taxable rows.'
+        description: 'Must be numeric, required if `TaxOverrideType` is `TaxAmount`. The overriding amount of tax to apply. If at the document level, this is distributed across all taxable rows.'
   Address:
-    description: Input property of GetTaxRequest representing addresses needed for tax calculations.
+    description: Input property of `GetTaxRequest` representing addresses needed for tax calculations.
     xml:
       name: Address
     required:
@@ -1141,12 +1155,12 @@ definitions:
         maxLength: 50
         type: string
         example: Chicago
-        description: 'City name, required unless PostalCode is specified and/or Latitude and Longitude are provided.'
+        description: 'City name, required unless `PostalCode` is specified and/or latitude and longitude are provided.'
       Region:
         maxLength: 3
         type: string
         example: IL
-        description: 'State, province, or region name. Required unless City is specified and/or Latitude and Longitude are provided.'
+        description: 'State, province, or region name. Required unless City is specified and/or latitude and longitude are provided.'
       Country:
         maxLength: 2
         type: string
@@ -1156,24 +1170,24 @@ definitions:
         maxLength: 11
         type: string
         example: '60602'
-        description: 'Postal or ZIP code, Required unless City and Region are specified, and/or Latitude and Longitude are provided.'
+        description: 'Postal or ZIP code, Required unless city and region are specified, and/or latitude and longitude are provided.'
       Latitude:
         type: number
         format: double
         example: '47.627935'
-        description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic latitude. If latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       Longitude:
         type: number
         format: float
         example: '-122.51702'
-        description: 'Geographic longitude. If Longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic longitude. If longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       TaxRegionId:
         type: number
         format: integer
-        description: 'AvaTax tax region identifier. If a non-zero value is entered into TaxRegionId, other fields will be ignored.'
+        description: 'AvaTax tax region identifier. If a non-zero value is entered into `TaxRegionId`, other fields will be ignored. Not recommended.'
         example: 1
   BaseAddress:
-    description: Input property of GetTaxRequest representing addresses needed for tax calculations.
+    description: Input property of `GetTaxRequest` representing addresses needed for tax calculations.
     xml:
       name: BaseAddress
     required:
@@ -1191,7 +1205,7 @@ definitions:
         maxLength: 50
         type: string
         example: 45 Fremont Street
-        description: 'Address line 1, required if Latitude and Longitude are not provided.'
+        description: 'Address line 1, required if latitude and longitude are not provided.'
       Line2:
         maxLength: 50
         type: string
@@ -1206,12 +1220,12 @@ definitions:
         maxLength: 50
         type: string
         example: Chicago
-        description: 'City name, required unless PostalCode is specified and/or Latitude and Longitude are provided.'
+        description: 'City name, required unless PostalCode is specified and/or latitude and longitude are provided.'
       Region:
         maxLength: 3
         type: string
         example: IL
-        description: 'State, province, or region name. Required unless City is specified and/or Latitude and Longitude are provided.'
+        description: 'State, province, or region name. Required unless City is specified and/or latitude and longitude are provided.'
       Country:
         maxLength: 2
         type: string
@@ -1221,21 +1235,21 @@ definitions:
         maxLength: 11
         type: string
         example: '60602'
-        description: 'Postal or ZIP code, Required unless City and Region are specified, and/or Latitude and Longitude are provided.'
+        description: 'Postal or ZIP code, Required unless city and region are specified, and/or latitude and longitude are provided.'
       Latitude:
         type: number
         format: double
         example: '47.627935'
-        description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic latitude. If latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       Longitude:
         type: number
         format: float
         example: '-122.51702'
-        description: 'Geographic longitude. If Longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic longitude. If longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
       TaxRegionId:
         type: number
         format: integer
-        description: 'AvaTax tax region identifier. If a non-zero value is entered into TaxRegionId, other fields will be ignored.'
+        description: 'AvaTax tax region identifier. If a non-zero value is entered into `TaxRegionId`, other fields will be ignored. Not recommended.'
         example: 1
   DocCode:
     maxLength: 50
@@ -1401,10 +1415,10 @@ definitions:
         description: Server timestamp of request.
       TotalAmount:
         type: number
-        description: Sum of all line Amount values.
+        description: Sum of all line `Amount` values.
       TotalDiscount:
         type: number
-        description: Sum of all TaxLine discount amounts.
+        description: Sum of all `TaxLine` discount amounts.
       TotalExemption:
         type: number
         description: Total exemption amount.
@@ -1413,10 +1427,10 @@ definitions:
         description: Total taxable amount.
       TotalTax:
         type: number
-        description: Sum of all TaxLine tax amounts.
+        description: Sum of all `TaxLine` tax amounts.
       TotalTaxCalculated:
         type: number
-        description: TotalTaxCalculated indicates the total tax calculated by AvaTax. This is usually the same as the TotalTax, except when a tax override amount is specified. This is for informational purposes. The TotalTax will still be used for reporting.
+        description: Indicates the total tax calculated by AvaTax. This is usually the same as the `TotalTax`, except when a tax override amount is specified. This is for informational purposes. The `TotalTax` will still be used for reporting.
       TaxDate: 
         type: string
         format: date
@@ -1440,7 +1454,7 @@ definitions:
         items:
           $ref: '#/definitions/TaxAddress'
   TaxLine:
-    description: Tax calculation details for each item line (returned for detail levels Line and Tax).
+    description: Tax calculation details for each item line (returned for detail levels `Line` and `Tax`).
     xml:
       name: TaxLine
     properties:
@@ -1484,7 +1498,7 @@ definitions:
         items:
           $ref: '#/definitions/TaxDetail'
   TaxAddress:
-    description: TaxAddress represents canonical addresses used in tax calculation.
+    description: Represents canonical addresses used in tax calculation.
     xml:
       name: TaxAddress
     properties:
@@ -1494,7 +1508,7 @@ definitions:
         maxLength: 50
       AddressCode:
         type: string
-        description: Reference code uniquely identifying this address instance. AddressCode will always correspond to an address code supplied to in the address collection provided in the request.
+        description: Reference code uniquely identifying this address instance. `AddressCode` will always correspond to an address code supplied to in the address collection provided in the request.
       City:
         type: string
         description: City name
@@ -1513,10 +1527,10 @@ definitions:
         maxLength: 11
       Latitude:
         type: number
-        description: 'Geographic latitude. If Latitude is defined, it is expected that the longitude field will also be provided. Failure to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic latitude.'
       Longitude:
         type: number
-        description: 'Geographic longitude. If Longitude is defined, it is expected that the latitude field will also be provided. Fail to do so will result in operation error. Calculation by latitude/longitude is available for the United States only. If a latitude/longitude value outside of the US is provided, the service will return an error.'
+        description: 'Geographic longitude.'
       TaxRegionId:
         type: number
         description: AvaTax tax region identifier
@@ -1560,7 +1574,7 @@ definitions:
       AddressCode:
         type: string
         example: 01
-        description: A unique identifier of the address in the request. Will be blank unless an AddressCode was passed in the request.
+        description: A unique identifier of the address in the request. Will be blank unless an `AddressCode` was passed in the request.
       Line1:
         type: string
         example: 45 Fremont Street
@@ -1598,19 +1612,37 @@ definitions:
         maxLength: 11
       AddressType:
         type: string
-        description: 'Address type code. One of:\n * F - Firm or company address\n * G - General Delivery address\n * H - High-rise or business complex\n * P - PO Box address\n * R - Rural route address\n * S - Street or residential address' 
+        description: 'Address type code. One of:
+        * F - Firm or company address
+        * G - General Delivery address
+        * H - High-rise or business complex
+        * P - PO Box address
+        * R - Rural route address
+        * S - Street or residential address' 
         maxLength: 1
       FipsCode:
         type: string
-        description: 'FIPSCode is a unique 10-digit code representing each geographic combination of state, county, and city. The code is made up of the Federal Information Processing Code (FIPS) that uniquely identifies each state, county, and city in the U.S. Returned for US addresses only. Digits represent jurisdiction codes:\n * 1-2 State code\n * 3-5 County code\n * 6-10 City code'
+        description: 'FIPSCode is a unique 10-digit code representing each geographic combination of state, county, and city. The code is made up of the Federal Information Processing Code (FIPS) that uniquely identifies each state, county, and city in the U.S. Returned for US addresses only. Digits represent jurisdiction codes:
+         * 1-2 State code
+         * 3-5 County code
+         * 6-10 City code'
         maxLength: 10
       CarrierRoute:
         type: string
-        description: 'CarrierRoute is a four-character string representing a US postal carrier route. The first character of this property, the term, is always alphabetic, and the last three numeric. For example, “R001” or “C027” would be typical carrier routes. The alphabetic letter indicates the type of delivery associated with this address. Returned for US addresses only.\n * B - PO Box\n * C - City delivery\n * G - General delivery\n * H - Highway contract\n * R - Rural route'
+        description: 'CarrierRoute is a four-character string representing a US postal carrier route. The first character of this property, the term, is always alphabetic, and the last three numeric. For example, “R001” or “C027” would be typical carrier routes. The alphabetic letter indicates the type of delivery associated with this address. Returned for US addresses only.
+        * B - PO Box
+        * C - City delivery
+        * G - General delivery
+        * H - Highway contract
+        * R - Rural route'
         maxLength: 4
       PostNet:
         type: string
-        description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:\n * 1-5 ZIP code\n * 6-9 Plus4 code\n * 10-11 Delivery point\n * 12 Check digit'
+        description: 'POSTNet is a 12-digit barcode containing the ZIP Code, ZIP+4 Code, and the delivery point code, used by the USPS to direct mail. Returned for US addresses only digits represent delivery information:
+          * 1-5 ZIP code
+          * 6-9 Plus4 code
+          * 10-11 Delivery point
+          * 12 Check digit'
         maxLength: 12
   PostTaxResponse:
     description: Result data returned from PostTax.
@@ -1636,7 +1668,7 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   CommitTaxResponse:
-    description: Output for CommitTax indicating the success of the operation, or any errors encountered.
+    description: Output for `CommitTax` indicating the success of the operation, or any errors encountered.
     properties:
       CommitTaxResult:
         type: object
@@ -1659,7 +1691,7 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   AdjustTaxResponse:
-    description: Result data returned from AdjustTax. Within this result you will find the same elements as a GetTaxResult. It is likely you will want to consider retrieving the document Version in addition to other tax related information. This is an element of all GetTaxResult or AdjustTaxResult objects.
+    description: Result data returned from `AdjustTax`. Within this result you will find the same elements as a `GetTaxResult`. It is likely you will want to consider retrieving the document Version in addition to other tax related information. This is an element of all `GetTaxResult` or `AdjustTaxResult` objects.
     properties:
       AdjustTaxResult:
         allOf:
@@ -1675,7 +1707,7 @@ definitions:
                   $ref: '#/definitions/Message'
           - title: GetTaxResult
   GetTaxHistoryResponse:
-    description: Result data returned from GetTaxHistory. You can retrieve any part of the GetTaxRequest or GetTaxResult.
+    description: Result data returned from `GetTaxHistory`. You can retrieve any part of the `GetTaxRequest` or `GetTaxResult`.
     properties:
       GetTaxHistoryResult:
         type: object
@@ -1694,7 +1726,7 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   PingResponse:
-    description: Result data returned from Ping.
+    description: Result data returned from `Ping`.
     properties:
       PingResult:
         type: object
@@ -1718,7 +1750,7 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   IsAuthorizedResponse:
-    description: Result data returned from IsAuthorized.
+    description: Result data returned from `IsAuthorized`.
     properties:
       IsAuthorizedResult:
         title: IsAuthorizedResult
@@ -1732,7 +1764,7 @@ definitions:
             maxLength: 10
           Operations:
             type: string
-            description: "The operations that the current user is authorized to use. Determined from the list provided in the IsAuthorized call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
+            description: "The operations that the current user is authorized to use. Determined from the list provided in the `IsAuthorized` call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
             maxLength: 255
           TransactionId:
             type: string
@@ -1767,7 +1799,7 @@ definitions:
       'SOAP-ENV:actor':
         type: string
         example: "http://schemas.xmlsoap.org/soap/actor/next"
-        description: 'The WS-Security standard requires the wsse:Security element contains a SOAP-ENV:actor attribute.'
+        description: 'The WS-Security standard requires the `wsse:Security` element contains a `SOAP-ENV:actor` attribute.'
         xml:
           attribute: true
     xml:

@@ -42,7 +42,7 @@ paths:
     post:
       tags:
         - Items
-      summary: Post items
+      summary: Post Items
       description: >
         * Creates new items or updates them if they already exist
 
@@ -146,7 +146,7 @@ paths:
     get:
       tags:
         - Items
-      summary: Retrieve items by itemId for the given connectionId
+      summary: Retrieve Items by ItemId
       description: Get items of the provided itemId for the given connection. Will include both the item and the refund, if it exists
       operationId: GetItems
       parameters:
@@ -198,7 +198,7 @@ paths:
     get:
       tags:
         - Connections
-      summary: Retrieve connectionId information
+      summary: Retrieve ConnectionId Information
       description: Queries for the company information TrustFile has stored
       operationId: GetCompanies
       parameters:
