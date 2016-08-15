@@ -81,10 +81,10 @@ paths:
           description: 'Unauthorized: Service raises a 401 when the `Authorization` header is missing or malformed.'
           schema:
             $ref: '#/definitions/CancelTaxUnauthorizedError'
-  '/tax/{latitude},{longitude}/get?{saleamount}':
+'/tax/{latitude},{longitude}/get':
     get:
       summary: Estimate Tax
-      description: 'Retrieves tax rate details for the supplied geographic coordinates and sale amount. Since the REST API does not provide an explicit ping function, this method can also be used to test connectivity to the service. If you would like an XML response, use the URL `/1.0/tax/{latitude},{longitude}/get.xml?{saleamount}` and specify the request header `Content-Type: text/xml`.'
+      description: 'Retrieves tax rate details for the supplied geographic coordinates and sale amount. Since the REST API does not provide an explicit ping function, this method can also be used to test connectivity to the service. If you would like an XML response, use the URL `/1.0/tax/{latitude},{longitude}/get.xml` and specify the request header `Content-Type: text/xml`.'
       operationId: estimateTax
       parameters:
         - in: path
@@ -93,18 +93,21 @@ paths:
           type: string
           format: int32
           description: The latitude of the geographic coordinates to get tax for based on the sale amount
+          x-example: 47.6205
         - in: path
           name: longitude
           required: true
           type: string
           format: int32
           description: The longitude of the geographic coordinates to get tax for based on the sale amount
-        - in: path
+          x-example: -122.3493
+        - in: query
           name: saleamount
           required: true
           type: string
           format: int32
           description: 'The amount of sale requiring tax calculation, in decimal format'
+          x-example: 1249.99
       responses:
         '200':
           description: Successful operation
