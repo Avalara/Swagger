@@ -36,7 +36,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/NpaNxxToPCode
+          x-example: "http://tempuri.org/IEZTaxWebService/NpaNxxToPCode"
         - in: body
           description: NpaNxxToPCode SOAP Envelope
           name: Envelope
@@ -59,7 +59,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/GetTaxRates
+          x-example: "http://tempuri.org/IEZTaxWebService/GetTaxRates"
         - in: body
           name: GetTaxRatesEnvelope
           description: GetTaxRates SOAP Envelope
@@ -81,7 +81,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/GetAddress
+          x-example: "http://tempuri.org/IEZTaxWebService/GetAddress"
         - in: body
           name: GetAddressEnvelope
           description: GetAddress SOAP Envelope
@@ -103,7 +103,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/GetVersion
+          x-example: "http://tempuri.org/IEZTaxWebService/GetVersion"
         - in: body
           name: GetVersionEnvelope
           description: GetVersion SOAP Envelope
@@ -123,7 +123,7 @@ paths:
       parameters:
         - in: header
           name: SOAPAction
-          x-example: http://tempuri.org/IEZTaxWebService/CalcTaxesWithPCode
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcTaxesWithPCode"
           required: true
           type: string
         - in: body
@@ -148,7 +148,7 @@ paths:
           required: true
           type: string
           default: 'http://tempuri.org/IEZTaxWebService/CalcAdjWithNpaNxx'
-          x-example: http://tempuri.org/IEZTaxWebService/CalcAdjWithNpaNxx
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcAdjWithNpaNxx"
         - in: body
           name: CalcAdjWithNpaNxxEnvelope
           description: CalcAdjWithNpaNxx SOAP Envelope
@@ -170,7 +170,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/CalcReverseAdjWithFipsCode
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcReverseAdjWithFipsCode"
         - in: body
           name: CalcReverseAdjWithFipsCodeEnvelope
           description: CalcReverseAdjWithFipsCode SOAP Envelope
@@ -192,7 +192,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/CalcProRatedTaxes
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcProRatedTaxes"
         - in: body
           name: CalcProRatedTaxesEnvelope
           description: CalcProRatedTaxes SOAP Envelope
@@ -213,7 +213,7 @@ paths:
         - in: header
           name: SOAPAction
           required: true
-          x-example: http://tempuri.org/IEZTaxWebService/CalcJurisdiction
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcJurisdiction"
           type: string
         - in: body
           name: CalcJurisdictionEnvelope
@@ -236,7 +236,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/CalcTaxesWithOverrides
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcTaxesWithOverrides"
         - in: body
           name: CalcTaxesWithOverridesEnvelope
           description: CalcTaxesWithOverrides SOAP Envelope
@@ -258,7 +258,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/CalcTaxesInCustMode
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcTaxesInCustMode"
         - in: body
           name: CalcTaxesInCustModeEnvelope
           description: CalcTaxesInCustMode SOAP Envelope
@@ -280,7 +280,7 @@ paths:
           name: SOAPAction
           required: true
           type: string
-          x-example: http://tempuri.org/IEZTaxWebService/BeginCustomerBatch
+          x-example: "http://tempuri.org/IEZTaxWebService/BeginCustomerBatch"
         - in: body
           name: BeginCustomerBatchEnvelope
           description: BeginCustomerBatch SOAP Envelope
@@ -300,7 +300,7 @@ paths:
       parameters:
         - in: header
           name: SOAPAction
-          x-example: http://tempuri.org/IEZTaxWebService/CalcCustAdj
+          x-example: "http://tempuri.org/IEZTaxWebService/CalcCustAdj"
           required: true
           type: string
         - in: body
