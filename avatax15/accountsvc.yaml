@@ -406,7 +406,7 @@ definitions:
         type: string
         maxLength: 50
         description: Reference to a named profile.
-  UnauthorizedError:
+  Error:
     xml:
       name: Envelope
       prefix: s
