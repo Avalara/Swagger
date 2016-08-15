@@ -33,10 +33,11 @@ paths:
     post:
       operationId: batchSave
       summary: Save a batch
-      description: "This function uses a `Batch` object to load and save a batch into the AvaTax system. It will automatically process the loaded batch. The file loaded needs to be in a .csv, .xls, or .xlsx format, with a header row, and data consistent with the appropriate import format. This import format is the same as the format required for imports through the Admin Console. Templates and information about these formats is available through our [Admin Console documentation](https://help.avalara.com/000_AvaTax_Calc/000AvaTaxCalc_User_Guide/055_Add_or_Import_Transactions?_ga=1.247157572.1375781175.1454001053)."
+      description: "This function uses a Batch object to load and save a batch into the AvaTax system. It will automatically process the loaded batch. The file loaded needs to be in a .csv, .xls, or .xlsx format, with a header row, and data consistent with the appropriate import format. This import format is the same as the format required for imports through the Admin Console. Templates and information about these formats is available through our [Admin Console documentation](https://help.avalara.com/000_AvaTax_Calc/000AvaTaxCalc_User_Guide/055_Add_or_Import_Transactions?_ga=1.247157572.1375781175.1454001053)."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchSave'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchSave" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchSave\""`'
           type: string
@@ -57,10 +58,11 @@ paths:
     post:
       operationId: batchFetch
       summary: Retrieve a batch
-      description: "BatchFetch uses a generic `FetchRequest` object to return details about a specified batch or group of batches. Filters must be populated (as the service will otherwise return all accessible records of the specified type)."
+      description: "BatchFetch uses a generic FetchRequest object to return details about a specified batch or group of batches. Filters must be populated (as the service will otherwise return all accessible records of the specified type)."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchFetch'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFetch" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFetch\""`'
           type: string
@@ -81,10 +83,11 @@ paths:
     post:
       operationId: batchFileFetch
       summary: Retrieve a file from a batch
-      description: "`BatchFileFetch` uses a generic `FetchRequest` object to return details about a specified batch file or group of batch files. Filters must be populated (as the service will otherwise return all accessible records of the specified type). Up to three `BatchFiles` may be associated with a given completed batch: an input file, an error file, and a results file. For batches with no errors, no error file is generated. Similarly, for batches with no successfully processed records, no results file is generated."
+      description: "BatchFileFetch uses a generic FetchRequest object to return details about a specified batch file or group of batch files. Filters must be populated (as the service will otherwise return all accessible records of the specified type). Up to three batchFiles may be associated with a given completed batch: an input file, an error file, and a results file. For batches with no errors, no error file is generated. Similarly, for batches with no successfully processed records, no results file is generated."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchFileFetch'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileFetch" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileFetch\""`'
           type: string
@@ -109,6 +112,7 @@ paths:
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchDelete'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchDelete" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchDelete\""`'
           type: string
@@ -129,10 +133,11 @@ paths:
     post:
       operationId: batchProcess
       summary: Process a batch
-      description: "This method is intended for *internal use only* and may be changed or removed without warning. A granular operation that allows a batch or group of batches to be processed. If you're loading your batches with `BatchSave` (as recommended), you do not need to call this method."
+      description: "This method is intended for *internal use only* and may be changed or removed without warning. A granular operation that allows a batch or group of batches to be processed. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchProcess'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchProcess" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchProcess\""`'
           type: string
@@ -153,10 +158,11 @@ paths:
     post:
       operationId: batchFileSave
       summary: Save a batch file
-      description: "A granular operation that allows a single batch file to be saved independent of a processing batch. If you're loading your batches with `BatchSave` (as recommended), you do not need to call this method."
+      description: "A granular operation that allows a single batch file to be saved independent of a processing batch. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchFileSave'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileSave" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileSave\""`'
           type: string
@@ -177,10 +183,11 @@ paths:
     post:
       operationId: batchFileDelete
       summary: Delete a batch file
-      description: "A granular operation that allows deletion of a batch file (or group of files) independently of a processing batch. If you're loading your batches with `BatchSave` (as recommended), you do not need to call this method."
+      description: "A granular operation that allows deletion of a batch file (or group of files) independently of a processing batch. If you're loading your batches with BatchSave (as recommended), you do not need to call this method."
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/BatchFileDelete'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/BatchFileDelete" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/BatchFileDelete\""`'
           type: string
@@ -204,6 +211,7 @@ paths:
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/Ping'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/Ping" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Ping\""`'
           type: string
@@ -227,6 +235,7 @@ paths:
       parameters:
         - in: header
           name: SOAPAction
+          x-example: 'http://avatax.avalara.com/services/IsAuthorized'
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/IsAuthorized" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/IsAuthorized\""`'
           type: string
@@ -270,7 +279,7 @@ definitions:
           namespace: "http://avatax.avalara.com/services"
         type: object
         properties: 
-          FetchRequest:
+          BatchFetchRequest:
             $ref: '#/definitions/FetchRequest' 
   BatchSaveEnvelope:
     xml:
@@ -597,11 +606,11 @@ definitions:
         title: BatchSaveResult
         properties:
           BatchId:
-            description: "The `BatchId` uniquely identifies the batch in the Avalara system. A unique `BatchId` will be assigned upon saving the batch."
+            description: "The BatchId uniquely identifies the batch in the Avalara system. A unique BatchId will be assigned upon saving the batch."
             type: number
             format: integer
           EstimatedCompletion:
-            description: "Estimated time to complete the processing of the batch. Formatted as a `DateTime`."
+            description: "Estimated time to complete the processing of the batch. Formatted as a DateTime."
             type: string
           TransactionId:
             type: string
@@ -621,7 +630,7 @@ definitions:
         type: object
         properties:
           BatchFileId:
-            description: "Upon saving a batch file, the system assigns that file a unique `BatchFileId`."
+            description: "Upon saving a batch file, the system assigns that file a unique BatchFileId."
             type: number
             format: integer
           TransactionId:
@@ -673,18 +682,18 @@ definitions:
         description: "An indicator of the type of batch. Permitted values are: TransactionImport, TaxRuleImport, ExemptCertImport, CompanyLocationImport, ItemImport."
         type: string
       CompanyId:
-        description: "The unique identifier of the target company. Note that this is different from the `CompanyCode`. For information on finding your `CompanyId`, look [here](http://developer.avalara.com/avatax/finding-your-company-id)."
+        description: "The unique identifier of the target company. Note that this is different from the CompanyCode. For information on finding your CompanyId, look here."
         type: number
         format: integer
       CreatedDate:
-        description: "Date the batch was created in the AvaTax system.  Formatted as a `DateTime`."
+        description: "Date the batch was created in the AvaTax system.  Formatted as a DateTime."
         type: string
       CreatedUserId:
-        description: "UserId of the user who created the `Batch` in the system."
+        description: "UserId of the user who created the Batch in the system."
         type: number
         format: integer
       CompletedDate:
-        description: "Date the batch process was completed.  Formatted as a `DateTime`."
+        description: "Date the batch process was completed.  Formatted as a DateTime."
         type: string
       Files:
         description: "An array of files associated with the batch. There may be up to three files: an input file, a results file (of those records that were successfully processed), and an error file (of those records which were not successfully processed)."
@@ -694,7 +703,7 @@ definitions:
         xml:
           wrapped: true
       ModifiedDate:
-        description:  Date the batch was last modified in the database. Formatted as a `DateTime`.
+        description:  Date the batch was last modified in the database. Formatted as a DateTime.
         type: string
       ModifiedUserId:
         description:  UserId of the user who last modified the batch.
@@ -721,11 +730,11 @@ definitions:
         type: number
         format: integer
       BatchId:
-        description: Unique identifier for the uploaded batch, matches the `BatchId` specified in the containing Batch object.
+        description: Unique identifier for the uploaded batch, matches the BatchId specified in the containing Batch object.
         type: number
         format: integer
       Content:
-        description: "File content, as a byte array. Note that this is not returned in `BatchFetch`, and must be retrieved with `BatchFileFetch`. Encoded as base64Binary"
+        description: "File content, as a byte array. Note that this is not returned in BatchFetch, and must be retrieved with BatchFileFetch. encoded as base64Binary"
         type: string
       ContentType:
         description: MIME type of file contained in Content.
@@ -772,7 +781,7 @@ definitions:
             items:
               $ref: '#/definitions/Message'
   IsAuthorizedResponse:
-    description: Result data returned from `IsAuthorized`.
+    description: Result data returned from IsAuthorized.
     properties:
       IsAuthorizedResult:
         title: IsAuthorizedResult
@@ -786,7 +795,7 @@ definitions:
             maxLength: 10
           Operations:
             type: string
-            description: "The operations that the current user is authorized to use. Determined from the list provided in the `IsAuthorized` call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
+            description: "The operations that the current user is authorized to use. Determined from the list provided in the IsAuthorized call. Possible operations are: Ping, IsAuthorized, GetTax, PostTax, CommitTax, CancelTax, AdjustTax, GetTaxHistory, Validate."
             maxLength: 255
           TransactionId:
             type: string
@@ -806,25 +815,25 @@ definitions:
         description: "Allows the user to specify which properties of the specified object are desired. If not populated, all fields at the root level will be returned. Default and optional fields are documented at the operation level."
         type: string
       Filters:
-        description: "Allows the user to specify filter criteria for the result set. e.g. to return all batches with BatchId=12345, the filter would be `'BatchId=12345'`. Not required, but highly recommended"
+        description: "Allows the user to specify filter criteria for the result set. e.g. to return all batches with BatchId=12345, the filter would be 'BatchId=12345'. Not required, but highly recommended"
         type: string
       Sort:
-        description: "Returns the records sorted by the specified field. Especially useful when used with `RecordCount`."
+        description: "Returns the records sorted by the specified field. Especially useful when used with RecordCount."
         type: string
       MaxCount:
         description: "Maximum number of records to be returned"
         type: number
         format: integer
       PageIndex:
-        description: "`PageIndex` and `PageSize` (along with `Sort`) allow for pagination of records. `PageIndex` will determine the page number returned, as determined by `Sort` and `PageSize` from the result set."
+        description: "PageIndex and PageSize (along with Sort) allow for pagination of records. PageIndex will determine the page number returned, as determined by Sort and PageSize from the result set."
         type: number
         format: integer
       PageSize:
-        description: "See `PageIndex`."
+        description: "See PageIndex."
         type: number
         format: integer
       RecordCount:
-        description: "Specifies the maximum number of records to be returned. Note that there is a service-level `RecordCount` limit of 100,000."
+        description: "Specifies the maximum number of records to be returned. Note that there is a service-level RecordCount limit of 100,000."
         type: number
         format: integer
   FilterRequest:
@@ -875,7 +884,7 @@ definitions:
       'SOAP-ENV:actor':
         type: string
         example: "http://schemas.xmlsoap.org/soap/actor/next"
-        description: 'The WS-Security standard requires the `wsse:Security` element contains a `SOAP-ENV:actor` attribute.'
+        description: 'The WS-Security standard requires the wsse:Security element contains a SOAP-ENV:actor attribute.'
         xml:
           attribute: true
     xml:
@@ -899,7 +908,7 @@ definitions:
       LicenseKey:
         type: string
         maxLength: 16
-        description: The unique alpha-numeric key provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use password.
+        description: The unique alpha-numeric key provided by Avalara for verification against the service. If you are on a free trial and don’t have a license key, use Password.
         example: A1B2C3D4E5F6G7H8
         xml:
           prefix: 'wsse'
