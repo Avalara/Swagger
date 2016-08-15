@@ -50,6 +50,7 @@ produces:
   - application/json
 schemes:
   - http
+x-ApiType: SOAP
 securityDefinitions:
   Authorization:
     type: apiKey
