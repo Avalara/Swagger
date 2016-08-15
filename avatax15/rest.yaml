@@ -25,6 +25,9 @@ produces:
   - text/xml
 security:
   - basic_auth: []
+x-auth-formula: "`Basic ${btoa(`<username>:<password>`)}`"		
+x-api-proxy: https://swn36zl7ba.execute-api.us-west-2.amazonaws.com/prod		
+x-ApiType: REST
 paths:
   '/tax/get':
     post:
@@ -131,6 +134,7 @@ paths:
           description: Address line 1
           in: query
           maxLength: 50
+          x-example: 400 Broad St
         - name: Line2
           required: false
           type: string
@@ -149,11 +153,13 @@ paths:
           description: "City name: optional unless `PostalCode` is not specified."
           in: query
           maxLength: 50
+          x-example: Seattle
         - name: Region
           required: false
           type: string
           in: query
           maxLength: 3
+          x-example: WA
         - name: Country
           in: query
           required: true
@@ -164,6 +170,7 @@ paths:
           required: false
           type: string
           maxLength: 11
+          x-example: 98109
       responses:
         '200':
           description: 'Successful operation'
