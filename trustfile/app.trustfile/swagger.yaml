@@ -23,6 +23,7 @@ basePath: /v3
 schemes:
   - http
   - https
+x-ApiType: SOAP
 consumes:
   - application/json
 produces:
