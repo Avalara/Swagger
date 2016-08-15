@@ -70,6 +70,7 @@ paths:
           required: true
           description: ""
           type: string
+          x-example: http://taxes.services.fuelquest.com/Login
         - name: Envelope
           in: body
           required: true
@@ -91,6 +92,7 @@ paths:
           required: true
           description: ""
           type: string
+          x-example: http://taxes.services.fuelquest.com/Logout
         - name: Envelope
           in: body
           required: true
@@ -112,6 +114,7 @@ paths:
           required: true
           description: ""
           type: string
+          x-example: http://taxes.services.fuelquest.com/ProcessTransactions
         - name: Envelope
           in: body
           required: true
