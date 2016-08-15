@@ -54,6 +54,7 @@ host: excise.avalara.net
 basePath: /
 schemes:
   - https
+x-ApiType: SOAP
 consumes:
   - application/xml
 produces:
