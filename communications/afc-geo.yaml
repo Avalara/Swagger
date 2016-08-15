@@ -35,6 +35,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
+          x-example: http://tempuri.org/ILocatorService/GeocodeAddress
         - in: body
           description: GeocodeAddress SOAP Envelope
           name: Envelope
@@ -57,6 +58,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
+          x-example: http://tempuri.org/ILocatorService/GeocodeLatLong
         - in: body
           name: Envelope
           description: GeocodeLatLong Envelope
@@ -79,6 +81,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
+          x-example: http://tempuri.org/ILocatorService/GeocodeAllMatches
         - in: body
           name: Envelope
           description: GeocodeAllMatches Envelope
@@ -101,6 +104,7 @@ paths:
           description: Required header value to identify the web method
           required: true
           type: string
+          x-example: http://tempuri.org/ILocatorService/GetServerTime
         - in: body
           name: Envelope
           description: GetServerTime SOAP Envelope
