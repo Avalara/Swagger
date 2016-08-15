@@ -35,6 +35,7 @@ paths:
           name: SOAPAction
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/GetTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/GetTax\""`'
+          x-example: "http://avatax.avalara.com/services/GetTax"
           type: string
         - in: body
           name: Envelope
@@ -60,6 +61,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/PostTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/PostTax\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/PostTax"
         - in: body
           name: Envelope
           schema:
@@ -83,6 +85,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/CommitTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/CommitTax\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/CommitTax"
         - in: body
           name: Envelope
           schema:
@@ -107,6 +110,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/CancelTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/CancelTax\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/CancelTax"
         - in: body
           name: Envelope
           schema:
@@ -130,6 +134,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/AdjustTax" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/AdjustTax\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/AdjustTax"
         - in: body
           name: Envelope
           schema:
@@ -153,6 +158,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/GetTaxHistory" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/GetTaxHistory\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/GetTaxHistory"
         - in: body
           name: Envelope
           schema:
@@ -176,6 +182,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/Ping" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Ping\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/Ping"
         - in: body
           name: Envelope
           schema:
@@ -199,6 +206,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/IsAuthorized" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/IsAuthorized\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/IsAuthorized"
         - in: body
           name: Envelope
           schema:
@@ -223,6 +231,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/ApplyPayment" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/ApplyPayment\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/ApplyPayment"
         - in: body
           name: Envelope
           schema:
@@ -247,6 +256,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/ReconcileTaxHistory" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/ReconcileTaxHistory\""`'
           type: string
+          x-example: "http://avatax.avalara.com/services/ReconcileTaxHistory"
         - in: body
           name: Envelope
           schema:
@@ -272,6 +282,7 @@ paths:
           required: true
           description: 'SOAPAction must be "http://avatax.avalara.com/services/Validate" for this operation: e.g. `--header "SOAPAction: \"http://avatax.avalara.com/services/Validate\"" `'
           type: string
+          x-example: "http://avatax.avalara.com/services/Validate"
         - in: body
           name: Envelope
           required: true
