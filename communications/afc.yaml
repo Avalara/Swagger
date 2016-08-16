@@ -15,8 +15,6 @@ produces:
   - application/xml
 consumes:
   - application/xml
-schemes:
-  - https
 x-ApiType: SOAP
 x-wsdlPath: 'https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc?wsdl'
 x-basePath: 'https://eztaxasp.billsoft.com/EZTaxWebService/EZTaxWebService.svc'
@@ -480,7 +478,7 @@ definitions:
       - TaxRateOverrideInfo
     properties:
       TaxRateOverrideInfo:
-        $ref: '#/Definitions/TaxRateOverrideInfo'
+        $ref: '#/definitions/TaxRateOverrideInfo'
   TaxRateOverrideInfo:
     xml:
       prefix: a
@@ -493,7 +491,7 @@ definitions:
       - TaxType
     properties:
       TaxBracketInfo:
-        $ref: '#/Definitions/TaxBracketInfo'
+        $ref: '#/definitions/TaxBracketInfo'
       LevelExemptible:
         type: boolean
         xml:
