@@ -25,7 +25,8 @@ produces:
   - text/xml
 security:
   - basic_auth: []
-x-auth-formula: "`Basic ${btoa(`<username>:<password>`)}`"		
+x-auth-formula: "`Basic ${btoa(`<username>:<password>`)}`"
+x-sample-auth-header: 'Basic aHR0cHdhdGNoOmY='
 x-api-proxy: https://swn36zl7ba.execute-api.us-west-2.amazonaws.com/prod		
 x-ApiType: REST
 paths:
@@ -81,7 +82,7 @@ paths:
           description: 'Unauthorized: Service raises a 401 when the `Authorization` header is missing or malformed.'
           schema:
             $ref: '#/definitions/CancelTaxUnauthorizedError'
-'/tax/{latitude},{longitude}/get':
+  '/tax/{latitude},{longitude}/get':
     get:
       summary: Estimate Tax
       description: 'Retrieves tax rate details for the supplied geographic coordinates and sale amount. Since the REST API does not provide an explicit ping function, this method can also be used to test connectivity to the service. If you would like an XML response, use the URL `/1.0/tax/{latitude},{longitude}/get.xml` and specify the request header `Content-Type: text/xml`.'
@@ -208,17 +209,21 @@ definitions:
       CancelCode:
         type: string
         description: 'The reason for cancelling the tax record. One of: Unspecified, PostFailed, DocDeleted, DocVoided, AdjustmentCancelled'
+        example: DocDeleted
       CompanyCode:
         maxLength: 25
         type: string
         description: Client application company reference code. Not required if the document is identified by DocId.
+        example: APITrialCompany
       DocCode:
         maxLength: 50
         type: string
         description: 'Client application identifier describing this tax transaction (i.e. invoice number, sales order number, etc.). Not required if the document is identified by DocId.'
+        example: SalesInvoice
       DocType:
         type: string
         description: 'Value describing what type of tax document is being cancelled. One of: SalesInvoice, ReturnInvoice, PurchaseInvoice. Not required if the document is identified by DocId.'
+        example: SalesInvoice
       DocId:
         type: string
         description: 'Avatax-assigned unique Document Id, can be used in place of DocCode, DocType, and CompanyCode.'
@@ -470,6 +475,8 @@ definitions:
       - PostalCode
     x-excludedProperties:
       - TaxRegionId
+      - Latitude
+      - Longitude
     properties:
       AddressCode:
         type: string
