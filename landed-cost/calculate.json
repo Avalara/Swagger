@@ -33,11 +33,11 @@
         }
     ],
     "basePath": "/",
-    "host": "sandbox.landedcost.api.avalara.com",
     "paths": {
         "/v3/validate-creds": {
             "get": {
                 "summary":"Validate Credentials",
+                "operationId": "validateCreds",
                 "tags": [
                     "Landed Cost Calculation API"
                 ],
