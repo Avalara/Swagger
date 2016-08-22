@@ -4,7 +4,7 @@ info:
   
     There are three primary resources in the BatchSvc: BatchSave, BatchFetch, and BatchFileFetch. Other functions are referenced in the WSDL, but we do not recommend using them in a standard use case.
 
-    Proxy DLLs are also maintained by AvaTax for this functionality, and can be downloaded from our [sample code page](http://developer.avalara.com/resources/api-sample-code).
+    Proxy DLLs are also maintained by AvaTax for this functionality, and can be downloaded from our [sample code page](/avatax/sample-code/).
 
     Note that BatchSvc has some quirks to it: you will need to authenticate with an Account Admin level username/password combination, an account number/license key combination will not be sufficient. Also, you will need to know your CompanyId (which is not the same as the CompanyCode used in the standard TaxSvc functionality). To find your CompanyId, take a look at [this article](http://developer.avalara.com/api-docs/soap/finding-your-companyid)."
   
