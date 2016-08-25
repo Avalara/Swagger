@@ -208,6 +208,7 @@ paths:
     post:
       operationId: ping
       summary: Test service connectivity
+      description: "A simple service to test connectivity."
       parameters:
         - in: header
           name: SOAPAction
@@ -232,6 +233,7 @@ paths:
     post:
       operationId: isAuthorized
       summary: Test authorized operations
+      description: "A simple service to test authorized operations."
       parameters:
         - in: header
           name: SOAPAction
