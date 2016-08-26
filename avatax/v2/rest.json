@@ -14,9 +14,6 @@
             "url":"https://www.avalara.com/terms-of-use/"
         }
     },
-    "x-auth-formula": "`Basic ${btoa(`<username>:<password>`)}`",
-    "x-sample-auth-header": "Basic aHR0cHdhdGNoOmY=",
-    "x-ApiType": "REST",
     "host": "rest-sbx-preview.avalara.net",
     "schemes": [
         "https"
