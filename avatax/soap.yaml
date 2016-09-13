@@ -1032,12 +1032,12 @@ definitions:
     xml:
       name: Line
     required:
-      - LineNo
+      - No
       - DestinationCode
       - OriginCode
       - Qty
     properties:
-      LineNo:
+      No:
         maxLength: 50
         type: string
         example: '1'
@@ -1468,7 +1468,7 @@ definitions:
     xml:
       name: TaxLine
     properties:
-      LineNo:
+      No:
         maxLength: 50
         type: string
         description: Line item identifier
