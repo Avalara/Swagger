@@ -21,7 +21,6 @@ info:
 host: app.trustfile.avalara.com
 basePath: /v3
 schemes:
-  - http
   - https
 x-ApiType: SOAP
 consumes:
@@ -49,7 +48,7 @@ paths:
 
         * The new user will receive an email to set their password
       
-        * user.connectionId will only be passed if the user completes the required fields AND provides a company address
+        * user.company.connectionId will only be passed if the user completes the required fields AND provides a company address
         
       parameters:
         - in: body
@@ -127,9 +126,6 @@ paths:
                   password:
                     type: string
                     description: Hashed password
-                  connectionId:
-                    type: string
-                    description: connectionId. Will not be passed if the address is incomplete.
                   accountSetup:
                     type: boolean
                   lastLoginAt:
@@ -156,6 +152,9 @@ paths:
                       syncDate:
                         type: string
                         format: date-time
+                      connectionId:
+                        type: string
+                        description: connectionId. Will not be passed if the address is incomplete.
                       fein:
                         type: string
                       phone:
