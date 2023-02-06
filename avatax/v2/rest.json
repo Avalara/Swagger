@@ -10433,6 +10433,10 @@
             "description":"Address Resolution Model",
             "type":"object",
             "properties":{
+                "messages":{
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/ErrorDetail"}
+                },
                 "address":{
                     "$ref":"#/definitions/AddressInfo",
                     "description":"The resolved address"
